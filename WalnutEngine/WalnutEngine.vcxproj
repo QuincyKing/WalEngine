@@ -72,7 +72,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>C:\Users\QuincyKing\Desktop\WalnutEngine\WalnutEngine\ThirdParty\include\glad\include;C:\Users\QuincyKing\Desktop\WalnutEngine\WalnutEngine\ThirdParty\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Users\QuincyKing\Desktop\WalnutEngine\WalnutEngine\ThirdParty\lib;$(LibraryPath)</LibraryPath>
-    <OutDir>$(SolutionDir)$(Configuration)\bin</OutDir>
+    <OutDir>$(SolutionDir)bin</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

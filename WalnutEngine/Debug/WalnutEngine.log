@@ -1,4 +1,10 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(377,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
+  imgui.cpp
+  imgui_demo.cpp
+  imgui_draw.cpp
+  imgui_impl_glfw.cpp
+  imgui_impl_opengl3.cpp
+  imgui_widgets.cpp
   main.cpp
 c:\program files (x86)\windows kits\10\include\10.0.17134.0\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
   c:\users\quincyking\desktop\walnutengine\walnutengine\thirdparty\include\glad\include\glad\glad.h(30): note: see previous definition of 'APIENTRY'
@@ -22,8 +28,11 @@ c:\users\quincyking\desktop\walnutengine\walnutengine\src\core\window.cpp(123): 
 c:\users\quincyking\desktop\walnutengine\walnutengine\src\core\window.cpp(124): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
 c:\users\quincyking\desktop\walnutengine\walnutengine\src\core\window.cpp(126): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
 c:\users\quincyking\desktop\walnutengine\walnutengine\src\core\window.cpp(127): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+  Hierarchy.cpp
   Menu.cpp
 c:\program files (x86)\windows kits\10\include\10.0.17134.0\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
   c:\users\quincyking\desktop\walnutengine\walnutengine\thirdparty\include\glad\include\glad\glad.h(30): note: see previous definition of 'APIENTRY'
+  Panel.cpp
   Generating Code...
-  WalnutEngine.vcxproj -> C:\Users\QuincyKing\Desktop\WalnutEngine\Debug\bin\WalnutEngine.exe
+  glad.c
+  WalnutEngine.vcxproj -> C:\Users\QuincyKing\Desktop\WalnutEngine\bin\WalnutEngine.exe
