@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="ThirdParty\include\glad\src\glad.c" />
+    <ClCompile Include="ThirdParty\include\imgui\imgui.cpp" />
+    <ClCompile Include="ThirdParty\include\imgui\imgui_demo.cpp" />
+    <ClCompile Include="ThirdParty\include\imgui\imgui_draw.cpp" />
+    <ClCompile Include="ThirdParty\include\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="ThirdParty\include\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="ThirdParty\include\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="src\editor\Hierarchy.cpp" />
+    <ClCompile Include="src\editor\Menu.cpp" />
+    <ClCompile Include="src\editor\Panel.cpp" />
+    <ClCompile Include="src\core\Window.cpp" />
+    <ClCompile Include="src\core\Input.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\core\camera.h" />
+    <ClInclude Include="src\core\mesh.h" />
+    <ClInclude Include="src\core\model.h" />
+    <ClInclude Include="src\core\shader.h" />
+    <ClInclude Include="ThirdParty\include\imgui\imconfig.h" />
+    <ClInclude Include="ThirdParty\include\imgui\imgui.h" />
+    <ClInclude Include="ThirdParty\include\imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="ThirdParty\include\imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="ThirdParty\include\imgui\imgui_internal.h" />
+    <ClInclude Include="ThirdParty\include\imgui\imstb_rectpack.h" />
+    <ClInclude Include="ThirdParty\include\imgui\imstb_textedit.h" />
+    <ClInclude Include="ThirdParty\include\imgui\imstb_truetype.h" />
+    <ClInclude Include="src\editor\Hierarchy.h" />
+    <ClInclude Include="src\editor\Menu.h" />
+    <ClInclude Include="src\editor\Panel.h" />
+    <ClInclude Include="src\core\Window.h" />
+    <ClInclude Include="pbr.h" />
+    <ClInclude Include="src\core\Input.h" />
+  </ItemGroup>
+</Project>
