@@ -6,6 +6,9 @@
 #include <stb_image.h>
 #include <GLFW/glfw3.h>
 
+#include "src/core/Quaternion.h";
+//#include "./src/core/Model.h"
+#include "./src/render/Texture.h"
 #include <iostream>
 #include <memory>
 
@@ -13,19 +16,57 @@ class Pbr : public Window
 {
 private:
 	std::shared_ptr<Shader> shader;
-	unsigned int albedo, normal, metallic, roughness, ao;
+	Texture albedo, normal, metallic, roughness, ao;
 	unsigned int sphereVAO = 0;
 	unsigned int indexCount;
+	//Model model;
 
 public:
 	Pbr(unsigned int _Width, unsigned int _Height) : Window(_Width, _Height)
 	{
+		albedo = Texture("pbr/plastic/albedo.png");
+		normal = Texture("pbr/plastic/normal.png");
+		metallic = Texture("pbr/plastic/metallic.png");
+		roughness = Texture("pbr/plastic/roughness.png");
+		ao = Texture("pbr/plastic/ao.png");
+	}
 
+	~Pbr()
+	{
 	}
 
 	void onrun()
 	{
 		Window::onrun();
+	}
+
+	void oninit()
+	{
+		//model = Model("C:/Users/QuincyKing/Desktop/WalnutEngine/res/objects/nanosuit/nanosuit.obj");
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_TEXTURE_2D);
+
+		albedo.process();
+		normal.process();
+		metallic.process();
+		roughness.process();
+		ao.process();
+
+		shader = std::make_shared<Shader>("./shader/pbr.vs", "./shader/pbr.fs");
+		shader->use();
+
+		shader->setInt("albedoMap", 0);
+		shader->setInt("normalMap", 1);
+		shader->setInt("metallicMap", 2);
+		shader->setInt("roughnessMap", 3);
+		shader->setInt("aoMap", 4);
+
+		
+		glm::mat4 model = glm::mat4();
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+
+		shader->use();
+		shader->setMat4("model", model);
 	}
 
 	void onupdate()
@@ -34,9 +75,9 @@ public:
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glm::vec2 curScreen;
-		curScreen.x = 10 * float((mInput.get_mouse_x() - mInput.get_win_size_x() / 2) / mInput.get_win_size_x());
-		curScreen.y = 10 * float(0 - (mInput.get_mouse_y() - mInput.get_win_size_y() / 2) / mInput.get_win_size_y());
-
+		 
+		curScreen.x = 5 * float((mInput.get_mouse_x()) - mInput.get_win_size_x() / 2.0f) / float(mInput.get_win_size_x());
+		curScreen.y = 5 * float(0 - (mInput.get_mouse_y()) - mInput.get_win_size_y() / 2.0f) / float(mInput.get_win_size_y());
 		glm::vec3 lightPosition = glm::vec3(0.0f, 0.0f, 10.0f);
 		glm::vec3 lightColor = glm::vec3(255.0f, 255.0f, 255.0f);
 		shader->use();
@@ -48,18 +89,15 @@ public:
 		shader->setVec3("lightPos", lightPosition + glm::vec3(curScreen, 0.0));
 		shader->setVec3("lightColor", lightColor);
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, albedo);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, normal);
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, metallic);
-		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_2D, roughness);
-		glActiveTexture(GL_TEXTURE4);
-		glBindTexture(GL_TEXTURE_2D, ao);
+		albedo.bind(0);
+		normal.bind(1);
+		metallic.bind(2);
+		roughness.bind(3);
+		ao.bind(4);
 
 		RenderSphere();
+
+		////model.Draw(shader);
 	}
 
 	void RenderSphere()
@@ -153,70 +191,5 @@ public:
 
 		glBindVertexArray(sphereVAO);
 		glDrawElements(GL_TRIANGLE_STRIP, indexCount, GL_UNSIGNED_INT, 0);
-	}
-
-	unsigned int LoadTexture(const std::string _path)
-	{
-		const char *path = _path.c_str();
-		unsigned int textureID;
-		glGenTextures(1, &textureID);
-
-		int width, height, nrComponents;
-		unsigned char *data = stbi_load(path, &width, &height, &nrComponents, 0);
-		if (data)
-		{
-			GLenum format;
-			if (nrComponents == 1)
-				format = GL_RED;
-			else if (nrComponents == 3)
-				format = GL_RGB;
-			else if (nrComponents == 4)
-				format = GL_RGBA;
-
-			glBindTexture(GL_TEXTURE_2D, textureID);
-			glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-			glGenerateMipmap(GL_TEXTURE_2D);
-
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-			stbi_image_free(data);
-		}
-		else
-		{
-			std::cout << "Texture failed to load at path: " << path << std::endl;
-			stbi_image_free(data);
-		}
-
-		return textureID;
-	}
-
-	void oninit()
-	{
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_TEXTURE_2D);
-
-		shader = std::make_shared<Shader>("./shader/pbr.vs", "./shader/pbr.fs");
-		shader->use();
-
-		shader->setInt("albedoMap", 0);
-		shader->setInt("normalMap", 1);
-		shader->setInt("metallicMap", 2);
-		shader->setInt("roughnessMap", 3);
-		shader->setInt("aoMap", 4);
-
-		albedo = LoadTexture("../res/textures/pbr/plastic/albedo.png");
-		normal = LoadTexture("../res/textures/pbr/plastic/normal.png");
-		metallic = LoadTexture("../res/textures/pbr/plastic/metallic.png");
-		roughness = LoadTexture("../res/textures/pbr/plastic/roughness.png");
-		ao = LoadTexture("../res/textures/pbr/plastic/ao.png");
-
-		glm::mat4 model = glm::mat4();
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-
-		shader->use();
-		shader->setMat4("model", model);
 	}
 };

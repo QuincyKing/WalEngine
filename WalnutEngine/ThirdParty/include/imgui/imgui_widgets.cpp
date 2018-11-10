@@ -714,7 +714,7 @@ void ImGui::Scrollbar(ImGuiLayoutType direction)
         : ImRect(window_rect.Max.x - style.ScrollbarSize, window->Pos.y + border_size, window_rect.Max.x - border_size, window_rect.Max.y - other_scrollbar_size_w - border_size);
     if (!horizontal)
         bb.Min.y += window->TitleBarHeight() + ((window->Flags & ImGuiWindowFlags_MenuBar) ? window->MenuBarHeight() : 0.0f);
-    if (bb.GetWidth() <= 0.0f || bb.GetHeight() <= 0.0f)
+    if (bb.get_width() <= 0.0f || bb.GetHeight() <= 0.0f)
         return;
 
     int window_rounding_corners;
@@ -726,7 +726,7 @@ void ImGui::Scrollbar(ImGuiLayoutType direction)
     bb.Expand(ImVec2(-ImClamp((float)(int)((bb.Max.x - bb.Min.x - 2.0f) * 0.5f), 0.0f, 3.0f), -ImClamp((float)(int)((bb.Max.y - bb.Min.y - 2.0f) * 0.5f), 0.0f, 3.0f)));
 
     // V denote the main, longer axis of the scrollbar (= height for a vertical scrollbar)
-    float scrollbar_size_v = horizontal ? bb.GetWidth() : bb.GetHeight();
+    float scrollbar_size_v = horizontal ? bb.get_width() : bb.GetHeight();
     float scroll_v = horizontal ? window->Scroll.x : window->Scroll.y;
     float win_size_avail_v = (horizontal ? window->SizeFull.x : window->SizeFull.y) - other_scrollbar_size_w;
     float win_size_contents_v = horizontal ? window->SizeContents.x : window->SizeContents.y;
@@ -884,7 +884,7 @@ bool ImGui::Checkbox(const char* label, bool* v)
     const ImRect text_bb(window->DC.CursorPos + ImVec2(0,style.FramePadding.y), window->DC.CursorPos + ImVec2(0,style.FramePadding.y) + label_size);
     if (label_size.x > 0)
     {
-        ItemSize(ImVec2(text_bb.GetWidth(), check_bb.GetHeight()), style.FramePadding.y);
+        ItemSize(ImVec2(text_bb.get_width(), check_bb.GetHeight()), style.FramePadding.y);
         total_bb = ImRect(ImMin(check_bb.Min, text_bb.Min), ImMax(check_bb.Max, text_bb.Max));
     }
 
@@ -903,9 +903,9 @@ bool ImGui::Checkbox(const char* label, bool* v)
     RenderFrame(check_bb.Min, check_bb.Max, GetColorU32((held && hovered) ? ImGuiCol_FrameBgActive : hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg), true, style.FrameRounding);
     if (*v)
     {
-        const float check_sz = ImMin(check_bb.GetWidth(), check_bb.GetHeight());
+        const float check_sz = ImMin(check_bb.get_width(), check_bb.GetHeight());
         const float pad = ImMax(1.0f, (float)(int)(check_sz / 6.0f));
-        RenderCheckMark(check_bb.Min + ImVec2(pad,pad), GetColorU32(ImGuiCol_CheckMark), check_bb.GetWidth() - pad*2.0f);
+        RenderCheckMark(check_bb.Min + ImVec2(pad,pad), GetColorU32(ImGuiCol_CheckMark), check_bb.get_width() - pad*2.0f);
     }
 
     if (g.LogEnabled)
@@ -951,7 +951,7 @@ bool ImGui::RadioButton(const char* label, bool active)
     const ImRect text_bb(window->DC.CursorPos + ImVec2(0, style.FramePadding.y), window->DC.CursorPos + ImVec2(0, style.FramePadding.y) + label_size);
     if (label_size.x > 0)
     {
-        ItemSize(ImVec2(text_bb.GetWidth(), check_bb.GetHeight()), style.FramePadding.y);
+        ItemSize(ImVec2(text_bb.get_width(), check_bb.GetHeight()), style.FramePadding.y);
         total_bb.Add(text_bb);
     }
 
@@ -972,7 +972,7 @@ bool ImGui::RadioButton(const char* label, bool active)
     window->DrawList->AddCircleFilled(center, radius, GetColorU32((held && hovered) ? ImGuiCol_FrameBgActive : hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg), 16);
     if (active)
     {
-        const float check_sz = ImMin(check_bb.GetWidth(), check_bb.GetHeight());
+        const float check_sz = ImMin(check_bb.get_width(), check_bb.GetHeight());
         const float pad = ImMax(1.0f, (float)(int)(check_sz / 6.0f));
         window->DrawList->AddCircleFilled(center, radius-pad, GetColorU32(ImGuiCol_CheckMark), 16);
     }
@@ -1172,7 +1172,7 @@ void ImGui::VerticalSeparator()
     float y1 = window->DC.CursorPos.y;
     float y2 = window->DC.CursorPos.y + window->DC.CurrentLineSize.y;
     const ImRect bb(ImVec2(window->DC.CursorPos.x, y1), ImVec2(window->DC.CursorPos.x + 1.0f, y2));
-    ItemSize(ImVec2(bb.GetWidth(), 0.0f));
+    ItemSize(ImVec2(bb.get_width(), 0.0f));
     if (!ItemAdd(bb, 0))
         return;
 
@@ -2083,7 +2083,7 @@ bool ImGui::SliderBehaviorT(const ImRect& bb, ImGuiID id, ImGuiDataType data_typ
     const bool is_power = (power != 1.0f) && is_decimal;
 
     const float grab_padding = 2.0f;
-    const float slider_sz = is_horizontal ? (bb.GetWidth() - grab_padding * 2.0f) : (bb.GetHeight() - grab_padding * 2.0f);
+    const float slider_sz = is_horizontal ? (bb.get_width() - grab_padding * 2.0f) : (bb.GetHeight() - grab_padding * 2.0f);
     float grab_sz = style.GrabMinSize;
     SIGNEDTYPE v_range = (v_min < v_max ? v_max - v_min : v_min - v_max);
     if (!is_decimal && v_range >= 0)                                             // v_range < 0 may happen on integer overflows
@@ -4343,7 +4343,7 @@ bool ImGui::ColorPicker4(const char* label, float col[4], ImGuiColorEditFlags fl
     {
         float alpha = ImSaturate(col[3]);
         ImRect bar1_bb(bar1_pos_x, picker_pos.y, bar1_pos_x + bars_width, picker_pos.y + sv_picker_size);
-        RenderColorRectWithAlphaCheckerboard(bar1_bb.Min, bar1_bb.Max, IM_COL32(0,0,0,0), bar1_bb.GetWidth() / 2.0f, ImVec2(0.0f, 0.0f));
+        RenderColorRectWithAlphaCheckerboard(bar1_bb.Min, bar1_bb.Max, IM_COL32(0,0,0,0), bar1_bb.get_width() / 2.0f, ImVec2(0.0f, 0.0f));
         draw_list->AddRectFilledMultiColor(bar1_bb.Min, bar1_bb.Max, col32_no_alpha, col32_no_alpha, col32_no_alpha & ~IM_COL32_A_MASK, col32_no_alpha & ~IM_COL32_A_MASK);
         float bar1_line_y = (float)(int)(picker_pos.y + (1.0f - alpha) * sv_picker_size + 0.5f);
         RenderFrameBorder(bar1_bb.Min, bar1_bb.Max, 0.0f);

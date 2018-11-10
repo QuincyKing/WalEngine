@@ -128,6 +128,7 @@
     <ClCompile Include="src\editor\Hierarchy.cpp" />
     <ClCompile Include="src\editor\Menu.cpp" />
     <ClCompile Include="src\editor\Panel.cpp" />
+    <ClCompile Include="src\render\Texture.cpp" />
     <ClCompile Include="ThirdParty\include\glad\src\glad.c" />
     <ClCompile Include="ThirdParty\include\imgui\imgui.cpp" />
     <ClCompile Include="ThirdParty\include\imgui\imgui_demo.cpp" />
@@ -139,14 +140,14 @@
   <ItemGroup>
     <ClInclude Include="src\core\camera.h" />
     <ClInclude Include="src\core\Input.h" />
-    <ClInclude Include="src\core\mesh.h" />
-    <ClInclude Include="src\core\model.h" />
     <ClInclude Include="pbr.h" />
+    <ClInclude Include="src\core\Quaternion.h" />
     <ClInclude Include="src\core\Window.h" />
     <ClInclude Include="src\core\shader.h" />
     <ClInclude Include="src\editor\Hierarchy.h" />
     <ClInclude Include="src\editor\Menu.h" />
     <ClInclude Include="src\editor\Panel.h" />
+    <ClInclude Include="src\render\Texture.h" />
     <ClInclude Include="ThirdParty\include\imgui\imconfig.h" />
     <ClInclude Include="ThirdParty\include\imgui\imgui.h" />
     <ClInclude Include="ThirdParty\include\imgui\imgui_impl_glfw.h" />

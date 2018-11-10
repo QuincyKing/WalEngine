@@ -1,38 +1,12 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(377,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
-  imgui.cpp
-  imgui_demo.cpp
-  imgui_draw.cpp
-  imgui_impl_glfw.cpp
-  imgui_impl_opengl3.cpp
-  imgui_widgets.cpp
-  main.cpp
-c:\program files (x86)\windows kits\10\include\10.0.17134.0\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
-  c:\users\quincyking\desktop\walnutengine\walnutengine\thirdparty\include\glad\include\glad\glad.h(30): note: see previous definition of 'APIENTRY'
-c:\users\quincyking\desktop\walnutengine\walnutengine\src\core\shader.h(64): warning C4101: 'infoLog': unreferenced local variable
-c:\users\quincyking\desktop\walnutengine\walnutengine\src\core\shader.h(63): warning C4101: 'success': unreferenced local variable
-c:\users\quincyking\desktop\walnutengine\walnutengine\pbr.h(82): warning C4305: 'initializing': truncation from 'double' to 'float'
-c:\users\quincyking\desktop\walnutengine\walnutengine\pbr.h(123): warning C4018: '<': signed/unsigned mismatch
-c:\users\quincyking\desktop\walnutengine\walnutengine\pbr.h(147): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
-c:\users\quincyking\desktop\walnutengine\walnutengine\pbr.h(149): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
-c:\users\quincyking\desktop\walnutengine\walnutengine\pbr.h(151): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
-  Input.cpp
   Window.cpp
-c:\program files (x86)\windows kits\10\include\10.0.17134.0\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
-  c:\users\quincyking\desktop\walnutengine\walnutengine\thirdparty\include\glad\include\glad\glad.h(30): note: see previous definition of 'APIENTRY'
 c:\users\quincyking\desktop\walnutengine\walnutengine\src\core\window.cpp(9): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
 c:\users\quincyking\desktop\walnutengine\walnutengine\src\core\window.cpp(10): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
-c:\users\quincyking\desktop\walnutengine\walnutengine\src\core\window.cpp(105): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\quincyking\desktop\walnutengine\walnutengine\src\core\window.cpp(119): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-c:\users\quincyking\desktop\walnutengine\walnutengine\src\core\window.cpp(120): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-c:\users\quincyking\desktop\walnutengine\walnutengine\src\core\window.cpp(123): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\quincyking\desktop\walnutengine\walnutengine\src\core\window.cpp(124): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\quincyking\desktop\walnutengine\walnutengine\src\core\window.cpp(126): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-c:\users\quincyking\desktop\walnutengine\walnutengine\src\core\window.cpp(127): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-  Hierarchy.cpp
-  Menu.cpp
-c:\program files (x86)\windows kits\10\include\10.0.17134.0\shared\minwindef.h(130): warning C4005: 'APIENTRY': macro redefinition
-  c:\users\quincyking\desktop\walnutengine\walnutengine\thirdparty\include\glad\include\glad\glad.h(30): note: see previous definition of 'APIENTRY'
-  Panel.cpp
-  Generating Code...
-  glad.c
+c:\users\quincyking\desktop\walnutengine\walnutengine\src\core\window.cpp(103): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\quincyking\desktop\walnutengine\walnutengine\src\core\window.cpp(117): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+c:\users\quincyking\desktop\walnutengine\walnutengine\src\core\window.cpp(118): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+c:\users\quincyking\desktop\walnutengine\walnutengine\src\core\window.cpp(121): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\quincyking\desktop\walnutengine\walnutengine\src\core\window.cpp(122): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\quincyking\desktop\walnutengine\walnutengine\src\core\window.cpp(124): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+c:\users\quincyking\desktop\walnutengine\walnutengine\src\core\window.cpp(125): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
   WalnutEngine.vcxproj -> C:\Users\QuincyKing\Desktop\WalnutEngine\bin\WalnutEngine.exe

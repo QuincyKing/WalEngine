@@ -14,11 +14,10 @@
     <ClCompile Include="src\editor\Panel.cpp" />
     <ClCompile Include="src\core\Window.cpp" />
     <ClCompile Include="src\core\Input.cpp" />
+    <ClCompile Include="src\render\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\camera.h" />
-    <ClInclude Include="src\core\mesh.h" />
-    <ClInclude Include="src\core\model.h" />
     <ClInclude Include="src\core\shader.h" />
     <ClInclude Include="ThirdParty\include\imgui\imconfig.h" />
     <ClInclude Include="ThirdParty\include\imgui\imgui.h" />
@@ -34,5 +33,7 @@
     <ClInclude Include="src\core\Window.h" />
     <ClInclude Include="pbr.h" />
     <ClInclude Include="src\core\Input.h" />
+    <ClInclude Include="src\core\Quaternion.h" />
+    <ClInclude Include="src\render\Texture.h" />
   </ItemGroup>
 </Project>

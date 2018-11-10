@@ -95,8 +95,6 @@ int Window::onrun()
 	glfwSetMouseButtonCallback(mWindow, mouse);
 	//glfwSetCursorPosCallback(mWindow, cursor);
 
-	glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-
 	//初始化函数
 	oninit();
 
@@ -175,6 +173,7 @@ void Window::_framebuffersize(int width, int height)
 	glViewport(0, 0, width, height);
 }
 
+//GUI
 void Window::_gui()
 {
 	ImGui_ImplOpenGL3_NewFrame();
@@ -201,8 +200,17 @@ void Window::_update()
 		if(fabs(mInput.get_offset_x()) + fabs(mInput.get_offset_y()) > 1.0)
 			mCamera.ProcessMouseMovement(mInput.get_offset_x(), mInput.get_offset_y());
 	}
+	if (mInput.get_key(Input::KEY_W))
+		mCamera.ProcessKeyboard(FORWARD, 0.01f);
+	if (mInput.get_key(Input::KEY_S))
+		mCamera.ProcessKeyboard(BACKWARD, 0.01f);
+	if (mInput.get_key(Input::KEY_A))
+		mCamera.ProcessKeyboard(LEFT, 0.01f);
+	if (mInput.get_key(Input::KEY_D))
+		mCamera.ProcessKeyboard(RIGHT, 0.01f);
 }
 
+//键盘按键
 void Window::_key(int key, int scancode, int action, int mods)
 {
 	for (int i = 0; i < Input::NUM_KEYS; i++)
@@ -223,6 +231,7 @@ void Window::_key(int key, int scancode, int action, int mods)
 	}
 }
 
+//鼠标按键
 void Window::_mouse(int button, int action, int mods)
 {
 	for (int i = 0; i < Input::NUM_MOUSEBUTTONS; i++)
