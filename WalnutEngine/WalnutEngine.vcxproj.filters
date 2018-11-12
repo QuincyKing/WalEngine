@@ -15,10 +15,12 @@
     <ClCompile Include="src\core\Window.cpp" />
     <ClCompile Include="src\core\Input.cpp" />
     <ClCompile Include="src\render\Texture.cpp" />
+    <ClCompile Include="src\core\Mesh.cpp" />
+    <ClCompile Include="src\core\Transform.cpp" />
+    <ClCompile Include="src\render\Camera.cpp" />
+    <ClCompile Include="src\core\Entity.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\core\camera.h" />
-    <ClInclude Include="src\core\shader.h" />
     <ClInclude Include="ThirdParty\include\imgui\imconfig.h" />
     <ClInclude Include="ThirdParty\include\imgui\imgui.h" />
     <ClInclude Include="ThirdParty\include\imgui\imgui_impl_glfw.h" />
@@ -35,5 +37,13 @@
     <ClInclude Include="src\core\Input.h" />
     <ClInclude Include="src\core\Quaternion.h" />
     <ClInclude Include="src\render\Texture.h" />
+    <ClInclude Include="src\core\Model.h" />
+    <ClInclude Include="src\core\mesh.h" />
+    <ClInclude Include="src\render\Shader.h" />
+    <ClInclude Include="src\render\Camera.h" />
+    <ClInclude Include="src\core\Transform.h" />
+    <ClInclude Include="src\core\Entity.h" />
+    <ClInclude Include="src\core\Component.h" />
+    <ClInclude Include="src\render\Material.h" />
   </ItemGroup>
 </Project>

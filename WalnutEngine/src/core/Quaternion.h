@@ -119,7 +119,7 @@ public:
 		return Quaternion(l.que * srcFactor + correctedDest.que * destFactor);
 	}
 
-	inline glm::mat4 InitRotationFromVectors(const glm::vec3& n, const glm::vec3& v, const glm::vec3& u)
+	static glm::mat4 rotation_from_vec(const glm::vec3& n, const glm::vec3& v, const glm::vec3& u)
 	{
 		glm::mat4 m;
 
@@ -131,18 +131,27 @@ public:
 		return m;
 	}
 
-	inline glm::mat4 ToRotationMatrix()
+	static glm::mat4 rotation_from_direction(const glm::vec3& forward, const glm::vec3& up)
+	{
+		glm::vec3 n = glm::normalize(forward);
+		glm::vec3 u = glm::cross(glm::normalize(up) ,n);
+		glm::vec3 v = glm::cross(n, u);
+
+		return rotation_from_vec(n, v, u);
+	}
+
+	inline glm::mat4 to_rotation_mat() const
 	{
 		glm::vec3 forward = glm::vec3(2.0f * (que.x * que.z - que.w * que.y), 2.0f * (que.y * que.z + que.w * que.x), 1.0f - 2.0f * (que.x * que.x + que.y * que.y));
 		glm::vec3 up = glm::vec3(2.0f * (que.x*que.y + que.w*que.z), 1.0f - 2.0f * (que.x*que.x + que.z*que.z), 2.0f * (que.y*que.z - que.w*que.x));
 		glm::vec3 right = glm::vec3(1.0f - 2.0f * (que.y*que.y + que.z*que.z), 2.0f * (que.x*que.y - que.w*que.z), 2.0f * (que.x*que.z + que.w*que.y));
 
-		return InitRotationFromVectors(forward, up, right);
+		return rotation_from_vec(forward, up, right);
 	}
 
-	static glm::vec3 Rotate(const glm::vec3 v, const Quaternion& rotation)
+	static glm::vec3 rotate(const glm::vec3 v, const Quaternion& rotation)
 	{
-		Quaternion conjugateQ = rotation.Conjugate();
+		Quaternion conjugateQ = rotation.conjugate();
 		Quaternion w = rotation * v * conjugateQ;
 
 		glm::vec3 ret(w.que.x, w.que.y, w.que.z);
@@ -150,37 +159,42 @@ public:
 		return ret;
 	}
 
-	inline glm::vec3 GetForward() const
+	inline glm::vec3 get_forward() const
 	{
-		return Rotate(glm::vec3(0, 0, 1), que);
+		return rotate(glm::vec3(0, 0, 1), que);
 	}
 
-	inline glm::vec3 GetBack() const
+	inline glm::vec3 get_back() const
 	{
-		return Rotate(glm::vec3(0, 0, -1), que);
+		return rotate(glm::vec3(0, 0, -1), que);
 	}
 
-	inline glm::vec3 GetUp() const
+	inline glm::vec3 get_up() const
 	{
-		return Rotate(glm::vec3(0, 1, 0), que);
+		return rotate(glm::vec3(0, 1, 0), que);
 	}
 
-	inline glm::vec3 GetDown() const
+	inline glm::vec3 get_down() const
 	{
-		return Rotate(glm::vec3(0, -1, 0), que);
+		return rotate(glm::vec3(0, -1, 0), que);
 	}
 
-	inline glm::vec3 GetRight() const
+	inline glm::vec3 get_right() const
 	{
-		return Rotate(glm::vec3(1, 0, 0), que);
+		return rotate(glm::vec3(1, 0, 0), que);
 	}
 
-	inline glm::vec3 GetLeft() const
+	inline glm::vec3 get_left() const
 	{
-		return Rotate(glm::vec3(-1, 0, 0), que);
+		return rotate(glm::vec3(-1, 0, 0), que);
 	}
 
-	inline Quaternion Conjugate() const { return Quaternion(-que.x, -que.y, -que.z, que.w); }
+	inline Quaternion conjugate() const { return Quaternion(-que.x, -que.y, -que.z, que.w); }
+
+	Quaternion normalize()
+	{
+		return Quaternion(glm::normalize(que));
+	}
 
 	inline Quaternion operator*(const Quaternion& r) const
 	{
@@ -201,4 +215,15 @@ public:
 
 		return Quaternion(_x, _y, _z, _w);
 	}
+
+	inline bool operator==(const Quaternion& r) const
+	{
+		for (unsigned int i = 0; i < 4; i++)
+			if (que[i] != r.que[i])
+				return false;
+		return true;
+	}
+
+	inline bool operator!=(const Quaternion& r) const { return !operator==(r); }
 };
+

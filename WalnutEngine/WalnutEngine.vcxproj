@@ -80,6 +80,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>_DISABLE_EXTENDED_ALIGNED_STORAGE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>kernel32.lib;user32.lib;SOIL.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;opengl32.lib;assimp.lib;glfw3.lib;STB_IMAGE.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -123,11 +124,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\core\Entity.cpp" />
     <ClCompile Include="src\core\Input.cpp" />
+    <ClCompile Include="src\core\Mesh.cpp" />
+    <ClCompile Include="src\core\Transform.cpp" />
     <ClCompile Include="src\core\Window.cpp" />
     <ClCompile Include="src\editor\Hierarchy.cpp" />
     <ClCompile Include="src\editor\Menu.cpp" />
     <ClCompile Include="src\editor\Panel.cpp" />
+    <ClCompile Include="src\render\Camera.cpp" />
     <ClCompile Include="src\render\Texture.cpp" />
     <ClCompile Include="ThirdParty\include\glad\src\glad.c" />
     <ClCompile Include="ThirdParty\include\imgui\imgui.cpp" />
@@ -138,15 +143,21 @@
     <ClCompile Include="ThirdParty\include\imgui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\core\camera.h" />
+    <ClInclude Include="src\core\Component.h" />
+    <ClInclude Include="src\core\Entity.h" />
     <ClInclude Include="src\core\Input.h" />
     <ClInclude Include="pbr.h" />
+    <ClInclude Include="src\core\mesh.h" />
+    <ClInclude Include="src\core\Model.h" />
     <ClInclude Include="src\core\Quaternion.h" />
+    <ClInclude Include="src\core\Transform.h" />
     <ClInclude Include="src\core\Window.h" />
-    <ClInclude Include="src\core\shader.h" />
     <ClInclude Include="src\editor\Hierarchy.h" />
     <ClInclude Include="src\editor\Menu.h" />
     <ClInclude Include="src\editor\Panel.h" />
+    <ClInclude Include="src\render\Camera.h" />
+    <ClInclude Include="src\render\Material.h" />
+    <ClInclude Include="src\render\Shader.h" />
     <ClInclude Include="src\render\Texture.h" />
     <ClInclude Include="ThirdParty\include\imgui\imconfig.h" />
     <ClInclude Include="ThirdParty\include\imgui\imgui.h" />

@@ -241,7 +241,7 @@ void Texture::operator=(Texture texture)
 
 Texture::~Texture()
 {
-	if (mTextureData)
+	if (mTextureData && sResMap.size() != 0)
 	{
 		if (mFileName.length() > 0)
 			sResMap.erase(mFileName);

@@ -8,7 +8,7 @@
 #include <iostream>
 #include <algorithm>
 
-#include "Camera.h"
+#include "../render/Camera.h"
 #include "../editor/Panel.h"
 #include "Input.h"
 

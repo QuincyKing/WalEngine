@@ -1,7 +1,7 @@
 #include "Window.h"
 
 Window::Window(unsigned int _Width, unsigned int _Height, unsigned int _posX,
-	unsigned int _posY, int _multisample,std::string _title )
+	unsigned int _posY, int _multisample, std::string _title )
 {
 	mProInfo.title = _title;
 	mProInfo.posX = _posX;
@@ -9,7 +9,7 @@ Window::Window(unsigned int _Width, unsigned int _Height, unsigned int _posX,
 	mPanel.mScreen.x = _Width;
 	mPanel.mScreen.y = _Height;
 	multisample = _multisample;
-	mCamera = Camera(glm::vec3(0.0f, 0.0f, 10.0f));
+	//mCamera = Camera(glm::vec3(0.0f, 0.0f, 10.0f));
 	mInput.SetWinSize(_Width, _Height);
 }
 
@@ -95,6 +95,12 @@ int Window::onrun()
 	glfwSetMouseButtonCallback(mWindow, mouse);
 	//glfwSetCursorPosCallback(mWindow, cursor);
 
+	//初始化摄像机
+	Quaternion cameraRot = Quaternion(0, 0, 0, 1.0);
+	glm::vec3  cameraPos = glm::vec3(0.0f, 0.0f, 5.0f);
+	std::shared_ptr<Transform> cameraT = std::make_shared<Transform>(cameraPos, cameraRot);
+	mCamera.set_transform(cameraT);
+
 	//初始化函数
 	oninit();
 
@@ -123,6 +129,15 @@ int Window::onrun()
 
 		mInput.SetMouseX(x);
 		mInput.SetMouseY(y);
+
+		glm::mat4 projection = glm::perspective
+		(
+			glm::radians(Camera::mZoom),
+			(float)mInput.get_win_size_x() / (float)mInput.get_win_size_y(),
+			Camera::mNear,
+			Camera::mFar
+		);
+		mCamera.set_projection(projection);
 
 		//按键事件
 		onkey();
@@ -187,27 +202,27 @@ void Window::_update()
 {
 	if (mInput.get_mouse_down(Input::MOUSE_SCROLL_UP))
 	{
-		mCamera.ProcessMouseScroll(1.0);
+		mCamera.move(glm::vec3(0.0, 0.0, 1.0));
 		mInput.SetMouseDown(Input::MOUSE_SCROLL_UP, false);
 	}
-	if (mInput.get_mouse_down(Input::MOUSE_SCROLL_DOWN)) 
+	if (mInput.get_mouse_down(Input::MOUSE_SCROLL_DOWN))
 	{
-		mCamera.ProcessMouseScroll(-1.0);
+		mCamera.move(glm::vec3(0.0, 0.0, -1.0));
 		mInput.SetMouseDown(Input::MOUSE_SCROLL_DOWN, false);
 	}
-	if (mInput.get_mouse_down(Input::MOUSE_BUTTON_MIDDLE))
+	if (mInput.get_mouse(Input::MOUSE_BUTTON_MIDDLE))
 	{
 		if(fabs(mInput.get_offset_x()) + fabs(mInput.get_offset_y()) > 1.0)
-			mCamera.ProcessMouseMovement(mInput.get_offset_x(), mInput.get_offset_y());
+			mCamera.move(glm::normalize(glm::vec3(mInput.get_offset_x(), mInput.get_offset_y(), 0.0)));
 	}
-	if (mInput.get_key(Input::KEY_W))
-		mCamera.ProcessKeyboard(FORWARD, 0.01f);
-	if (mInput.get_key(Input::KEY_S))
-		mCamera.ProcessKeyboard(BACKWARD, 0.01f);
-	if (mInput.get_key(Input::KEY_A))
-		mCamera.ProcessKeyboard(LEFT, 0.01f);
-	if (mInput.get_key(Input::KEY_D))
-		mCamera.ProcessKeyboard(RIGHT, 0.01f);
+	//if (mInput.get_key(Input::KEY_W))
+	//	mCamera.ProcessKeyboard(FORWARD, 0.01f);
+	//if (mInput.get_key(Input::KEY_S))
+	//	mCamera.ProcessKeyboard(BACKWARD, 0.01f);
+	//if (mInput.get_key(Input::KEY_A))
+	//	mCamera.ProcessKeyboard(LEFT, 0.01f);
+	//if (mInput.get_key(Input::KEY_D))
+	//	mCamera.ProcessKeyboard(RIGHT, 0.01f);
 }
 
 //键盘按键

@@ -1,12 +1,11 @@
-#ifndef MESH_H
-#define MESH_H
+#pragma once
 
 #include <glad/glad.h> // holds all OpenGL type declarations
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "Shader.h"
+#include "../render/Shader.h"
 
 #include <string>
 #include <fstream>
@@ -29,7 +28,7 @@ struct Vertex {
     glm::vec3 Bitangent;
 };
 
-struct Texture {
+struct Tex {
     unsigned int id;
     string type;
     string path;
@@ -40,12 +39,12 @@ public:
     /*  Mesh Data  */
     vector<Vertex> vertices;
     vector<unsigned int> indices;
-    vector<Texture> textures;
+    vector<Tex> textures;
     unsigned int VAO;
 
     /*  Functions  */
     // constructor
-    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures)
+    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Tex> textures)
     {
         this->vertices = vertices;
         this->indices = indices;
@@ -103,4 +102,3 @@ private:
     // initializes all the buffer objects/arrays
 	void setup_mesh();
 };
-#endif

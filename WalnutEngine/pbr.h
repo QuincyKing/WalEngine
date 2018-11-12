@@ -1,13 +1,13 @@
 #pragma once
 
 #include "src/core/Window.h"
-#include "./src/core/Shader.h"
+#include "./src/render/Shader.h"
 #include "./src/core/Window.h"
 #include <stb_image.h>
 #include <GLFW/glfw3.h>
 
 #include "src/core/Quaternion.h";
-//#include "./src/core/Model.h"
+#include "./src/core/Model.h"
 #include "./src/render/Texture.h"
 #include <iostream>
 #include <memory>
@@ -19,17 +19,10 @@ private:
 	Texture albedo, normal, metallic, roughness, ao;
 	unsigned int sphereVAO = 0;
 	unsigned int indexCount;
-	//Model model;
+	Model model;
 
 public:
-	Pbr(unsigned int _Width, unsigned int _Height) : Window(_Width, _Height)
-	{
-		albedo = Texture("pbr/plastic/albedo.png");
-		normal = Texture("pbr/plastic/normal.png");
-		metallic = Texture("pbr/plastic/metallic.png");
-		roughness = Texture("pbr/plastic/roughness.png");
-		ao = Texture("pbr/plastic/ao.png");
-	}
+	Pbr(unsigned int _Width, unsigned int _Height) : Window(_Width, _Height) {}
 
 	~Pbr()
 	{
@@ -42,6 +35,12 @@ public:
 
 	void oninit()
 	{
+		albedo = Texture("pbr/plastic/albedo.png");
+		normal = Texture("pbr/plastic/normal.png");
+		metallic = Texture("pbr/plastic/metallic.png");
+		roughness = Texture("pbr/plastic/roughness.png");
+		ao = Texture("pbr/plastic/ao.png");
+
 		//model = Model("C:/Users/QuincyKing/Desktop/WalnutEngine/res/objects/nanosuit/nanosuit.obj");
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_TEXTURE_2D);
@@ -81,11 +80,11 @@ public:
 		glm::vec3 lightPosition = glm::vec3(0.0f, 0.0f, 10.0f);
 		glm::vec3 lightColor = glm::vec3(255.0f, 255.0f, 255.0f);
 		shader->use();
-		glm::mat4 projection = glm::perspective(glm::radians(mCamera.Zoom), (float)mInput.get_win_size_x() / (float)mInput.get_win_size_y(), 0.1f, 100.0f);
-		shader->setMat4("projection", projection);
-		glm::mat4 view = mCamera.GetViewMatrix();
-		shader->setMat4("view", view);
-		shader->setVec3("camPos", mCamera.Position);
+		
+		//shader->setMat4("projection", projection);
+		glm::mat4 view = mCamera.get_view_projection();
+		shader->setMat4("vp", view);
+		shader->setVec3("camPos", *(mCamera.get_transform()->get_pos()));
 		shader->setVec3("lightPos", lightPosition + glm::vec3(curScreen, 0.0));
 		shader->setVec3("lightColor", lightColor);
 
@@ -97,7 +96,7 @@ public:
 
 		RenderSphere();
 
-		////model.Draw(shader);
+		//model.Draw(shader);
 	}
 
 	void RenderSphere()
