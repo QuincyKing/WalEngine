@@ -16,7 +16,7 @@ void GetDesktopResolution(int& horizontal, int& vertical)
 int main()
 {
 	GetDesktopResolution(screen_width, screen_height);
-	pro = std::make_shared<Window>(screen_width, screen_height);
+	pro = std::make_shared<Pbr>(screen_width, screen_height);
 	pro->onrun();
 	return 0;
 }
