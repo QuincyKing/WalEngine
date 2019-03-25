@@ -3,13 +3,17 @@
 #include "src/core/Window.h"
 #include "./src/render/Shader.h"
 #include "./src/core/Window.h"
-#include <stb_image.h>
+#include <stb_image/stb_image.h>
 #include <GLFW/glfw3.h>
 
 #include "src/core/Quaternion.h";
 #include "./src/core/Model.h"
 #include "./src/render/Texture.h"
+#include "./src/model/sphere.h"
+#include "./src/model/Cube.h"
 #include <iostream>
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <memory>
 
 class Pbr : public Window
@@ -17,12 +21,20 @@ class Pbr : public Window
 private:
 	std::shared_ptr<Shader> shader;
 	Texture albedo, normal, metallic, roughness, ao;
-	unsigned int sphereVAO = 0;
-	unsigned int indexCount;
 	Model model;
+	Sphere sphere1;
+	Sphere sphere2;
+	Cube cube1;
+	Sphere sphere4;
 
 public:
-	Pbr(unsigned int _Width, unsigned int _Height) : Window(_Width, _Height) {}
+	Pbr(unsigned int _Width, unsigned int _Height) :
+		Window(_Width, _Height),
+		sphere1("123455"),
+		sphere2("223333"),
+		cube1("cube"),
+		sphere4("sphere4")
+	{}
 
 	~Pbr()
 	{
@@ -41,7 +53,9 @@ public:
 		roughness = Texture("pbr/plastic/roughness.png");
 		ao = Texture("pbr/plastic/ao.png");
 
-		//model = Model("C:/Users/QuincyKing/Desktop/WalnutEngine/res/objects/nanosuit/nanosuit.obj");
+		Sphere::load();
+		Cube::load();
+
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_TEXTURE_2D);
 
@@ -59,13 +73,18 @@ public:
 		shader->setInt("metallicMap", 2);
 		shader->setInt("roughnessMap", 3);
 		shader->setInt("aoMap", 4);
+		albedo.bind(0);
+		normal.bind(1);
+		metallic.bind(2);
+		roughness.bind(3);
+		ao.bind(4);
 
-		
-		glm::mat4 model = glm::mat4();
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-
-		shader->use();
-		shader->setMat4("model", model);
+		sphere1.mTransform->set_pos(glm::vec3(1.0, 0.0, 0.0));
+		sphere1.add_child(&sphere2);
+		sphere2.add_child(&cube1);
+		sphere2.mTransform->set_pos(glm::vec3(1.0, 1.0, 0.0));
+		cube1.mTransform->set_pos(glm::vec3(-1.0, 0.0, 0.0));
+		cube1.mTransform->set_rot(Quaternion(glm::vec3(1.0, 1.0, 0.0), glm::pi<float>() * 1 / 6));
 	}
 
 	void onupdate()
@@ -88,107 +107,20 @@ public:
 		shader->setVec3("lightPos", lightPosition + glm::vec3(curScreen, 0.0));
 		shader->setVec3("lightColor", lightColor);
 
-		albedo.bind(0);
-		normal.bind(1);
-		metallic.bind(2);
-		roughness.bind(3);
-		ao.bind(4);
+		glm::mat4 model = sphere1.mTransform->get_model();
 
-		RenderSphere();
+		shader->use();
+		shader->setMat4("model", model);
+		sphere1.render();
 
-		//model.Draw(shader);
-	}
+		shader->use();
+		model = sphere2.mTransform->get_model();
+		shader->setMat4("model", model);
+		sphere2.render();
 
-	void RenderSphere()
-	{
-		if (sphereVAO == 0)
-		{
-			glGenVertexArrays(1, &sphereVAO);
-
-			unsigned int vbo, ebo;
-			glGenBuffers(1, &vbo);
-			glGenBuffers(1, &ebo);
-
-			std::vector<glm::vec3> positions;
-			std::vector<glm::vec2> uv;
-			std::vector<glm::vec3> normals;
-			std::vector<unsigned int> indices;
-
-			const unsigned int X_SEGMENTS = 64;
-			const unsigned int Y_SEGMENTS = 64;
-			const float PI = 3.14159265359;
-			for (unsigned int y = 0; y <= Y_SEGMENTS; ++y)
-			{
-				for (unsigned int x = 0; x <= X_SEGMENTS; ++x)
-				{
-					float xSegment = (float)x / (float)X_SEGMENTS;
-					float ySegment = (float)y / (float)Y_SEGMENTS;
-					float xPos = std::cos(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
-					float yPos = std::cos(ySegment * PI);
-					float zPos = std::sin(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
-
-					positions.push_back(glm::vec3(xPos, yPos, zPos));
-					uv.push_back(glm::vec2(xSegment, ySegment));
-					normals.push_back(glm::vec3(xPos, yPos, zPos));
-				}
-			}
-
-			bool oddRow = false;
-			for (int y = 0; y < Y_SEGMENTS; ++y)
-			{
-				if (!oddRow) // even rows: y == 0, y == 2; and so on
-				{
-					for (int x = 0; x <= X_SEGMENTS; ++x)
-					{
-						indices.push_back(y       * (X_SEGMENTS + 1) + x);
-						indices.push_back((y + 1) * (X_SEGMENTS + 1) + x);
-					}
-				}
-				else
-				{
-					for (int x = X_SEGMENTS; x >= 0; --x)
-					{
-						indices.push_back((y + 1) * (X_SEGMENTS + 1) + x);
-						indices.push_back(y       * (X_SEGMENTS + 1) + x);
-					}
-				}
-				oddRow = !oddRow;
-			}
-			indexCount = indices.size();
-
-			std::vector<float> data;
-			for (int i = 0; i < positions.size(); ++i)
-			{
-				data.push_back(positions[i].x);
-				data.push_back(positions[i].y);
-				data.push_back(positions[i].z);
-				if (uv.size() > 0)
-				{
-					data.push_back(uv[i].x);
-					data.push_back(uv[i].y);
-				}
-				if (normals.size() > 0)
-				{
-					data.push_back(normals[i].x);
-					data.push_back(normals[i].y);
-					data.push_back(normals[i].z);
-				}
-			}
-			glBindVertexArray(sphereVAO);
-			glBindBuffer(GL_ARRAY_BUFFER, vbo);
-			glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), &data[0], GL_STATIC_DRAW);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
-			float stride = (3 + 2 + 3) * sizeof(float);
-			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
-			glEnableVertexAttribArray(1);
-			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
-			glEnableVertexAttribArray(2);
-			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, stride, (void*)(5 * sizeof(float)));
-		}
-
-		glBindVertexArray(sphereVAO);
-		glDrawElements(GL_TRIANGLE_STRIP, indexCount, GL_UNSIGNED_INT, 0);
+		model = cube1.mTransform->get_model();
+		shader->setMat4("model", model);
+		cube1.render();
+		//model.draw(shader);
 	}
 };

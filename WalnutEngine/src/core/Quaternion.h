@@ -75,7 +75,7 @@ public:
 	}
 
 	inline static glm::vec4 lerp(const glm::vec4 &l, const glm::vec4& r, float lerpFactor)
-	{ 
+	{
 		return (r - l) * lerpFactor + l;
 	}
 
@@ -134,7 +134,7 @@ public:
 	static glm::mat4 rotation_from_direction(const glm::vec3& forward, const glm::vec3& up)
 	{
 		glm::vec3 n = glm::normalize(forward);
-		glm::vec3 u = glm::cross(glm::normalize(up) ,n);
+		glm::vec3 u = glm::cross(glm::normalize(up), n);
 		glm::vec3 v = glm::cross(n, u);
 
 		return rotation_from_vec(n, v, u);
@@ -225,5 +225,15 @@ public:
 	}
 
 	inline bool operator!=(const Quaternion& r) const { return !operator==(r); }
+
+	friend glm::vec3 rotate(glm::vec3 vec, Quaternion rot)
+	{
+		Quaternion conj = rot.conjugate();
+		Quaternion w = rot * vec * conj;
+
+		glm::vec3 res(w.que.x, w.que.y, w.que.z);
+
+		return res;
+	}
 };
 

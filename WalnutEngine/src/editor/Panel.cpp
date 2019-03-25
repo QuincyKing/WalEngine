@@ -35,7 +35,7 @@ void Panel::show_hierarchy()
 
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
 
-	mHierarchy;
+	mHierarchy.show_hierarchy(Entity::mRoot);
 	ImGui::PopStyleVar();
 	ImGui::End();
 }

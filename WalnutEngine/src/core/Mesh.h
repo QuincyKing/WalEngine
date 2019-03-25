@@ -44,6 +44,11 @@ public:
 
     /*  Functions  */
     // constructor
+	Mesh()
+	{
+
+	}
+
     Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Tex> textures)
     {
         this->vertices = vertices;
@@ -55,7 +60,7 @@ public:
     }
 
     // render the mesh
-    void Draw(shared_ptr<Shader> shader) 
+    void draw(shared_ptr<Shader> shader) 
     {
         unsigned int diffuseNr  = 1;
         unsigned int specularNr = 1;

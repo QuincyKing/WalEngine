@@ -4,7 +4,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <stb_image.h>
+#include <stb_image/stb_image.h>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -40,10 +40,10 @@ public:
     }
 
     // draws the model, and thus all its meshes
-    void Draw(shared_ptr<Shader> shader)
+    void draw(shared_ptr<Shader> shader)
     {
         for(unsigned int i = 0; i < meshes.size(); i++)
-            meshes[i].Draw(shader);
+            meshes[i].draw(shader);
     }
     
 private:

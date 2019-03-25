@@ -1,18 +1,45 @@
 #include "Entity.h"
+#include <algorithm>
 
-std::shared_ptr<Entity> Entity::add_child(std::shared_ptr<Entity> child)
+std::vector<Entity*> Entity::mRoot = std::vector<Entity *>();
+int Entity::mCount = 0;
+
+void Entity::add_child(Entity* child)
 {
-	mChildren.push_back(child);
-	child->get_transform()->set_parent(mTransform);
-	return std::make_shared<Entity>(this);
+	if (std::find(mChildren.begin(), mChildren.end(), child) == mChildren.end())
+	{	
+		auto iter = std::find(Entity::mRoot.begin(), Entity::mRoot.end(), child);
+		if(iter != Entity::mRoot.end())
+			mRoot.erase(iter);
+		mChildren.push_back(child);
+		child->mTransform->set_parent(mTransform);
+	}
 }
 
-std::shared_ptr<Entity> Entity::add_component(std::shared_ptr<Component> component)
-{
-	mComponents.push_back(component);
-	component->set_parent(std::make_shared<Entity>(this));
-	return std::make_shared<Entity>(this);
-}
+//std::shared_ptr<Entity> Entity::add_component(std::shared_ptr<Component> component)
+//{
+//	mComponents.push_back(component);
+//	component->set_parent(std::make_shared<Entity>(this));
+//	return std::make_shared<Entity>(this);
+//}
+
+//void Entity::render_all(const Shader& shader, const Renderer& renderingEngine, const Camera& camera) const
+//{
+//	render(shader, renderingEngine, camera);
+//
+//	for (unsigned int i = 0; i < mChildren.size(); i++)
+//	{
+//		mChildren[i]->render_all(shader, renderingEngine, camera);
+//	}
+//}
+
+//void Entity::render(const Shader& shader, const Renderer& renderingEngine, const Camera& camera) const
+//{
+//	for (unsigned int i = 0; i < mComponents.size(); i++)
+//	{
+//		mComponents[i]->render(shader, renderingEngine, camera);
+//	}
+//}
 
 //void Entity::update_all(float delta)
 //{

@@ -1,7 +1,7 @@
 #include "Texture.h"
 
 #include <glm/glm.hpp>
-#include <stb_image.h>
+#include <stb_image/stb_image.h>
 #include <iostream>
 #include <cassert>
 #include <cstring>

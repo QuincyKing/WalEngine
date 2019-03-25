@@ -1,4 +1,9 @@
 #include "Window.h"
+#include <iostream>
+
+Input Window::mInput = Input();
+float Window::deltaTime = 0.0f;
+float Window::lastFrame = 0.0f;
 
 Window::Window(unsigned int _Width, unsigned int _Height, unsigned int _posX,
 	unsigned int _posY, int _multisample, std::string _title )
@@ -11,6 +16,14 @@ Window::Window(unsigned int _Width, unsigned int _Height, unsigned int _posX,
 	multisample = _multisample;
 	//mCamera = Camera(glm::vec3(0.0f, 0.0f, 10.0f));
 	mInput.SetWinSize(_Width, _Height);
+}
+
+void Window::bind_render_target() const
+{
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	glViewport(0, 0, mInput.get_win_size_x(), mInput.get_win_size_y());
 }
 
 int Window::onrun()
@@ -108,7 +121,7 @@ int Window::onrun()
 	{
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
-		float lastFrame = currentFrame;
+		lastFrame = currentFrame;
 
 		//¿ØÖÆ³ÌÐò¹Ø±Õ
 		if (mInput.get_key_down(Input::KEY_ESCAPE)) 
@@ -266,5 +279,3 @@ void Window::_mouse(int button, int action, int mods)
 		mInput.SetMouseUp(button, true);
 	}
 }
-
-Input Window::mInput = Input();

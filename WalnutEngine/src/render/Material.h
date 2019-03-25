@@ -20,11 +20,11 @@
 //		const Texture& normalMap = Texture("default_normal.jpg"),
 //		const Texture& dispMap = Texture("default_disp.png"), float dispMapScale = 0.0f, float dispMapOffset = 0.0f);
 //
-//	inline void SetVector3f(const std::string& name, const Vector3f& value) { m_materialData->SetVector3f(name, value); }
+//	inline void Setglm::vec3(const std::string& name, const glm::vec3& value) { m_materialData->Setglm::vec3(name, value); }
 //	inline void SetFloat(const std::string& name, float value) { m_materialData->SetFloat(name, value); }
 //	inline void SetTexture(const std::string& name, const Texture& value) { m_materialData->SetTexture(name, value); }
 //
-//	inline const Vector3f& GetVector3f(const std::string& name) const { return m_materialData->GetVector3f(name); }
+//	inline const glm::vec3& Getglm::vec3(const std::string& name) const { return m_materialData->Getglm::vec3(name); }
 //	inline float GetFloat(const std::string& name)              const { return m_materialData->GetFloat(name); }
 //	inline const Texture& GetTexture(const std::string& name)   const { return m_materialData->GetTexture(name); }
 //protected:

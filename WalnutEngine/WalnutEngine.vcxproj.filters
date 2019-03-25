@@ -14,11 +14,13 @@
     <ClCompile Include="src\editor\Panel.cpp" />
     <ClCompile Include="src\core\Window.cpp" />
     <ClCompile Include="src\core\Input.cpp" />
-    <ClCompile Include="src\render\Texture.cpp" />
     <ClCompile Include="src\core\Mesh.cpp" />
     <ClCompile Include="src\core\Transform.cpp" />
     <ClCompile Include="src\render\Camera.cpp" />
+    <ClCompile Include="src\render\Texture.cpp" />
     <ClCompile Include="src\core\Entity.cpp" />
+    <ClCompile Include="src\model\Sphere.cpp" />
+    <ClCompile Include="src\model\Cube.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ThirdParty\include\imgui\imconfig.h" />
@@ -36,14 +38,24 @@
     <ClInclude Include="pbr.h" />
     <ClInclude Include="src\core\Input.h" />
     <ClInclude Include="src\core\Quaternion.h" />
-    <ClInclude Include="src\render\Texture.h" />
     <ClInclude Include="src\core\Model.h" />
     <ClInclude Include="src\core\mesh.h" />
     <ClInclude Include="src\render\Shader.h" />
     <ClInclude Include="src\render\Camera.h" />
     <ClInclude Include="src\core\Transform.h" />
-    <ClInclude Include="src\core\Entity.h" />
-    <ClInclude Include="src\core\Component.h" />
     <ClInclude Include="src\render\Material.h" />
+    <ClInclude Include="src\render\Texture.h" />
+    <ClInclude Include="src\core\Entity.h" />
+    <ClInclude Include="src\model\Sphere.h" />
+    <ClInclude Include="src\model\Cube.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shader\forwardDirectional.vs" />
+    <None Include="shader\light.glh" />
+    <None Include="shader\sampling.glh" />
+    <None Include="shader\forwardDirectional.fs" />
+    <None Include="shader\forwardPoint.fs" />
+    <None Include="shader\forwardAmbient.vs" />
+    <None Include="shader\forwardAmbient.fs" />
   </ItemGroup>
 </Project>

@@ -17,7 +17,7 @@ public:
 		mInitializedOldStuff(false) 
 	{}
 
-	glm::mat4 get_transform() const;
+	glm::mat4 get_model() const;
 	bool has_changed();
 	void update();
 	void rotate(const glm::vec3& axis, float angle);

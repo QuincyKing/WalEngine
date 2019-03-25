@@ -43,7 +43,7 @@ void Transform::lookat(const glm::vec3& point, const glm::vec3& up)
 }
 
 //计算得到平移，变大，旋转的矩阵合
-glm::mat4 Transform::get_transform() const
+glm::mat4 Transform::get_model() const
 {
 	glm::mat4 translationMatrix;
 	glm::mat4 scaleMatrix;
@@ -60,7 +60,7 @@ const glm::mat4& Transform::get_parent_mat() const
 {
 	if (mParent != 0 && mParent->has_changed())
 	{
-		mParentMat = mParent->get_transform();
+		mParentMat = mParent->get_model();
 	}
 
 	return mParentMat;

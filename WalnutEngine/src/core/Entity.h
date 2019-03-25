@@ -2,32 +2,63 @@
 
 #include <vector>
 #include "Transform.h"
-#include "Component.h"
+//#include "Component.h"
+//#include "../render/Renderer.h"
+#include "../render/Shader.h"
+#include "../render/Camera.h"
+#include <memory>
+#include <iostream>
+#include <string>
 
 class Entity
 {
 public:
-	Entity(const glm::vec3& pos = glm::vec3(0, 0, 0), 
-		const Quaternion& rot = Quaternion(0, 0, 0, 1), 
+	Entity(
+		std::string name,
+		glm::vec3 pos = glm::vec3(0, 0, 0), 
+		Quaternion rot = Quaternion(0, 0, 0, 1), 
 		glm::vec3 scale = glm::vec3(1.0))
 		{
+			mName = name;
+			mCount++;
+			mIndex = mCount;
+			mRoot.push_back(this);
 			mTransform = std::make_shared<Transform>(pos, rot, scale);
 		}
 
+	Entity(const Entity &entity)
+	{
+		mName = entity.mName;
+		mChildren = entity.mChildren;
+		mTransform = entity.mTransform;
+		mRoot.push_back(this);
+		mCount++;
+		mIndex = mCount;
+	}
+
 	virtual ~Entity() {};
 
-	std::shared_ptr<Entity> add_child(std::shared_ptr<Entity> child);
-	std::shared_ptr<Entity> add_component(std::shared_ptr<Component> component);
+	void add_child(Entity *child);
+	//std::shared_ptr<Entity> add_component(std::shared_ptr<Component> component);
 
-	inline std::shared_ptr<Transform> get_transform() { return mTransform; }
+	//void render_all(const Shader& shader, const Renderer& renderingEngine, const Camera& camera) const;
+
 	//void update_all(float delta);
 
 	//std::vector<std::shared_ptr<Entity> > get_all_attached();
 
-private:
-	std::vector<std::shared_ptr<Entity> >       mChildren;
-	std::vector<std::shared_ptr<Component> >    mComponents;
-	std::shared_ptr<Transform>                  mTransform;
-
+public:
+	std::vector<Entity*>				mChildren;
+	std::shared_ptr<Transform>          mTransform;
+	std::string							mName;
+	static std::vector<Entity*>			mRoot;
+	int									mIndex;
+	static int							mCount;
+	//Entity*								mParent;
+	//std::vector<std::shared_ptr<Component> >    mComponents;
+	//void render(const Shader& shader, const Renderer& renderingEngine, const Camera& camera) const;
 	//void update(float delta);
+
+//protected:
+
 };
