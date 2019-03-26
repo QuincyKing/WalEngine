@@ -146,7 +146,8 @@ int Window::onrun()
 		glm::mat4 projection = glm::perspective
 		(
 			glm::radians(Camera::mZoom),
-			(float)mInput.get_win_size_x() / (float)mInput.get_win_size_y(),
+			mInput.get_win_size_y() != 0 ? 
+			(float)mInput.get_win_size_x() / (float)mInput.get_win_size_y() : 0,
 			Camera::mNear,
 			Camera::mFar
 		);
