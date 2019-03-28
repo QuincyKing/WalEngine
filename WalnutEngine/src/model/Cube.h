@@ -14,10 +14,10 @@ public:
 	{
 	}
 
-	void render();
+	void render(Shader& shader, const Renderer& renderingEngine, const Camera& camera);
 	static void load();
+	void draw();
 
 private:
 	static unsigned int vao;
-	static unsigned int count;
 };

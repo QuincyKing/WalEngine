@@ -1,9 +1,15 @@
 #include "Cube.h"
 
-unsigned int Cube::vao;
-unsigned int Cube::count;
+unsigned int Cube::vao  = 0;
 
-void Cube::render()
+void Cube::render(Shader& shader, const Renderer& renderingEngine, const Camera& camera)
+{
+	shader.use();
+
+	draw();
+}
+
+void Cube::draw()
 {
 	if (vao != 0)
 	{

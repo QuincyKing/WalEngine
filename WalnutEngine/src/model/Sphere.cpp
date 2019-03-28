@@ -3,7 +3,14 @@
 unsigned int Sphere::vao = 0;
 unsigned int Sphere::count = 0;
 
-void Sphere::render()
+void Sphere::render(Shader& shader, const Renderer& renderingEngine, const Camera& camera)
+{
+	shader.use();
+
+	draw();
+}
+
+void Sphere::draw()
 {
 	if (vao != 0)
 	{
