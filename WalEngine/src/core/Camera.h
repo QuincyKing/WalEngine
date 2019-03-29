@@ -4,7 +4,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "../core/Transform.h"
+#include "Transform.h"
+#include "Window.h"
 
 class Camera
 {
@@ -25,7 +26,16 @@ public:
 	inline std::shared_ptr<Transform> get_transform() { return mTransform; }
 	inline const Transform& get_transform() const { return *mTransform; }
 
-	inline void set_projection(const glm::mat4& projection) { mProjection = projection; }
+	inline void set_projection() 
+	{ 
+		mProjection = glm::perspective(
+			glm::radians(Camera::mFOV),
+			Window::mInput.get_win_size_y() != 0 ?
+			(float)Window::mInput.get_win_size_x() / (float)Window::mInput.get_win_size_y() : 0,
+			Camera::mNear,
+			Camera::mFar
+		);
+	}
 	inline void set_transform(std::shared_ptr<Transform> transform) { mTransform = transform; }
 
 	void move(glm::vec3 dir);
@@ -34,7 +44,7 @@ private:
 	std::shared_ptr<Transform>	mTransform;
 
 public:
-	static float mZoom;
-	static float mNear;
-	static float mFar;
+	float mFOV = 45.0f;
+	float mNear = 0.1f;
+	float mFar = 100.0f;
 };

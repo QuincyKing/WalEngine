@@ -3,9 +3,9 @@
 #include <vector>
 #include "Transform.h"
 //#include "Component.h"
-//#include "../render/Renderer.h"
+#include "../render/Renderer.h"
 #include "../render/Shader.h"
-#include "../render/Camera.h"
+#include "Camera.h"
 #include <memory>
 #include <iostream>
 #include <string>
@@ -39,9 +39,12 @@ public:
 	virtual ~Entity() {};
 
 	void add_child(Entity *child);
-	//std::shared_ptr<Entity> add_component(std::shared_ptr<Component> component);
 
-	//void render_all(const Shader& shader, const Renderer& renderingEngine, const Camera& camera) const;
+	virtual void render_all(Shader& shader, const Renderer& renderingEngine, const Camera& camera) const;
+	
+	virtual void render(Shader& shader, const Renderer& renderingEngine, const Camera& camera) const {};
+
+	//std::shared_ptr<Entity> add_component(std::shared_ptr<Component> component);
 
 	//void update_all(float delta);
 

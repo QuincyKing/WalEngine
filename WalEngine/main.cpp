@@ -17,7 +17,7 @@ int main()
 {
 	GetDesktopResolution(screen_width, screen_height);
 	pro = std::make_shared<Pbr>(screen_width, screen_height);
-	pro->onrun();
+	pro->onrun();   
 	return 0;
 }
 

@@ -1,8 +1,5 @@
 #include "Camera.h"
 
-float Camera::mZoom = 45.0f;
-float Camera::mNear = 0.1f;
-float Camera::mFar = 100.0f;
 const float sensitive = 0.07f;
 
 glm::mat4 Camera::get_view_projection() const
