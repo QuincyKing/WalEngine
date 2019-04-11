@@ -143,15 +143,7 @@ int Window::onrun()
 		mInput.SetMouseX(x);
 		mInput.SetMouseY(y);
 
-		glm::mat4 projection = glm::perspective
-		(
-			glm::radians(Camera::mZoom),
-			mInput.get_win_size_y() != 0 ? 
-			(float)mInput.get_win_size_x() / (float)mInput.get_win_size_y() : 0,
-			Camera::mNear,
-			Camera::mFar
-		);
-		mCamera.set_projection(projection);
+		mCamera.set_projection();
 
 		//°´¼üÊÂ¼þ
 		onkey();
