@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{6AC0B402-0F31-47DF-A801-A6D43C70F526}</ProjectGuid>
-    <RootNamespace>WalnutEngine</RootNamespace>
+    <RootNamespace>WalEngine</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -70,8 +70,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\QuincyKing\Desktop\WalnutEngine\WalnutEngine\ThirdParty\include\glad\include;C:\Users\QuincyKing\Desktop\WalnutEngine\WalnutEngine\ThirdParty\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\QuincyKing\Desktop\WalnutEngine\WalnutEngine\ThirdParty\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\QuincyKing\Desktop\WalEngine\WalEngine\ThirdParty\include\glad\include;C:\Users\QuincyKing\Desktop\WalEngine\WalEngine\ThirdParty\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\QuincyKing\Desktop\WalEngine\WalEngine\ThirdParty\lib;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)bin</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
