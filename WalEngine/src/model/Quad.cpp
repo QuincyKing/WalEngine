@@ -2,11 +2,27 @@
 
 unsigned int Quad::vao = 0;
 
+void Quad::draw()
+{
+	if (vao != 0)
+	{
+		glBindVertexArray(vao);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glBindVertexArray(0);
+	}
+}
+
+void Quad::render(std::shared_ptr<Shader> &shader)
+{
+	shader->use();
+	draw();
+}
+
 void Quad::load()
 {
 	if (vao == 0)
 	{
-		float quadVertices[] = {  
+		float quadVertices[] = {
 			-1.0f, 1.0f, 0.0f, 1.0f,
 			-1.0f, -1.0f, 0.0f, 0.0f,
 			1.0f, -1.0f, 1.0f, 0.0f,
@@ -15,7 +31,7 @@ void Quad::load()
 			1.0f, -1.0f, 1.0f, 0.0f,
 			1.0f, 1.0f, 1.0f, 1.0f
 		};
-		
+
 		unsigned int quadVBO;
 		glGenVertexArrays(1, &vao);
 		glGenBuffers(1, &quadVBO);
@@ -27,21 +43,4 @@ void Quad::load()
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 	}
-}
-
-void Quad::draw()
-{
-	if (vao != 0)
-	{
-		glBindVertexArray(vao);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-		glBindVertexArray(0);
-	}
-}
-
-void Quad::render(Shader& shader, const Renderer& renderingEngine, const Camera& camera)
-{
-	shader.use();
-
-	draw();
 }

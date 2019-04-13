@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{89756403-6D29-4D90-B56F-7970A7FF1A81}</ProjectGuid>
+    <ProjectGuid>{6AC0B402-0F31-47DF-A801-A6D43C70F526}</ProjectGuid>
     <RootNamespace>WalEngine</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -69,14 +69,22 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>C:\Users\QuincyKing\Desktop\WalEngine\WalEngine\ThirdParty\include\glad\include;C:\Users\QuincyKing\Desktop\WalEngine\WalEngine\ThirdParty\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\QuincyKing\Desktop\WalEngine\WalEngine\ThirdParty\lib;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)bin</OutDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>_DISABLE_EXTENDED_ALIGNED_STORAGE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <Link>
+      <AdditionalDependencies>kernel32.lib;user32.lib;SOIL.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;opengl32.lib;assimp.lib;glfw3.lib;STB_IMAGE.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -115,6 +123,62 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\core\Entity.cpp" />
+    <ClCompile Include="src\core\Input.cpp" />
+    <ClCompile Include="src\core\Mesh.cpp" />
+    <ClCompile Include="src\core\Transform.cpp" />
+    <ClCompile Include="src\core\Window.cpp" />
+    <ClCompile Include="src\editor\Hierarchy.cpp" />
+    <ClCompile Include="src\editor\Menu.cpp" />
+    <ClCompile Include="src\editor\Panel.cpp" />
+    <ClCompile Include="src\model\Cube.cpp" />
+    <ClCompile Include="src\model\Sphere.cpp" />
+    <ClCompile Include="src\render\Camera.cpp" />
+    <ClCompile Include="src\render\Texture.cpp" />
+    <ClCompile Include="ThirdParty\include\glad\src\glad.c" />
+    <ClCompile Include="ThirdParty\include\imgui\imgui.cpp" />
+    <ClCompile Include="ThirdParty\include\imgui\imgui_demo.cpp" />
+    <ClCompile Include="ThirdParty\include\imgui\imgui_draw.cpp" />
+    <ClCompile Include="ThirdParty\include\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="ThirdParty\include\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="ThirdParty\include\imgui\imgui_widgets.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\core\Entity.h" />
+    <ClInclude Include="src\core\Input.h" />
+    <ClInclude Include="pbr.h" />
+    <ClInclude Include="src\core\mesh.h" />
+    <ClInclude Include="src\core\Model.h" />
+    <ClInclude Include="src\core\Quaternion.h" />
+    <ClInclude Include="src\core\Transform.h" />
+    <ClInclude Include="src\core\Window.h" />
+    <ClInclude Include="src\editor\Hierarchy.h" />
+    <ClInclude Include="src\editor\Menu.h" />
+    <ClInclude Include="src\editor\Panel.h" />
+    <ClInclude Include="src\model\Cube.h" />
+    <ClInclude Include="src\model\Sphere.h" />
+    <ClInclude Include="src\render\Camera.h" />
+    <ClInclude Include="src\render\Material.h" />
+    <ClInclude Include="src\render\Shader.h" />
+    <ClInclude Include="src\render\Texture.h" />
+    <ClInclude Include="ThirdParty\include\imgui\imconfig.h" />
+    <ClInclude Include="ThirdParty\include\imgui\imgui.h" />
+    <ClInclude Include="ThirdParty\include\imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="ThirdParty\include\imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="ThirdParty\include\imgui\imgui_internal.h" />
+    <ClInclude Include="ThirdParty\include\imgui\imstb_rectpack.h" />
+    <ClInclude Include="ThirdParty\include\imgui\imstb_textedit.h" />
+    <ClInclude Include="ThirdParty\include\imgui\imstb_truetype.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shader\forwardAmbient.fs" />
+    <None Include="shader\forwardAmbient.vs" />
+    <None Include="shader\forwardDirectional.fs" />
+    <None Include="shader\forwardDirectional.vs" />
+    <None Include="shader\forwardPoint.fs" />
+    <None Include="shader\light.glh" />
+    <None Include="shader\sampling.glh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,11 +1,11 @@
 #include "Cube.h"
 
-unsigned int Cube::vao  = 0;
+unsigned int Cube::vao;
+unsigned int Cube::count;
 
-void Cube::render(Shader& shader, const Renderer& renderingEngine, const Camera& camera)
+void Cube::render(std::shared_ptr<Shader> &shader)
 {
-	shader.use();
-
+	shader->use();
 	draw();
 }
 

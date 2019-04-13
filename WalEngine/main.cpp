@@ -1,4 +1,5 @@
-#include "pbr.h"
+#include "./game/pbr.h"
+
 
 int screen_width, screen_height;
 std::shared_ptr<Window> pro;
@@ -17,7 +18,7 @@ int main()
 {
 	GetDesktopResolution(screen_width, screen_height);
 	pro = std::make_shared<Pbr>(screen_width, screen_height);
-	pro->onrun();   
+	pro->onrun();
 	return 0;
 }
 

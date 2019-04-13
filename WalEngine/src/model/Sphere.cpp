@@ -3,13 +3,6 @@
 unsigned int Sphere::vao = 0;
 unsigned int Sphere::count = 0;
 
-void Sphere::render(Shader& shader, const Renderer& renderingEngine, const Camera& camera)
-{
-	shader.use();
-
-	draw();
-}
-
 void Sphere::draw()
 {
 	if (vao != 0)
@@ -18,6 +11,12 @@ void Sphere::draw()
 		glDrawElements(GL_TRIANGLE_STRIP, count, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 	}
+}
+
+void Sphere::render(std::shared_ptr<Shader> &shader)
+{
+	shader->use();
+	draw();
 }
 
 void Sphere::load()

@@ -16,15 +16,23 @@ void Entity::add_child(Entity* child)
 	}
 }
 
-void Entity::render_all(Shader& shader, const Renderer& renderingEngine, const Camera& camera) const
-{
-	render(shader, renderingEngine, camera);
+//std::shared_ptr<Entity> Entity::add_component(std::shared_ptr<Component> component)
+//{
+//	mComponents.push_back(component);
+//	component->set_parent(std::make_shared<Entity>(this));
+//	return std::make_shared<Entity>(this);
+//}
 
-	for (unsigned int i = 0; i < mChildren.size(); i++)
-	{
-		mChildren[i]->render_all(shader, renderingEngine, camera);
-	}
-}
+//void Entity::render_all(const Shader& shader, const Renderer& renderingEngine, const Camera& camera) const
+//{
+//	render(shader, renderingEngine, camera);
+//
+//	for (unsigned int i = 0; i < mChildren.size(); i++)
+//	{
+//		mChildren[i]->render_all(shader, renderingEngine, camera);
+//	}
+//}
+
 
 //void Entity::render(const Shader& shader, const Renderer& renderingEngine, const Camera& camera) const
 //{
@@ -32,13 +40,6 @@ void Entity::render_all(Shader& shader, const Renderer& renderingEngine, const C
 //	{
 //		mComponents[i]->render(shader, renderingEngine, camera);
 //	}
-//}
-
-//std::shared_ptr<Entity> Entity::add_component(std::shared_ptr<Component> component)
-//{
-//	mComponents.push_back(component);
-//	component->set_parent(std::make_shared<Entity>(this));
-//	return std::make_shared<Entity>(this);
 //}
 
 //void Entity::update_all(float delta)

@@ -15,7 +15,7 @@ public:
 	{
 	}
 
-	void render(Shader& shader, const Renderer& renderingEngine, const Camera& camera);
+	void render(std::shared_ptr<Shader> &shader);
 	static void load();
 	void draw();
 
