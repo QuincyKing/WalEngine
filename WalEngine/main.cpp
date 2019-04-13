@@ -1,4 +1,4 @@
-#include "pbr.h"
+#include "./game/pbr.h"
 
 int screen_width, screen_height;
 std::shared_ptr<Window> pro;

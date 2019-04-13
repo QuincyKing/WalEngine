@@ -3,7 +3,7 @@
 unsigned int Sphere::vao = 0;
 unsigned int Sphere::count = 0;
 
-void Sphere::render()
+void Sphere::draw()
 {
 	if (vao != 0)
 	{
@@ -11,6 +11,12 @@ void Sphere::render()
 		glDrawElements(GL_TRIANGLE_STRIP, count, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 	}
+}
+
+void Sphere::render(std::shared_ptr<Shader> &shader)
+{
+	shader->use();
+	draw();
 }
 
 void Sphere::load()

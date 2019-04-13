@@ -1,16 +1,16 @@
 #pragma once
 
-#include "src/core/Window.h"
-#include "./src/render/Shader.h"
-#include "./src/core/Window.h"
+#include "../src/core/Window.h"
+#include "../src/render/Shader.h"
+#include "../src/core/Window.h"
 #include <stb_image/stb_image.h>
 #include <GLFW/glfw3.h>
 
-#include "src/core/Quaternion.h";
-#include "./src/core/Model.h"
-#include "./src/render/Texture.h"
-#include "./src/model/sphere.h"
-#include "./src/model/Cube.h"
+#include "../src/core/Quaternion.h";
+#include "../src/core/Model.h"
+#include "../src/render/Texture.h"
+#include "../src/model/sphere.h"
+#include "../src/model/Cube.h"
 #include <iostream>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -111,16 +111,16 @@ public:
 
 		shader->use();
 		shader->setMat4("model", model);
-		sphere1.render();
+		sphere1.render(shader);
 
 		shader->use();
 		model = sphere2.mTransform->get_model();
 		shader->setMat4("model", model);
-		sphere2.render();
+		sphere2.render(shader);
 
 		model = cube1.mTransform->get_model();
 		shader->setMat4("model", model);
-		cube1.render();
+		cube1.render(shader);
 		//model.draw(shader);
 	}
 };

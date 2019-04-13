@@ -3,7 +3,13 @@
 unsigned int Cube::vao;
 unsigned int Cube::count;
 
-void Cube::render()
+void Cube::render(std::shared_ptr<Shader> &shader)
+{
+	shader->use();
+	draw();
+}
+
+void Cube::draw()
 {
 	if (vao != 0)
 	{
