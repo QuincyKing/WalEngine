@@ -33,6 +33,7 @@ void Entity::add_child(Entity* child)
 //	}
 //}
 
+
 //void Entity::render(const Shader& shader, const Renderer& renderingEngine, const Camera& camera) const
 //{
 //	for (unsigned int i = 0; i < mComponents.size(); i++)

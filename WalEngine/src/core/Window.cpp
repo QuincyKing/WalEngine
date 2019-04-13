@@ -101,20 +101,20 @@ int Window::onrun()
 	//	static_cast<Window*>(glfwGetWindowUserPointer(w))->_cursor_pos(x, y);
 	//};
 
-	//×¢²áÊÂ¼şº¯Êı
+	//æ³¨å†Œäº‹ä»¶å‡½æ•°
 	glfwSetScrollCallback(mWindow, scroll);
 	glfwSetFramebufferSizeCallback(mWindow, framebuffersize);
 	glfwSetKeyCallback(mWindow, key);
 	glfwSetMouseButtonCallback(mWindow, mouse);
 	//glfwSetCursorPosCallback(mWindow, cursor);
 
-	//³õÊ¼»¯ÉãÏñ»ú
+	//åˆå§‹åŒ–æ‘„åƒæœº
 	Quaternion cameraRot = Quaternion(0, 0, 0, 1.0);
 	glm::vec3  cameraPos = glm::vec3(0.0f, 0.0f, 5.0f);
 	std::shared_ptr<Transform> cameraT = std::make_shared<Transform>(cameraPos, cameraRot);
 	mCamera.set_transform(cameraT);
 
-	//³õÊ¼»¯º¯Êı
+	//åˆå§‹åŒ–å‡½æ•°
 	oninit();
 
 	while (!glfwWindowShouldClose(mWindow))
@@ -123,7 +123,7 @@ int Window::onrun()
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
-		//¿ØÖÆ³ÌĞò¹Ø±Õ
+		//æ§åˆ¶ç¨‹åºå…³é—­
 		if (mInput.get_key_down(Input::KEY_ESCAPE)) 
 			glfwSetWindowShouldClose(mWindow, true);
 
@@ -153,10 +153,10 @@ int Window::onrun()
 		);
 		mCamera.set_projection(projection);
 
-		//°´¼üÊÂ¼ş
+		//æŒ‰é”®äº‹ä»¶
 		onkey();
 
-		//UIÊÂ¼ş
+		//UIäº‹ä»¶
 		_gui();
 		ongui();
 
@@ -166,7 +166,7 @@ int Window::onrun()
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		//äÖÈ¾ÊÂ¼ş
+		//æ¸²æŸ“äº‹ä»¶
 		_update();
 		onupdate();
 
@@ -175,7 +175,7 @@ int Window::onrun()
 		glfwMakeContextCurrent(mWindow);
 		glfwSwapBuffers(mWindow);
 	}
-	//¹Ø±Õº¯Êı
+	//å…³é—­å‡½æ•°
 	ondisable();
 
 	ImGui_ImplOpenGL3_Shutdown();
@@ -187,7 +187,7 @@ int Window::onrun()
 	return 0;
 }
 
-//Êó±ê¹ö¶¯
+//é¼ æ ‡æ»šåŠ¨
 void Window::_scroll(double xoffset, double yoffset)
 {
 	if (yoffset < 0.0)
@@ -196,7 +196,7 @@ void Window::_scroll(double xoffset, double yoffset)
 		mInput.SetMouseDown(Input::MOUSE_SCROLL_UP, true);
 }
 
-//´°¿Ú±ä»¯
+//çª—å£å˜åŒ–
 void Window::_framebuffersize(int width, int height)
 {
 	glViewport(0, 0, width, height);
@@ -239,7 +239,7 @@ void Window::_update()
 	//	mCamera.ProcessKeyboard(RIGHT, 0.01f);
 }
 
-//¼üÅÌ°´¼ü
+//é”®ç›˜æŒ‰é”®
 void Window::_key(int key, int scancode, int action, int mods)
 {
 	for (int i = 0; i < Input::NUM_KEYS; i++)
@@ -260,7 +260,7 @@ void Window::_key(int key, int scancode, int action, int mods)
 	}
 }
 
-//Êó±ê°´¼ü
+//é¼ æ ‡æŒ‰é”®
 void Window::_mouse(int button, int action, int mods)
 {
 	for (int i = 0; i < Input::NUM_MOUSEBUTTONS; i++)

@@ -40,6 +40,7 @@ public:
 
 	void add_child(Entity *child);
 
+
 	virtual void render(std::shared_ptr<Shader> &shader) = 0;
 
 	//std::shared_ptr<Entity> add_component(std::shared_ptr<Component> component);

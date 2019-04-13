@@ -20,5 +20,4 @@ public:
 
 private:
 	static unsigned int vao;
-	static unsigned int count;
 };
