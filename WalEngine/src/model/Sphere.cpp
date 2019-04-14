@@ -13,10 +13,18 @@ void Sphere::draw()
 	}
 }
 
-void Sphere::render(std::shared_ptr<Shader> &shader)
+void Sphere::render(const std::shared_ptr<Shader> &shader)
 {
-	shader->use();
-	draw();
+	if (mShader != nullptr)
+	{
+		mShader->use();
+		draw();
+	}
+	else
+	{
+		shader->use();
+		draw();
+	}
 }
 
 void Sphere::load()

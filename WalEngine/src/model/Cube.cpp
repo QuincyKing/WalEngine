@@ -3,10 +3,18 @@
 unsigned int Cube::vao;
 unsigned int Cube::count;
 
-void Cube::render(std::shared_ptr<Shader> &shader)
+void Cube::render(const std::shared_ptr<Shader> &shader)
 {
-	shader->use();
-	draw();
+	if (mShader != nullptr)
+	{
+		mShader->use();
+		draw();
+	}
+	else
+	{
+		shader->use();
+		draw();
+	}
 }
 
 void Cube::draw()

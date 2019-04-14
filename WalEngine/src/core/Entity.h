@@ -3,12 +3,14 @@
 #include <vector>
 #include "Transform.h"
 //#include "Component.h"
-//#include "../render/Renderer.h"
+//#include "../render/RenderEngine.h"
 #include "../render/Shader.h"
 #include "../render/Camera.h"
 #include <memory>
 #include <iostream>
 #include <string>
+
+class RenderEngine;
 
 class Entity
 {
@@ -40,12 +42,13 @@ public:
 
 	void add_child(Entity *child);
 
+	virtual void render(const std::shared_ptr<Shader> &shader) {};
 
-	virtual void render(std::shared_ptr<Shader> &shader) = 0;
+	void set_shader(std::shared_ptr<Shader> shader) { mShader = shader; }
+
+	void render_all(const std::shared_ptr<Shader>& shader, const RenderEngine& renderingEngine, const Camera& camera);
 
 	//std::shared_ptr<Entity> add_component(std::shared_ptr<Component> component);
-
-	//void render_all(const Shader& shader, const Renderer& renderingEngine, const Camera& camera) const;
 
 	//void update_all(float delta);
 
@@ -58,6 +61,9 @@ public:
 	static std::vector<Entity*>			mRoot;
 	int									mIndex;
 	static int							mCount;
+
+protected:
+	std::shared_ptr<Shader>				mShader;
 	//Entity*								mParent;
 	//std::vector<std::shared_ptr<Component> >    mComponents;
 	//void render(const Shader& shader, const Renderer& renderingEngine, const Camera& camera) const;

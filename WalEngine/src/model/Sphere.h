@@ -15,7 +15,7 @@ public:
 	{
 	}
 
-	void render(std::shared_ptr<Shader> &shader);
+	void render(const std::shared_ptr<Shader> &shader);
 	static void load();
 	void draw();
 

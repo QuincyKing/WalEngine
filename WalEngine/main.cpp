@@ -1,5 +1,5 @@
 #include "./game/pbr.h"
-
+#include "./src/render/RenderEngine.h"
 
 int screen_width, screen_height;
 std::shared_ptr<Window> pro;
@@ -21,4 +21,3 @@ int main()
 	pro->onrun();
 	return 0;
 }
-

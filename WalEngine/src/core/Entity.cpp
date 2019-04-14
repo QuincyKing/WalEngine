@@ -1,4 +1,5 @@
 #include "Entity.h"
+#include "../render/RenderEngine.h"
 #include <algorithm>
 
 std::vector<Entity*> Entity::mRoot = std::vector<Entity *>();
@@ -16,23 +17,22 @@ void Entity::add_child(Entity* child)
 	}
 }
 
+void Entity::render_all(const std::shared_ptr<Shader>& shader, const RenderEngine& renderingEngine, const Camera& camera)
+{
+	render(shader);
+
+	for (unsigned int i = 0; i < mChildren.size(); i++)
+	{
+		mChildren[i]->render_all(shader, renderingEngine, camera);
+	}
+}
+
 //std::shared_ptr<Entity> Entity::add_component(std::shared_ptr<Component> component)
 //{
 //	mComponents.push_back(component);
 //	component->set_parent(std::make_shared<Entity>(this));
 //	return std::make_shared<Entity>(this);
 //}
-
-//void Entity::render_all(const Shader& shader, const Renderer& renderingEngine, const Camera& camera) const
-//{
-//	render(shader, renderingEngine, camera);
-//
-//	for (unsigned int i = 0; i < mChildren.size(); i++)
-//	{
-//		mChildren[i]->render_all(shader, renderingEngine, camera);
-//	}
-//}
-
 
 //void Entity::render(const Shader& shader, const Renderer& renderingEngine, const Camera& camera) const
 //{

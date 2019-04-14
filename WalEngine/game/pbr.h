@@ -15,17 +15,21 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <memory>
+#include "../src/render/RenderEngine.h"
 
 class Pbr : public Window
 {
 private:
 	std::shared_ptr<Shader> shader;
+	std::shared_ptr<Shader> shader2;
 	Texture albedo, normal, metallic, roughness, ao;
 	Model model;
 	Sphere sphere1;
 	Sphere sphere2;
 	Cube cube1;
 	Sphere sphere4;
+	Entity root;
+	RenderEngine renderer;
 
 public:
 	Pbr(unsigned int _Width, unsigned int _Height) :
@@ -33,7 +37,9 @@ public:
 		sphere1("123455"),
 		sphere2("223333"),
 		cube1("cube"),
-		sphere4("sphere4")
+		sphere4("sphere4"),
+		root("root"),
+		renderer(*this)
 	{}
 
 	~Pbr()
@@ -65,7 +71,8 @@ public:
 		roughness.process();
 		ao.process();
 
-		shader = std::make_shared<Shader>("./shader/pbr.vs", "./shader/pbr.fs");
+		shader = std::make_shared<Shader>("./shader/pbr.vert", "./shader/pbr.frag");
+		shader2 = std::make_shared<Shader>("./shader/default.vert", "./shader/default.frag");
 		shader->use();
 
 		shader->setInt("albedoMap", 0);
@@ -85,6 +92,12 @@ public:
 		sphere2.mTransform->set_pos(glm::vec3(1.0, 1.0, 0.0));
 		cube1.mTransform->set_pos(glm::vec3(-1.0, 0.0, 0.0));
 		cube1.mTransform->set_rot(Quaternion(glm::vec3(1.0, 1.0, 0.0), glm::pi<float>() * 1 / 6));
+		
+		sphere1.set_shader(shader);
+		sphere2.set_shader(shader);
+		cube1.set_shader(shader);
+
+		root.add_child(&sphere1);
 	}
 
 	void onupdate()
@@ -107,20 +120,25 @@ public:
 		shader->setVec3("lightPos", lightPosition + glm::vec3(curScreen, 0.0));
 		shader->setVec3("lightColor", lightColor);
 
+		shader2->use();
+		shader2->setMat4("vp", view);
+
 		glm::mat4 model = sphere1.mTransform->get_model();
 
 		shader->use();
 		shader->setMat4("model", model);
-		sphere1.render(shader);
+		//sphere1.render(shader2);
 
 		shader->use();
 		model = sphere2.mTransform->get_model();
 		shader->setMat4("model", model);
-		sphere2.render(shader);
+		//sphere2.render(shader2);
 
 		model = cube1.mTransform->get_model();
 		shader->setMat4("model", model);
-		cube1.render(shader);
+
+		renderer.render(root);
+		//cube1.render(shader2);
 		//model.draw(shader);
 	}
 };

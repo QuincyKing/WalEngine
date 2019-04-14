@@ -56,4 +56,3 @@ private:
 	void _scroll(double xoffset, double yoffset);
 	void _framebuffersize(int width, int height);
 };
-
