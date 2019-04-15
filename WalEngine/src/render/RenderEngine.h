@@ -13,7 +13,7 @@ public:
 	RenderEngine(const Window& window);
 	virtual ~RenderEngine() {}
 
-	void render(Entity& object);
+	void render(Entity& object, glm::mat4 view);
 
 private:
 	std::shared_ptr<Shader>				mDefaultShader;

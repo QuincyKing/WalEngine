@@ -15,16 +15,17 @@ void Sphere::draw()
 
 void Sphere::render(const std::shared_ptr<Shader> &shader)
 {
+	glm::mat4 model = mTransform->get_model();
 	if (mShader != nullptr)
 	{
 		mShader->use();
-		glm::mat4 model = mTransform->get_model();
 		mShader->setMat4("model", model);
 		draw();
 	}
 	else
 	{
 		shader->use();
+		shader->setMat4("model", model);
 		draw();
 	}
 }
