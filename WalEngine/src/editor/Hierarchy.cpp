@@ -14,13 +14,19 @@ void Hierarchy::show_hierarchy(std::vector<Entity*> root)
 				| ((selected == e->mIndex) ? ImGuiTreeNodeFlags_Selected : 0);
 			if (!(e->mChildren.empty()))
 			{
-				bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)e->mIndex, node_flags, (e->mName).c_str());
+				bool node_open = false;
+				if (e->mName != "root")
+					node_open = ImGui::TreeNodeEx((void*)(intptr_t)e->mIndex, node_flags, (e->mName).c_str());
+				else
+					node_open = true;
+
 				if (ImGui::IsItemClicked())
 					selected = e->mIndex;
 				if (node_open)
 				{
 					show_hierarchy(e->mChildren);
-					ImGui::TreePop();
+					if (e->mName != "root")
+						ImGui::TreePop();
 				}
 			}
 			else

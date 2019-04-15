@@ -38,8 +38,7 @@ public:
 		sphere2("223333"),
 		cube1("cube"),
 		sphere4("sphere4"),
-		root("root"),
-		renderer(*this)
+		root("root")
 	{}
 
 	~Pbr()
@@ -86,6 +85,7 @@ public:
 		roughness.bind(3);
 		ao.bind(4);
 
+		renderer = RenderEngine(*this);
 		sphere1.mTransform->set_pos(glm::vec3(1.0, 0.0, 0.0));
 		sphere1.add_child(&sphere2);
 		sphere2.add_child(&cube1);
@@ -98,6 +98,7 @@ public:
 		cube1.set_shader(shader);
 
 		root.add_child(&sphere1);
+		root.add_child(&sphere4);
 	}
 
 	void onupdate()
@@ -122,20 +123,6 @@ public:
 
 		shader2->use();
 		shader2->setMat4("vp", view);
-
-		glm::mat4 model = sphere1.mTransform->get_model();
-
-		shader->use();
-		shader->setMat4("model", model);
-		//sphere1.render(shader2);
-
-		shader->use();
-		model = sphere2.mTransform->get_model();
-		shader->setMat4("model", model);
-		//sphere2.render(shader2);
-
-		model = cube1.mTransform->get_model();
-		shader->setMat4("model", model);
 
 		renderer.render(root);
 		//cube1.render(shader2);

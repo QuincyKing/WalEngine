@@ -8,6 +8,8 @@ void Cube::render(const std::shared_ptr<Shader> &shader)
 	if (mShader != nullptr)
 	{
 		mShader->use();
+		glm::mat4 model = mTransform->get_model();
+		mShader->setMat4("model", model);
 		draw();
 	}
 	else

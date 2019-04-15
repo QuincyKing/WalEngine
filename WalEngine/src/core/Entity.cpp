@@ -20,7 +20,6 @@ void Entity::add_child(Entity* child)
 void Entity::render_all(const std::shared_ptr<Shader>& shader, const RenderEngine& renderingEngine, const Camera& camera)
 {
 	render(shader);
-
 	for (unsigned int i = 0; i < mChildren.size(); i++)
 	{
 		mChildren[i]->render_all(shader, renderingEngine, camera);

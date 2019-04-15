@@ -9,6 +9,7 @@
 class RenderEngine
 {
 public:
+	RenderEngine() = default;
 	RenderEngine(const Window& window);
 	virtual ~RenderEngine() {}
 
