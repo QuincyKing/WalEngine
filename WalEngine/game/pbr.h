@@ -21,6 +21,7 @@ class Pbr : public Window
 {
 private:
 	std::shared_ptr<Shader> shader;
+	std::shared_ptr<Shader> shader2;
 	Texture albedo, normal, metallic, roughness, ao;
 	Model model;
 	Sphere sphere1;
@@ -70,6 +71,7 @@ public:
 		ao.process();
 
 		shader = std::make_shared<Shader>("./shader/pbr.vert", "./shader/pbr.frag");
+		shader2 = std::make_shared<Shader>("./shader/default.vert", "./shader/default.frag");
 		shader->use();
 
 		shader->setInt("albedoMap", 0);
@@ -93,7 +95,7 @@ public:
 		
 		sphere1.set_shader(shader);
 		sphere2.set_shader(shader);
-		//cube1.set_shader(shader);
+		cube1.set_shader(shader);
 
 		root.add_child(&sphere1);
 		root.add_child(&sphere4);
@@ -119,7 +121,10 @@ public:
 		shader->setVec3("lightPos", lightPosition + glm::vec3(curScreen, 0.0));
 		shader->setVec3("lightColor", lightColor);
 
-		renderer.render(root, view);
+		shader2->use();
+		shader2->setMat4("vp", view);
+
+		renderer.render(root);
 		//cube1.render(shader2);
 		//model.draw(shader);
 	}
