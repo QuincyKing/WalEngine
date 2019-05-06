@@ -1,37 +1,33 @@
-//#pragma once
-//
-//#include "Texture.h"
-//#include <map>
-//
-//class MaterialData public MappedValues
-//{
-//public:
-//private:
-//};
-//
-//class Material
-//{
-//public:
-//	Material(const std::string& materialName = "");
-//	Material(const Material& other);
-//	virtual ~Material();
-//
-//	Material(const std::string& materialName, const Texture& diffuse, float specularIntensity, float specularPower,
-//		const Texture& normalMap = Texture("default_normal.jpg"),
-//		const Texture& dispMap = Texture("default_disp.png"), float dispMapScale = 0.0f, float dispMapOffset = 0.0f);
-//
-//	inline void Setglm::vec3(const std::string& name, const glm::vec3& value) { m_materialData->Setglm::vec3(name, value); }
-//	inline void SetFloat(const std::string& name, float value) { m_materialData->SetFloat(name, value); }
-//	inline void SetTexture(const std::string& name, const Texture& value) { m_materialData->SetTexture(name, value); }
-//
-//	inline const glm::vec3& Getglm::vec3(const std::string& name) const { return m_materialData->Getglm::vec3(name); }
-//	inline float GetFloat(const std::string& name)              const { return m_materialData->GetFloat(name); }
-//	inline const Texture& GetTexture(const std::string& name)   const { return m_materialData->GetTexture(name); }
-//protected:
-//private:
-//	static std::map<std::string, MaterialData*> s_resourceMap;
-//	MaterialData* m_materialData;
-//	std::string   m_materialName;
-//
-//	void operator=(const Material& other) {}
-//};
+#pragma once
+
+#include "Texture.h"
+#include "../core/MapVal.h"
+#include "../core/ReferenceCounter.h"
+#include <map>
+
+class MaterialData : public MapVal, public ReferenceCounter
+{
+};
+
+class Material
+{
+public:
+	Material(const std::string& materialName = "");
+	Material(const Material& other);
+	virtual ~Material();
+
+	inline void set_vec3(const std::string& name, const glm::vec3& value) { mMateriaData->set_vec3(name, value); }
+	inline void set_float(const std::string& name, float value) { mMateriaData->set_float(name, value); }
+	inline void set_texture(const std::string& name, const Texture& value) { mMateriaData->set_texture(name, value); }
+
+	inline const glm::vec3& get_vec3(const std::string& name) const { return mMateriaData->get_vec3(name); }
+	inline float get_float(const std::string& name)              const { return mMateriaData->get_float(name); }
+	inline const Texture& get_texture(const std::string& name)   const { return mMateriaData->get_texture(name); }
+
+private:
+	static std::map<std::string, MaterialData*> ResourceMap;
+	MaterialData* mMateriaData;
+	std::string   mMaterialName;
+
+	void operator=(const Material& other) {}
+};
