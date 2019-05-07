@@ -42,11 +42,11 @@ public:
 
 	void add_child(Entity *child);
 
-	virtual void render(const std::shared_ptr<Shader> &shader) {};
+	virtual void render(const Shader &shader) {};
 
-	void set_shader(std::shared_ptr<Shader> shader) { mShader = shader; }
+	void set_shader(Shader shader) { mShader = shader; }
 
-	void render_all(const std::shared_ptr<Shader>& shader, const RenderEngine& renderingEngine, const Camera& camera);
+	void render_all(const Shader& shader, const RenderEngine& renderingEngine, const Camera& camera);
 
 	//std::shared_ptr<Entity> add_component(std::shared_ptr<Component> component);
 
@@ -63,7 +63,7 @@ public:
 	static int							mCount;
 
 protected:
-	std::shared_ptr<Shader>				mShader;
+	Shader								mShader;
 	//Entity*								mParent;
 	//std::vector<std::shared_ptr<Component> >    mComponents;
 	//void render(const Shader& shader, const Renderer& renderingEngine, const Camera& camera) const;

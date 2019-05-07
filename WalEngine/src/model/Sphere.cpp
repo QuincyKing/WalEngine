@@ -13,19 +13,19 @@ void Sphere::draw()
 	}
 }
 
-void Sphere::render(const std::shared_ptr<Shader> &shader)
+void Sphere::render(const Shader &shader)
 {
 	glm::mat4 model = mTransform->get_model();
-	if (mShader != nullptr)
+	if (!mShader.is_default())
 	{
-		mShader->use();
-		mShader->setMat4("model", model);
+		mShader.use();
+		mShader.set_mat4("model", model);
 		draw();
 	}
 	else
 	{
-		shader->use();
-		shader->setMat4("model", model);
+		shader.use();
+		shader.set_mat4("model", model);
 		draw();
 	}
 }

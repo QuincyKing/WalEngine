@@ -12,16 +12,16 @@ void Quad::draw()
 	}
 }
 
-void Quad::render(const std::shared_ptr<Shader> &shader)
+void Quad::render(const Shader &shader)
 {
-	if (mShader != nullptr)
+	if (!mShader.is_default())
 	{
-		mShader->use();
+		mShader.use();
 		draw();
 	}
-	else 
+	else
 	{
-		shader->use();
+		shader.use();
 		draw();
 	}
 }

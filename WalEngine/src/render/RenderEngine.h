@@ -20,7 +20,7 @@ public:
 	inline void set_sampler_slot(const std::string& name, unsigned int value) { mSamplerMap[name] = value; }
 
 private:
-	std::shared_ptr<Shader>				mDefaultShader;
+	Shader								mDefaultShader;
 	const Window*                       mWindow;
 	const Camera*                       mMainCamera;
 	std::map<std::string, unsigned int> mSamplerMap;

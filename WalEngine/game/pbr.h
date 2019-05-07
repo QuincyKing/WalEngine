@@ -20,9 +20,9 @@
 class Pbr : public Window
 {
 private:
-	std::shared_ptr<Shader> shader;
+	Shader shader;
 	Texture albedo, normal, metallic, roughness, ao;
-	Model model;
+	//Model model;
 	Sphere sphere1;
 	Sphere sphere2;
 	Cube cube1;
@@ -69,14 +69,17 @@ public:
 		roughness.process();
 		ao.process();
 
-		shader = std::make_shared<Shader>("./shader/pbr.vert", "./shader/pbr.frag");
-		shader->use();
+		Shader pbr("pbr.vert", "pbr.frag");
+		pbr.init();
+		shader = pbr;
+		shader.init();
+		shader.use();
 
-		shader->setInt("albedoMap", 0);
-		shader->setInt("normalMap", 1);
-		shader->setInt("metallicMap", 2);
-		shader->setInt("roughnessMap", 3);
-		shader->setInt("aoMap", 4);
+		shader.set_int("albedoMap", 0);
+		shader.set_int("normalMap", 1);
+		shader.set_int("metallicMap", 2);
+		shader.set_int("roughnessMap", 3);
+		shader.set_int("aoMap", 4);
 		albedo.bind(0);
 		normal.bind(1);
 		metallic.bind(2);
@@ -110,14 +113,14 @@ public:
 		curScreen.y = 5 * float(0 - (mInput.get_mouse_y()) - mInput.get_win_size_y() / 2.0f) / float(mInput.get_win_size_y());
 		glm::vec3 lightPosition = glm::vec3(0.0f, 0.0f, 10.0f);
 		glm::vec3 lightColor = glm::vec3(255.0f, 255.0f, 255.0f);
-		shader->use();
+		shader.use();
 		
 		//shader->setMat4("projection", projection);
 		glm::mat4 view = mCamera.get_view_projection();
-		shader->setMat4("vp", view);
-		shader->setVec3("camPos", *(mCamera.get_transform()->get_pos()));
-		shader->setVec3("lightPos", lightPosition + glm::vec3(curScreen, 0.0));
-		shader->setVec3("lightColor", lightColor);
+		shader.set_mat4("vp", view);
+		shader.set_vec3("camPos", *(mCamera.get_transform()->get_pos()));
+		shader.set_vec3("lightPos", lightPosition + glm::vec3(curScreen, 0.0));
+		shader.set_vec3("lightColor", lightColor);
 
 		renderer.render(root, view);
 		//cube1.render(shader2);
