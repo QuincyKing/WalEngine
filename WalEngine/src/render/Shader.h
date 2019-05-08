@@ -56,6 +56,8 @@ public:
 	inline const std::vector<std::string>& get_uniform_types()          const { return mUniformTypes; }
 	inline const std::map<std::string, unsigned int>& get_uniform_map() const { return mUniformMap; }
 	void init(const std::string& file, int type);
+	void compile_shader() const;
+	void add_shader_uniforms(const std::string& shaderText);
 
 private:
 	inline void add_vertex_shader(const std::string& text) { add_program(text, GL_VERTEX_SHADER); }
@@ -64,9 +66,8 @@ private:
 	void add_program(const std::string& text, int type);
 
 	//void add_all_attributes(const std::string& vertexShaderText, const std::string& attributeKeyword);
-	void add_shader_uniforms(const std::string& shaderText);
 	void add_uniform(const std::string& uniformName, const std::string& uniformType, const std::vector<UniformStruct>& structs);
-	void compile_shader() const;
+
 
 private:
 	static int SupportedOpenGLLevel;

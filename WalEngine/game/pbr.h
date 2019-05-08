@@ -79,12 +79,12 @@ public:
 		shader.set_int("normalMap", 1);
 		shader.set_int("metallicMap", 2);
 		shader.set_int("roughnessMap", 3);
-		shader.set_int("aoMap", 4);
+		//shader.set_int("aoMap", 4);
 		albedo.bind(0);
 		normal.bind(1);
 		metallic.bind(2);
 		roughness.bind(3);
-		ao.bind(4);
+		//ao.bind(4);
 
 		renderer = RenderEngine(*this);
 		sphere1.mTransform->set_pos(glm::vec3(1.0, 0.0, 0.0));

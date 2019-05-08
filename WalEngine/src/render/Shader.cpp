@@ -214,9 +214,7 @@ void ShaderData::init(const std::string& file, int type)
 	//std::string attributeKeyword = "in";
 	//add_all_attributes(vertexShaderText, attributeKeyword);
 
-	compile_shader();
-
-	add_shader_uniforms(text);
+	
 }
 
 ShaderData::~ShaderData()
@@ -392,6 +390,9 @@ void Shader::init()
 		mShaderData = new ShaderData();
 		mShaderData->init(mVsName, GL_VERTEX_SHADER);
 		mShaderData->init(mFsName, GL_FRAGMENT_SHADER);
+		mShaderData->compile_shader();
+		mShaderData->add_shader_uniforms(load_shader(mVsName));
+		mShaderData->add_shader_uniforms(load_shader(mFsName));
 		ResourceMap.insert(std::pair<std::string, ShaderData*>(mVsName + mFsName, mShaderData));
 	}
 }
@@ -529,7 +530,7 @@ void Shader::set_mat4(const std::string& uniformName, const glm::mat4& value) co
 
 bool Shader::is_default()
 {
-	return mVsName == "./shader/default.vert" && mFsName == "./shader/default.frag";
+	return mVsName == "default.vert" && mFsName == "default.frag";
 }
 
 //void Shader::set_uniform_dirlight(const std::string& uniformName, const DirectionalLight& directionalLight) const
