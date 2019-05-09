@@ -68,7 +68,6 @@ private:
 	//void add_all_attributes(const std::string& vertexShaderText, const std::string& attributeKeyword);
 	void add_uniform(const std::string& uniformName, const std::string& uniformType, const std::vector<UniformStruct>& structs);
 
-
 private:
 	static int SupportedOpenGLLevel;
 	static std::string GlslVersion;
@@ -88,7 +87,6 @@ public:
 	virtual ~Shader();
 
 	void use() const;
-	void init();
 	//virtual void update_uniforms(const Transform& transform, const Material& material, 
 		//const RenderEngine& renderEngine, const Camera& camera) const;
 

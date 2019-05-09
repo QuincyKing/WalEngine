@@ -375,10 +375,7 @@ Shader::Shader(const std::string& vsFile, const std::string& fsFile)
 {
 	mVsName = vsFile;
 	mFsName = fsFile;
-}
 
-void Shader::init()
-{
 	std::map<std::string, ShaderData*>::const_iterator it = ResourceMap.find(mVsName + mFsName);
 	if (it != ResourceMap.end())
 	{
@@ -410,7 +407,7 @@ Shader::~Shader()
 {
 	if (mShaderData && mShaderData->remove_reference())
 	{
-		if (mVsName.length() > 0)
+		if (mVsName.length() > 0 && !ResourceMap.empty())
 			ResourceMap.erase(mVsName);
 
 		delete mShaderData;

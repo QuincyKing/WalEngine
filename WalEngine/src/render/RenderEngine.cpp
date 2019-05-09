@@ -4,7 +4,6 @@ RenderEngine::RenderEngine(const Window& window)
 	:mWindow(&window),
 	mDefaultShader("default.vert", "default.frag")
 {
-	mDefaultShader.init();
 }
 
 void RenderEngine::render(Entity& object, glm::mat4 view)
