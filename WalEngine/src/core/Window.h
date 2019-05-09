@@ -44,11 +44,6 @@ public:
 	virtual ~Window() {}
 
 	int onrun();
-	//virtual void oninit() {}
-	//virtual void ongui() {}
-	//virtual void onupdate() {}
-	//virtual void ondisable() {}
-	//virtual void onkey() {}
 	void bind_render_target() const;
 
 	GLFWwindow* get_window() { return mWindow; }

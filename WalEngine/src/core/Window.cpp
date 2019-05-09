@@ -75,9 +75,7 @@ int Window::onrun()
 	ImFont* pFont = io.Fonts->AddFontFromFileTTF("../res/font/yuan.ttf", 16.0f);
 	ImGui::StyleColorsDark();
 
-	//ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
-	
+	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 	auto scroll = [](GLFWwindow* w, double x, double y)
 	{
@@ -118,7 +116,7 @@ int Window::onrun()
 	mCamera.set_transform(cameraT);
 
 	//初始化函数
-	mInitFun();
+	if(mInitFun) mInitFun();
 
 	while (!glfwWindowShouldClose(mWindow))
 	{
@@ -157,11 +155,11 @@ int Window::onrun()
 		mCamera.set_projection(projection);
 
 		//按键事件
-		//mKeyFun();
+		if(mKeyFun) mKeyFun();
 
 		//UI事件
 		_gui();
-		//mGuiFun();
+		if(mGuiFun) mGuiFun();
 
 		glfwMakeContextCurrent(mWindow);
 		glfwGetFramebufferSize(mWindow, &Inputs.get_win_size_x(), &Inputs.get_win_size_y());
@@ -171,7 +169,7 @@ int Window::onrun()
 
 		//渲染事件
 		_update();
-		mUpdateFun();
+		if(mUpdateFun) mUpdateFun();
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -179,7 +177,7 @@ int Window::onrun()
 		glfwSwapBuffers(mWindow);
 	}
 	//关闭函数
-	//mDisableFun();
+	if(mDisableFun) mDisableFun();
 
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
