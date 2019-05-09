@@ -213,8 +213,6 @@ void ShaderData::init(const std::string& file, int type)
 
 	//std::string attributeKeyword = "in";
 	//add_all_attributes(vertexShaderText, attributeKeyword);
-
-	
 }
 
 ShaderData::~ShaderData()
@@ -560,4 +558,3 @@ bool Shader::is_default()
 //	set_uniformvec3(uniformName + ".direction", spotLight.GetTransform().GetTransformedRot().GetForward());
 //	set_uniformf(uniformName + ".cutoff", spotLight.GetCutoff());
 //}
-
