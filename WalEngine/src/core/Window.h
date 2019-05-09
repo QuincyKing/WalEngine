@@ -7,7 +7,7 @@
 #include <vector>
 #include <iostream>
 #include <algorithm>
-
+#include <functional>
 
 #include "../render/Camera.h"
 #include "../editor/Panel.h"
@@ -25,9 +25,14 @@ public:
 	int multisample;
 	Panel mPanel;
 	Camera mCamera;
-	static Input mInput;
+	static Input Inputs;
 	static float deltaTime;
 	static float lastFrame;
+	std::function<void(void)> mInitFun;
+	std::function<void(void)> mGuiFun;
+	std::function<void(void)> mUpdateFun;
+	std::function<void(void)> mKeyFun;
+	std::function<void(void)> mDisableFun;
 
 protected:
 	GLFWwindow* mWindow;
@@ -39,11 +44,6 @@ public:
 	virtual ~Window() {}
 
 	int onrun();
-	virtual void oninit() {}
-	virtual void ongui() {}
-	virtual void onupdate() {}
-	virtual void ondisable() {}
-	virtual void onkey() {}
 	void bind_render_target() const;
 
 	GLFWwindow* get_window() { return mWindow; }

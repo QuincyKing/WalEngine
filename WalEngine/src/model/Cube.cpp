@@ -3,19 +3,19 @@
 unsigned int Cube::vao;
 unsigned int Cube::count;
 
-void Cube::render(const std::shared_ptr<Shader> &shader)
+void Cube::render(const Shader &shader)
 {
 	glm::mat4 model = mTransform->get_model();
-	if (mShader != nullptr)
+	if (!mShader.is_default())
 	{
-		mShader->use();
-		mShader->setMat4("model", model);
+		mShader.use();
+		mShader.set_mat4("model", model);
 		draw();
 	}
 	else
 	{
-		shader->use();
-		shader->setMat4("model", model);
+		shader.use();
+		shader.set_mat4("model", model);
 		draw();
 	}
 }

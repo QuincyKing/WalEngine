@@ -10,12 +10,7 @@ uniform sampler2D albedoMap;
 uniform sampler2D normalMap;
 uniform sampler2D metallicMap;
 uniform sampler2D roughnessMap;
-uniform sampler2D aoMap;
-
-//uniform vec3 albedo;
-//uniform float metallic;
-//uniform float roughness;
-//uniform float ao;
+//uniform sampler2D aoMap;
 
 uniform vec3 camPos;
 
@@ -76,7 +71,7 @@ void main()
    vec3 albedo = pow(texture(albedoMap, Tex).rgb, vec3(2.2));
    float metallic = texture(metallicMap, Tex).r;
    float roughness = texture(roughnessMap, Tex).r;
-   float ao = texture(aoMap, Tex).r;
+//   float ao = texture(aoMap, Tex).r;
 
    vec3 N = GetNormalFromMap();
    vec3 V = normalize(camPos - WorldPos);

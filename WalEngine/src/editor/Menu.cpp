@@ -78,7 +78,7 @@ void Menu::show_menu_file()
 
 	if (ImGui::MenuItem("Quit", "ESC"))
 	{
-		Window::mInput.SetKeyDown(Input::KEY_ESCAPE, true);
+		Window::Inputs.SetKeyDown(Input::KEY_ESCAPE, true);
 	}
 }
 
