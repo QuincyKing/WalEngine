@@ -146,10 +146,6 @@ static void check_shader_error(int shader, int flag, bool isProgram, const std::
 	}
 }
 
-ShaderData::ShaderData()
-{
-}
-
 void ShaderData::init(const std::string& file, int type)
 {
 	if(mProgram == 0)

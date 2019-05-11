@@ -49,7 +49,7 @@ private:
 class ShaderData : public ReferenceCounter
 {
 public:
-	ShaderData();
+	ShaderData() {};
 	virtual ~ShaderData();
 
 	inline int get_program()                                            const { return mProgram; }
@@ -62,9 +62,6 @@ public:
 	void add_shader_uniforms(const std::string& shaderText);
 
 private:
-	inline void add_vertex_shader(const std::string& text) { add_program(text, GL_VERTEX_SHADER); }
-	inline void add_geometry_shader(const std::string& text) { add_program(text, GL_GEOMETRY_SHADER); }
-	inline void add_fragment_shader(const std::string& text) { add_program(text, GL_FRAGMENT_SHADER); }
 	void add_program(const std::string& text, int type);
 
 	//void add_all_attributes(const std::string& vertexShaderText, const std::string& attributeKeyword);
@@ -79,71 +76,6 @@ private:
 	std::vector<std::string>            mUniformTypes;
 	std::map<std::string, unsigned int> mUniformMap;
 	unsigned int mProgram;
-};
-
-#include "../core/ReferenceCounter.h"
-
-class TypedData
-{
-public:
-	TypedData(const std::string& name, const std::string& type) :
-		mName(name),
-		mType(type) {}
-
-	inline const std::string& get_name() const { return mName; }
-	inline const std::string& get_type() const { return mType; }
-
-private:
-	std::string mName;
-	std::string mType;
-};
-
-class UniformStruct
-{
-public:
-	UniformStruct(const std::string& name, const std::vector<TypedData>& memberNames) :
-		mName(name),
-		mMemberNames(memberNames) {}
-
-	inline const std::string& get_name()                   const { return mName; }
-	inline const std::vector<TypedData>& get_membernames() const { return mMemberNames; }
-
-private:
-	std::string            mName;
-	std::vector<TypedData> mMemberNames;
-};
-
-class ShaderData : public ReferenceCounter
-{
-public:
-	ShaderData(const std::string& fileName);
-	virtual ~ShaderData();
-
-	inline int get_program()                                            const { return m_program; }
-	inline const std::vector<int>& get_shaders()                        const { return m_shaders; }
-	inline const std::vector<std::string>& get_uniform_names()          const { return m_uniformNames; }
-	inline const std::vector<std::string>& get_uniform_types()          const { return m_uniformTypes; }
-	inline const std::map<std::string, unsigned int>& get_uniform_map() const { return m_uniformMap; }
-
-private:
-	void add_vertex_shader(const std::string& text);
-	void add_geometry_shader(const std::string& text);
-	void add_fragment_shader(const std::string& text);
-	void add_program(const std::string& text, int type);
-
-	void add_all_attributes(const std::string& vertexShaderText, const std::string& attributeKeyword);
-	void add_shader_uniforms(const std::string& shaderText);
-	void add_uniform(const std::string& uniformName, const std::string& uniformType, const std::vector<UniformStruct>& structs);
-	void compile_shader() const;
-
-private:
-	static int SupportedOpenGLLevel;
-	static std::string GlslVersion;
-	int mProgram;
-	std::vector<int>                    mShaders;
-	std::vector<std::string>            mUniformNames;
-	std::vector<std::string>            mUniformTypes;
-	std::map<std::string, unsigned int> mUniformMap;
 };
 
 class Shader
