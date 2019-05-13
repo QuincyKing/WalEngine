@@ -1,11 +1,11 @@
 #pragma once
 
-class ReferenceCounter
+class Ref
 {
 public:
-	ReferenceCounter() :
+	Ref() :
 		mRefCount(1) {}
-	virtual ~ReferenceCounter() {}
+	virtual ~Ref() {}
 
 	inline int get_reference() { return mRefCount; }
 	inline void add_reference() { mRefCount++; }

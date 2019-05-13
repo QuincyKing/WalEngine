@@ -1,12 +1,12 @@
 #pragma once
 
 #include "../core/Window.h"
-#include "../render/Shader.h"
-#include "../core/Entity.h"
 #include "../core/MapVal.h"
 #include "Camera.h"
 #include <memory>
 #include <map>
+
+class Entity;
 
 class RenderEngine : public MapVal
 {
@@ -20,7 +20,6 @@ public:
 	inline void set_sampler_slot(const std::string& name, unsigned int value) { mSamplerMap[name] = value; }
 
 private:
-	Shader								mDefaultShader;
 	const Window*                       mWindow;
 	const Camera*                       mMainCamera;
 	std::map<std::string, unsigned int> mSamplerMap;

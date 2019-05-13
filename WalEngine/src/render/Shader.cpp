@@ -206,9 +206,6 @@ void ShaderData::init(const std::string& file, int type)
 	std::string shaderText = "#version " + GlslVersion + "\n#define GLSL_VERSION " + GlslVersion + "\n" + text;
 
 	add_program(text, type);
-
-	//std::string attributeKeyword = "in";
-	//add_all_attributes(vertexShaderText, attributeKeyword);
 }
 
 ShaderData::~ShaderData()
@@ -254,40 +251,6 @@ void ShaderData::add_program(const std::string& text, int type)
 	glAttachShader(mProgram, shader);
 	mShaders.push_back(shader);
 }
-
-//void ShaderData::add_all_attributes(const std::string& vertexShaderText, const std::string& attributeKeyword)
-//{
-//	int currentAttribLocation = 0;
-//	size_t attributeLocation = vertexShaderText.find(attributeKeyword);
-//	while (attributeLocation != std::string::npos)
-//	{
-//		bool isCommented = false;
-//		size_t lastLineEnd = vertexShaderText.rfind("\n", attributeLocation);
-//
-//		if (lastLineEnd != std::string::npos)
-//		{
-//			std::string potentialCommentSection = vertexShaderText.substr(lastLineEnd, attributeLocation - lastLineEnd);
-//
-//			//Potential false positives are both in comments, and in macros.
-//			isCommented = potentialCommentSection.find("//") != std::string::npos || potentialCommentSection.find("#") != std::string::npos;
-//		}
-//
-//		if (!isCommented)
-//		{
-//			size_t begin = attributeLocation + attributeKeyword.length();
-//			size_t end = vertexShaderText.find(";", begin);
-//
-//			std::string attributeLine = vertexShaderText.substr(begin + 1, end - begin - 1);
-//
-//			begin = attributeLine.find(" ");
-//			std::string attributeName = attributeLine.substr(begin + 1);
-//
-//			glbindAttribLocation(mProgram, currentAttribLocation, attributeName.c_str());
-//			currentAttribLocation++;
-//		}
-//		attributeLocation = vertexShaderText.find(attributeKeyword, attributeLocation + attributeKeyword.length());
-//	}
-//}
 
 void ShaderData::add_shader_uniforms(const std::string& shaderText)
 {
@@ -424,81 +387,6 @@ void Shader::use() const
 	glUseProgram(mShaderData->get_program());
 }
 
-//void Shader::update_uniforms(const Transform& transform, const Material& material, const RenderEngine& renderEngine, const Camera& camera) const
-//{
-//	glm::mat4 worldMatrix = transform.get_model();
-//	glm::mat4 projectedMatrix = camera.get_view_projection() * worldMatrix;
-//
-//	for (unsigned int i = 0; i < mShaderData->get_uniform_names().size(); i++)
-//	{
-//		std::string uniformName = mShaderData->get_uniform_names()[i];
-//		std::string uniformType = mShaderData->get_uniform_types()[i];
-//
-//		// RenderEngine variance  
-//		if (uniformName.substr(0, 2) == "R_")
-//		{
-//			/*std::string unprefixedName = uniformName.substr(2, uniformName.length());
-//
-//			if (unprefixedName == "lightMatrix")
-//				set_uniformmat4(uniformName, renderEngine.GetLightMatrix() * worldMatrix);
-//			else if (uniformType == "sampler2D")
-//			{
-//				int samplerSlot = renderEngine.GetSamplerSlot(unprefixedName);
-//				renderEngine.GetTexture(unprefixedName).bind(samplerSlot);
-//				set_uniformi(uniformName, samplerSlot);
-//			}
-//			else if (uniformType == "vec3")
-//				set_uniformvec3(uniformName, renderEngine.GetVector3f(unprefixedName));
-//			else if (uniformType == "float")
-//				set_uniformf(uniformName, renderEngine.GetFloat(unprefixedName));*/
-//			/*else if (uniformType == "DirectionalLight")
-//				set_uniform_dirlight(uniformName, *(const DirectionalLight*)&renderEngine.GetActiveLight());
-//			else if (uniformType == "PointLight")
-//				set_uniform_pointlight(uniformName, *(const PointLight*)&renderEngine.GetActiveLight());
-//			else if (uniformType == "SpotLight")
-//				set_uniform_spotlight(uniformName, *(const SpotLight*)&renderEngine.GetActiveLight());*/
-//			/*else
-//				renderEngine.update_uniformstruct(transform, material, *this, uniformName, uniformType);*/
-//		}
-//		//texture variance
-//		else if (uniformType == "sampler2D")
-//		{
-//			int samplerSlot = renderEngine.get_sampler_slot(uniformName);
-//			material.get_texture(uniformName).bind(samplerSlot);
-//			set_int(uniformName, samplerSlot);
-//		}
-//		//transform variance
-//		else if (uniformName.substr(0, 2) == "T_")
-//		{
-//			if (uniformName == "T_MVP")
-//				set_mat4(uniformName, projectedMatrix);
-//			else if (uniformName == "T_model")
-//				set_mat4(uniformName, worldMatrix);
-//			else
-//				throw "Invalid Transform Uniform: " + uniformName;
-//		}
-//		//constant variance
-//		else if (uniformName.substr(0, 2) == "C_")
-//		{
-//			//camera position
-//			if (uniformName == "C_cameraPos")
-//				set_vec3(uniformName, camera.get_transform().get_transform_pos());
-//			else
-//				throw "Invalid Camera Uniform: " + uniformName;
-//		}
-//		//other variance
-//		else
-//		{
-//			if (uniformType == "vec3")
-//				set_vec3(uniformName, material.get_vec3(uniformName));
-//			else if (uniformType == "float")
-//				set_float(uniformName, material.get_float(uniformName));
-//			else
-//				throw uniformType + " is not supported by the Material class";
-//		}
-//	}
-//}
-
 void Shader::set_int(const std::string& uniformName, int value) const
 {
 	glUniform1i(mShaderData->get_uniform_map().at(uniformName), value);
@@ -522,6 +410,29 @@ void Shader::set_mat4(const std::string& uniformName, const glm::mat4& value) co
 bool Shader::is_default()
 {
 	return mVsName == "default.vert" && mFsName == "default.frag";
+}
+
+void Shader::set_shader(const std::string& vsFile, const std::string& fsFile)
+{
+	mVsName = vsFile;
+	mFsName = fsFile;
+
+	std::map<std::string, ShaderData*>::const_iterator it = ResourceMap.find(mVsName + mFsName);
+	if (it != ResourceMap.end())
+	{
+		mShaderData = it->second;
+		mShaderData->add_reference();
+	}
+	else
+	{
+		mShaderData = new ShaderData();
+		mShaderData->init(mVsName, GL_VERTEX_SHADER);
+		mShaderData->init(mFsName, GL_FRAGMENT_SHADER);
+		mShaderData->compile_shader();
+		mShaderData->add_shader_uniforms(load_shader(mVsName));
+		mShaderData->add_shader_uniforms(load_shader(mFsName));
+		ResourceMap.insert(std::pair<std::string, ShaderData*>(mVsName + mFsName, mShaderData));
+	}
 }
 
 //void Shader::set_uniform_dirlight(const std::string& uniformName, const DirectionalLight& directionalLight) const

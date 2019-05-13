@@ -12,18 +12,10 @@ void Quad::draw()
 	}
 }
 
-void Quad::render(const Shader &shader)
+void Quad::render()
 {
-	if (!mShader.is_default())
-	{
-		mShader.use();
-		draw();
-	}
-	else
-	{
-		shader.use();
-		draw();
-	}
+	mMaterial->mShader.use();
+	draw();
 }
 
 void Quad::load()

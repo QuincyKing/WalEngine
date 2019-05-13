@@ -1,26 +1,24 @@
 #pragma once
 
 #include "../src/core/Window.h"
-#include "../src/render/Shader.h"
-#include "../src/core/Window.h"
+#include "../src/core/Quaternion.h";
+//#include "../src/core/Model.h"
+#include "../src/render/Material.h"
+#include "../src/render/Texture.h"
+#include "../src/model/Sphere.h"
+#include "../src/model/Cube.h"
+#include "../src/render/RenderEngine.h"
+
 #include <stb_image/stb_image.h>
 #include <GLFW/glfw3.h>
-
-#include "../src/core/Quaternion.h";
-#include "../src/core/Model.h"
-#include "../src/render/Texture.h"
-#include "../src/model/sphere.h"
-#include "../src/model/Cube.h"
 #include <iostream>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <memory>
-#include "../src/render/RenderEngine.h"
 
 class Game
 {
 public:
-	Shader shader;
 	Texture albedo, normal, metallic, roughness, ao;
 	//Model model;
 	Sphere sphere1;
@@ -28,6 +26,7 @@ public:
 	Cube cube1;
 	Sphere sphere4;
 	Entity root;
+	std::shared_ptr<Material> mat;
 
 public:
 	Game() :
@@ -44,5 +43,5 @@ public:
 
 	void init();
 
-	void render(RenderEngine& renderer, Window& window);
+	void render(RenderEngine renderer, Window window);
 };

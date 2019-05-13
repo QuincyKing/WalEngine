@@ -13,21 +13,12 @@ void Sphere::draw()
 	}
 }
 
-void Sphere::render(const Shader &shader)
+void Sphere::render()
 {
 	glm::mat4 model = mTransform->get_model();
-	if (!mShader.is_default())
-	{
-		mShader.use();
-		mShader.set_mat4("model", model);
-		draw();
-	}
-	else
-	{
-		shader.use();
-		shader.set_mat4("model", model);
-		draw();
-	}
+	mMaterial->mShader.use();
+	mMaterial->mShader.set_mat4("T_model", model);
+	draw();
 }
 
 void Sphere::load()

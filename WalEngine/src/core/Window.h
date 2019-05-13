@@ -39,7 +39,7 @@ protected:
 	
 public:
 	Window(unsigned int _Width, unsigned int _Height, unsigned int _posX = 0,
-		unsigned int _posY = 30, int _multisample = 1, std::string _title = "WalnutEngine");
+		unsigned int _posY = 30, int _multisample = 1, std::string _title = "WalEngine");
 	Window() = default;
 	virtual ~Window() {}
 

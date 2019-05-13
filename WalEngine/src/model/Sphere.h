@@ -15,7 +15,7 @@ public:
 	{
 	}
 
-	void render(const Shader &shader);
+	void render();
 	static void load();
 	void draw();
 

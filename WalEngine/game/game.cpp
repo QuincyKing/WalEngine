@@ -20,13 +20,14 @@ void Game::init()
 	roughness.process();
 	ao.process();
 
-	shader = Shader("pbr.vert", "pbr.frag");
-	shader.use();
+	mat = std::make_shared<Material>("pbr");
+	mat->set_shader("pbr.vert", "pbr.frag");
+	mat->mShader.use();
 
-	shader.set_int("albedoMap", 0);
-	shader.set_int("normalMap", 1);
-	shader.set_int("metallicMap", 2);
-	shader.set_int("roughnessMap", 3);
+	mat->mShader.set_int("albedoMap", 0);
+	mat->mShader.set_int("normalMap", 1);
+	mat->mShader.set_int("metallicMap", 2);
+	mat->mShader.set_int("roughnessMap", 3);
 	//shader.set_int("aoMap", 4);
 	albedo.bind(0);
 	normal.bind(1);
@@ -41,15 +42,15 @@ void Game::init()
 	cube1.mTransform->set_pos(glm::vec3(-1.0, 0.0, 0.0));
 	cube1.mTransform->set_rot(Quaternion(glm::vec3(1.0, 1.0, 0.0), glm::pi<float>() * 1 / 6));
 
-	sphere1.set_shader(shader);
-	sphere2.set_shader(shader);
+	sphere1.set_mat(mat);
+	sphere2.set_mat(mat);
 	//cube1.set_shader(shader);
 
 	root.add_child(&sphere1);
 	root.add_child(&sphere4);
 }
 
-void Game::render(RenderEngine& renderer, Window& window)
+void Game::render(RenderEngine renderer, Window window)
 {
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -60,14 +61,14 @@ void Game::render(RenderEngine& renderer, Window& window)
 	curScreen.y = 5 * float(0 - (Window::Inputs.get_mouse_y()) - Window::Inputs.get_win_size_y() / 2.0f) / float(Window::Inputs.get_win_size_y());
 	glm::vec3 lightPosition = glm::vec3(0.0f, 0.0f, 10.0f);
 	glm::vec3 lightColor = glm::vec3(255.0f, 255.0f, 255.0f);
-	shader.use();
+	mat->mShader.use();
 
 	//shader->setMat4("projection", projection);
 	glm::mat4 view = window.mCamera.get_view_projection();
-	shader.set_mat4("vp", view);
-	shader.set_vec3("camPos", *(window.mCamera.get_transform()->get_pos()));
-	shader.set_vec3("lightPos", lightPosition + glm::vec3(curScreen, 0.0));
-	shader.set_vec3("lightColor", lightColor);
+	mat->mShader.set_mat4("T_VP", view);
+	mat->mShader.set_vec3("camPos", *(window.mCamera.get_transform()->get_pos()));
+	mat->mShader.set_vec3("lightPos", lightPosition + glm::vec3(curScreen, 0.0));
+	mat->mShader.set_vec3("lightColor", lightColor);
 
 	renderer.render(root, view);
 	//cube1.render(shader2);

@@ -3,21 +3,12 @@
 unsigned int Cube::vao;
 unsigned int Cube::count;
 
-void Cube::render(const Shader &shader)
+void Cube::render()
 {
 	glm::mat4 model = mTransform->get_model();
-	if (!mShader.is_default())
-	{
-		mShader.use();
-		mShader.set_mat4("model", model);
-		draw();
-	}
-	else
-	{
-		shader.use();
-		shader.set_mat4("model", model);
-		draw();
-	}
+	mMaterial->mShader.use();
+	mMaterial->mShader.set_mat4("T_model", model);
+	draw();
 }
 
 void Cube::draw()

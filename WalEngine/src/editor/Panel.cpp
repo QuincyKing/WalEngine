@@ -1,4 +1,5 @@
 #include "Panel.h"
+#include "../core/Entity.h"
 
 void Panel::make_panel()
 {
@@ -20,7 +21,7 @@ void Panel::show_about()
 		ImGui::End();
 		return;
 	}
-	ImGui::TextWrapped("This is a Game Engine named Walnut. This is not a business project, just a learning project. I hope to strengthen my knowledge through this project.");
+	ImGui::TextWrapped("This is a Game Engine named WalEngine. This is not a business project, just a learning project. I hope to strengthen my knowledge through this project.");
 	ImGui::End();
 }
 

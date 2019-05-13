@@ -1,14 +1,14 @@
 #pragma once
 
-#include <vector>
-#include "Transform.h"
-//#include "Component.h"
-//#include "../render/RenderEngine.h"
-#include "../render/Shader.h"
-#include "../render/Camera.h"
 #include <memory>
 #include <iostream>
 #include <string>
+#include <vector>
+
+#include "Transform.h"
+#include "Component.h"
+#include "../render/Camera.h"
+#include "../render/Material.h"
 
 class RenderEngine;
 
@@ -26,6 +26,7 @@ public:
 			mIndex = mCount;
 			mRoot.push_back(this);
 			mTransform = std::make_shared<Transform>(pos, rot, scale);
+			mMaterial = std::make_shared<Material>("default");
 		}
 
 	Entity(const Entity &entity)
@@ -41,12 +42,12 @@ public:
 	virtual ~Entity() {};
 
 	void add_child(Entity *child);
-
-	virtual void render(const Shader &shader) {};
-
-	void set_shader(Shader shader) { mShader = shader; }
-
-	void render_all(const Shader& shader, const RenderEngine& renderingEngine, const Camera& camera);
+	virtual void render() {};
+	void render_all(const Camera& camera);
+	void set_mat(std::shared_ptr<Material> mat) 
+	{ 
+		mMaterial = mat; 
+	};
 
 	//std::shared_ptr<Entity> add_component(std::shared_ptr<Component> component);
 
@@ -63,12 +64,12 @@ public:
 	static int							mCount;
 
 protected:
-	Shader								mShader;
+	std::shared_ptr<Material>			mMaterial;
 	//Entity*								mParent;
-	//std::vector<std::shared_ptr<Component> >    mComponents;
+	//std::vector<Component *>				mComponents;
 	//void render(const Shader& shader, const Renderer& renderingEngine, const Camera& camera) const;
 	//void update(float delta);
 
-//protected:
+	//protected:
 
 };

@@ -1,6 +1,8 @@
 #include "Hierarchy.h"
 #include <cstdio>
 
+#include "../core/Entity.h" 
+
 int Hierarchy::selected = -1;
 
 void Hierarchy::show_hierarchy(std::vector<Entity*> root)
