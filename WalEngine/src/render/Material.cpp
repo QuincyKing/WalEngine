@@ -12,10 +12,8 @@ Material::Material(const std::string& materialName) :
 		std::map<std::string, MaterialData*>::const_iterator it = Material::ResourceMap.find(materialName);
 		if (it == ResourceMap.end())
 		{
-			std::cout << "fsdfs" << std::endl;
 			mMateriaData = new MaterialData();
 			ResourceMap[mMaterialName] = mMateriaData;
-			//mShader.set_shader("default.vert", "default.frag");
 		}
 		else
 		{
@@ -36,9 +34,9 @@ Material::~Material()
 {
 	if (mMateriaData && mMateriaData->remove_reference())
 	{
-		if (mMaterialName.length() > 0)
+		if (mMaterialName.length() > 0 && !ResourceMap.empty())
 		{
-			ResourceMap.erase(mMaterialName);
+			Material::ResourceMap.erase(mMaterialName);
 		}
 
 		delete mMateriaData;

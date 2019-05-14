@@ -50,7 +50,7 @@ void Game::init()
 	root.add_child(&sphere4);
 }
 
-void Game::render(RenderEngine renderer, Window window)
+void Game::render(RenderEngine &renderer, Window &window)
 {
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -70,7 +70,7 @@ void Game::render(RenderEngine renderer, Window window)
 	mat->mShader.set_vec3("lightPos", lightPosition + glm::vec3(curScreen, 0.0));
 	mat->mShader.set_vec3("lightColor", lightColor);
 
-	renderer.render(root, view);
+	renderer.render(root);
 	//cube1.render(shader2);
 	//model.draw(shader);
 }
