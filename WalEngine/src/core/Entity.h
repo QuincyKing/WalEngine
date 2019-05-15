@@ -62,9 +62,9 @@ public:
 	static std::vector<Entity*>			mRoot;
 	int									mIndex;
 	static int							mCount;
+	std::shared_ptr<Material>			mMaterial;
 
 protected:
-	std::shared_ptr<Material>			mMaterial;
 	//Entity*								mParent;
 	//std::vector<Component *>				mComponents;
 	//void render(const Shader& shader, const Renderer& renderingEngine, const Camera& camera) const;

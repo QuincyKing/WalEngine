@@ -70,6 +70,8 @@ void Game::render(RenderEngine &renderer, Window &window)
 	mat->mShader.set_vec3("lightPos", lightPosition + glm::vec3(curScreen, 0.0));
 	mat->mShader.set_vec3("lightColor", lightColor);
 
+	cube1.mMaterial->mShader.use();
+	cube1.mMaterial->mShader.set_mat4("T_VP", view);
 	renderer.render(root);
 	//cube1.render(shader2);
 	//model.draw(shader);
