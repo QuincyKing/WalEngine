@@ -12,7 +12,7 @@ uniform sampler2D metallicMap;
 uniform sampler2D roughnessMap;
 //uniform sampler2D aoMap;
 
-uniform vec3 camPos;
+uniform vec3 C_CamPos;
 
 out vec4 FragColor;
 

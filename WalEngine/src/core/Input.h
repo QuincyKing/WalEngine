@@ -182,17 +182,17 @@ public:
 	inline int& get_win_size_x()				  { return mWinsize.x; }
 	inline int& get_win_size_y()				  { return mWinsize.y; }
 
-	inline void SetKey(int keyCode, bool value) { mInputs[keyCode] = value; }
-	inline void SetKeyDown(int keyCode, bool value) { mDownKeys[keyCode] = value; }
-	inline void SetKeyUp(int keyCode, bool value) { mUpKeys[keyCode] = value; }
-	inline void SetMouse(int keyCode, bool value) { mMouseInput[keyCode] = value; }
-	inline void SetMouseDown(int keyCode, bool value) { mDownMouse[keyCode] = value; }
-	inline void SetMouseUp(int keyCode, bool value) { mUpMouse[keyCode] = value; }
-	inline void SetMouseX(int value) { mMouseX = value; }
-	inline void SetMouseY(int value) { mMouseY = value; }
-	inline void SetWinSize(int w, int h) { mWinsize.x = w; mWinsize.y = h; }
-	inline void SetOffsetX(float x) { mOffsetX = x; }
-	inline void SetOffsetY(float y) { mOffsetY = y; }
+	inline void set_key(int keyCode, bool value) { mInputs[keyCode] = value; }
+	inline void set_key_down(int keyCode, bool value) { mDownKeys[keyCode] = value; }
+	inline void set_key_up(int keyCode, bool value) { mUpKeys[keyCode] = value; }
+	inline void set_mouse(int keyCode, bool value) { mMouseInput[keyCode] = value; }
+	inline void set_mouse_down(int keyCode, bool value) { mDownMouse[keyCode] = value; }
+	inline void set_mouse_up(int keyCode, bool value) { mUpMouse[keyCode] = value; }
+	inline void set_mouse_x(int value) { mMouseX = value; }
+	inline void set_mouse_y(int value) { mMouseY = value; }
+	inline void set_win_size(int w, int h) { mWinsize.x = w; mWinsize.y = h; }
+	inline void set_offset_x(float x) { mOffsetX = x; }
+	inline void set_offset_y(float y) { mOffsetY = y; }
 
 private:
 	bool mInputs[NUM_KEYS];

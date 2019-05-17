@@ -24,7 +24,7 @@ public:
 	}mProInfo;
 	int multisample;
 	Panel mPanel;
-	Camera mCamera;
+	static Camera MainCamera;
 	static Input Inputs;
 	static float deltaTime;
 	static float lastFrame;

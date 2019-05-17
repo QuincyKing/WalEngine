@@ -4,6 +4,7 @@
 Input Window::Inputs = Input();
 float Window::deltaTime = 0.0f;
 float Window::lastFrame = 0.0f;
+Camera Window::MainCamera = Camera();
 
 Window::Window(unsigned int _Width, unsigned int _Height, unsigned int _posX,
 	unsigned int _posY, int _multisample, std::string _title )
@@ -14,8 +15,7 @@ Window::Window(unsigned int _Width, unsigned int _Height, unsigned int _posX,
 	mPanel.mScreen.x = _Width;
 	mPanel.mScreen.y = _Height;
 	multisample = _multisample;
-	//mCamera = Camera(glm::vec3(0.0f, 0.0f, 10.0f));
-	Inputs.SetWinSize(_Width, _Height);
+	Inputs.set_win_size(_Width, _Height);
 
 	if (!glfwInit())
 	{
@@ -113,7 +113,7 @@ int Window::onrun()
 	Quaternion cameraRot = Quaternion(0, 0, 0, 1.0);
 	glm::vec3  cameraPos = glm::vec3(0.0f, 0.0f, 5.0f);
 	std::shared_ptr<Transform> cameraT = std::make_shared<Transform>(cameraPos, cameraRot);
-	mCamera.set_transform(cameraT);
+	MainCamera.set_transform(cameraT);
 
 	//初始化函数
 	if(mInitFun) mInitFun();
@@ -134,15 +134,15 @@ int Window::onrun()
 		glfwGetCursorPos(mWindow, &x, &y);
 		if (Inputs.get_mouse_y() == -1 && Inputs.get_mouse_x() == -1)
 		{
-			Inputs.SetMouseX(x);
-			Inputs.SetMouseY(y);
+			Inputs.set_mouse_x(x);
+			Inputs.set_mouse_y(y);
 		}
 
-		Inputs.SetOffsetX(x - Inputs.get_mouse_x());
-		Inputs.SetOffsetY(Inputs.get_mouse_y() - y); // reversed since y-coordinates go from bottom to top
+		Inputs.set_offset_x(x - Inputs.get_mouse_x());
+		Inputs.set_offset_y(Inputs.get_mouse_y() - y); // reversed since y-coordinates go from bottom to top
 
-		Inputs.SetMouseX(x);
-		Inputs.SetMouseY(y);
+		Inputs.set_mouse_x(x);
+		Inputs.set_mouse_y(y);
 
 		glm::mat4 projection = glm::perspective
 		(
@@ -152,7 +152,7 @@ int Window::onrun()
 			Camera::mNear,
 			Camera::mFar
 		);
-		mCamera.set_projection(projection);
+		MainCamera.set_projection(projection);
 
 		//按键事件
 		if(mKeyFun) mKeyFun();
@@ -192,9 +192,9 @@ int Window::onrun()
 void Window::_scroll(double xoffset, double yoffset)
 {
 	if (yoffset < 0.0)
-		Inputs.SetMouseDown(Input::MOUSE_SCROLL_DOWN, true);
+		Inputs.set_mouse_down(Input::MOUSE_SCROLL_DOWN, true);
 	else if (yoffset > 0.0)
-		Inputs.SetMouseDown(Input::MOUSE_SCROLL_UP, true);
+		Inputs.set_mouse_down(Input::MOUSE_SCROLL_UP, true);
 }
 
 //窗口变化
@@ -217,27 +217,27 @@ void Window::_update()
 {
 	if (Inputs.get_mouse_down(Input::MOUSE_SCROLL_UP))
 	{
-		mCamera.move(glm::vec3(0.0, 0.0, 1.0));
-		Inputs.SetMouseDown(Input::MOUSE_SCROLL_UP, false);
+		MainCamera.move(glm::vec3(0.0, 0.0, 1.0));
+		Inputs.set_mouse_down(Input::MOUSE_SCROLL_UP, false);
 	}
 	if (Inputs.get_mouse_down(Input::MOUSE_SCROLL_DOWN))
 	{
-		mCamera.move(glm::vec3(0.0, 0.0, -1.0));
-		Inputs.SetMouseDown(Input::MOUSE_SCROLL_DOWN, false);
+		MainCamera.move(glm::vec3(0.0, 0.0, -1.0));
+		Inputs.set_mouse_down(Input::MOUSE_SCROLL_DOWN, false);
 	}
 	if (Inputs.get_mouse(Input::MOUSE_BUTTON_MIDDLE))
 	{
 		if(fabs(Inputs.get_offset_x()) + fabs(Inputs.get_offset_y()) > 1.0)
-			mCamera.move(glm::normalize(glm::vec3(Inputs.get_offset_x(), Inputs.get_offset_y(), 0.0)));
+			MainCamera.move(glm::normalize(glm::vec3(Inputs.get_offset_x(), Inputs.get_offset_y(), 0.0)));
 	}
 	//if (Inputs.get_key(Input::KEY_W))
-	//	mCamera.ProcessKeyboard(FORWARD, 0.01f);
+	//	MainCamera.ProcessKeyboard(FORWARD, 0.01f);
 	//if (Inputs.get_key(Input::KEY_S))
-	//	mCamera.ProcessKeyboard(BACKWARD, 0.01f);
+	//	MainCamera.ProcessKeyboard(BACKWARD, 0.01f);
 	//if (Inputs.get_key(Input::KEY_A))
-	//	mCamera.ProcessKeyboard(LEFT, 0.01f);
+	//	MainCamera.ProcessKeyboard(LEFT, 0.01f);
 	//if (Inputs.get_key(Input::KEY_D))
-	//	mCamera.ProcessKeyboard(RIGHT, 0.01f);
+	//	MainCamera.ProcessKeyboard(RIGHT, 0.01f);
 }
 
 //键盘按键
@@ -245,19 +245,19 @@ void Window::_key(int key, int scancode, int action, int mods)
 {
 	for (int i = 0; i < Input::NUM_KEYS; i++)
 	{
-		Inputs.SetKeyDown(i, false);
-		Inputs.SetKeyUp(i, false);
+		Inputs.set_key_down(i, false);
+		Inputs.set_key_up(i, false);
 	}
 
 	if (key != GLFW_KEY_UNKNOWN && action == GLFW_PRESS)
 	{
-		Inputs.SetKey(key, true);
-		Inputs.SetKeyDown(key, true);
+		Inputs.set_key(key, true);
+		Inputs.set_key_down(key, true);
 	}
 	if (key != GLFW_KEY_UNKNOWN && action == GLFW_RELEASE)
 	{
-		Inputs.SetKey(key, false);
-		Inputs.SetKeyUp(key, true);
+		Inputs.set_key(key, false);
+		Inputs.set_key_up(key, true);
 	}
 }
 
@@ -266,18 +266,18 @@ void Window::_mouse(int button, int action, int mods)
 {
 	for (int i = 0; i < Input::NUM_MOUSEBUTTONS; i++)
 	{
-		Inputs.SetMouseDown(i, false);
-		Inputs.SetMouseUp(i, false);
+		Inputs.set_mouse_down(i, false);
+		Inputs.set_mouse_up(i, false);
 	}
 
 	if (action == GLFW_PRESS)
 	{
-		Inputs.SetMouse(button, true);
-		Inputs.SetMouseDown(button, true);
+		Inputs.set_mouse(button, true);
+		Inputs.set_mouse_down(button, true);
 	}
 	if (action == GLFW_RELEASE)
 	{
-		Inputs.SetMouse(button, false);
-		Inputs.SetMouseUp(button, true);
+		Inputs.set_mouse(button, false);
+		Inputs.set_mouse_up(button, true);
 	}
 }
