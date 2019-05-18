@@ -43,5 +43,5 @@ public:
 
 	void init();
 
-	void render(RenderEngine &renderer, Window &window);
+	void render(RenderEngine &renderer);
 };

@@ -14,7 +14,7 @@ void Quad::draw()
 
 void Quad::render()
 {
-	mMaterial->mShader.use();
+	mMaterial->mShader->use();
 	draw();
 }
 

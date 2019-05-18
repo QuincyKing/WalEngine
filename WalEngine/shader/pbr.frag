@@ -12,7 +12,7 @@ uniform sampler2D metallicMap;
 uniform sampler2D roughnessMap;
 //uniform sampler2D aoMap;
 
-uniform vec3 C_CamPos;
+uniform vec3 M_CamPos;
 
 out vec4 FragColor;
 
@@ -74,7 +74,7 @@ void main()
 //   float ao = texture(aoMap, Tex).r;
 
    vec3 N = GetNormalFromMap();
-   vec3 V = normalize(camPos - WorldPos);
+   vec3 V = normalize(M_CamPos - WorldPos);
    vec3 L = normalize(lightPos - WorldPos);
    vec3 H = normalize(V + L);
 

@@ -12,6 +12,24 @@ class MaterialData : public MapVal, public Ref
 {
 };
 
+class DefineData
+{
+public:
+	DefineData()
+	{
+
+	}
+
+	DefineData(MaterialData *md, Shader* s) 
+	{
+		mMateriaData = md;
+		mShader = s;
+	}
+
+	MaterialData* mMateriaData;
+	Shader*		  mShader;
+};
+
 class Material
 {
 public:
@@ -27,15 +45,18 @@ public:
 	inline const glm::vec3& get_vec3(const std::string& name) const { return mMateriaData->get_vec3(name); }
 	inline float get_float(const std::string& name)              const { return mMateriaData->get_float(name); }
 	inline const Texture& get_texture(const std::string& name)   const { return mMateriaData->get_texture(name); }
-	//virtual void update_uniforms(const Transform& transform, const RenderEngine& renderEngine, const Camera& camera) const;
+	void update_uniforms_constant() const;
+	static void update_uniforms_constant_all();
+	void update_uniforms_mutable() const;
+	static void update_uniforms_mutable_all();
 	void operator=(const Material& other) {}
 	void set_shader(const std::string& vsFile, const std::string& fsFile);
 
 public:
-	Shader		  mShader;
+	Shader*		  mShader;
 
 private:
-	static std::map<std::string, MaterialData*> ResourceMap;
+	static std::map<std::string, DefineData> ResourceMap;
 	MaterialData* mMateriaData;
 	std::string   mMaterialName;
 };

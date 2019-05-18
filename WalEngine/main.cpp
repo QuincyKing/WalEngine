@@ -21,7 +21,7 @@ int main()
 	Window window(screen_width, screen_height);
 	RenderEngine renderer(window);
 	game = std::make_shared<Game>();
-	window.mUpdateFun = [&renderer, &window]() { game->render(renderer, window); };
+	window.mUpdateFun = [&renderer]() { game->render(renderer); };
 	window.mInitFun = []() { game->init(); };
 
 	window.onrun();

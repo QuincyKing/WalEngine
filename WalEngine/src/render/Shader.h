@@ -73,7 +73,7 @@ private:
 	unsigned int mProgram;
 };
 
-class Shader
+class Shader : public Ref
 {
 public:
 	friend class Material;
