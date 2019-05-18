@@ -1,6 +1,8 @@
 #include "RenderEngine.h"
 #include "../core/Entity.h"
 
+std::map<std::string, unsigned int> RenderEngine::SamplerMap;
+
 RenderEngine::RenderEngine(const Window& window)
 	:mWindow(&window)
 {

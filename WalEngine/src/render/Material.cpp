@@ -1,5 +1,6 @@
 #include "material.h"
 #include "../core/Window.h"
+#include "RenderEngine.h"
 #include <iostream>
 #include <cassert>
 
@@ -118,6 +119,7 @@ void Material::update_uniforms_constant_all()
 		Shader* shader = data.mShader;
 		MaterialData* md = data.mMateriaData;
 
+		shader->use();
 		for (unsigned int i = 0; i < shader->mShaderData->get_uniform_names().size(); i++)
 		{
 			std::string uniformName = shader->mShaderData->get_uniform_names()[i];
@@ -150,12 +152,12 @@ void Material::update_uniforms_constant_all()
 							renderEngine.update_uniformstruct(transform, material, *this, uniformName, uniformType);*/
 			}
 			//texture variance
-			//else if (uniformType == "sampler2D")
-			//{
-				//int samplerSlot = renderEngine.get_sampler_slot(uniformName);
-				//get_texture(uniformName).bind(samplerSlot);
-				//mShader.set_int(uniformName, samplerSlot);
-			//}
+			else if (uniformType == "sampler2D")
+			{
+				int samplerSlot = RenderEngine::get_sampler_slot(uniformName);
+				md->get_texture(uniformName).bind(samplerSlot);
+				shader->set_int(uniformName, samplerSlot);
+			}
 			//constant variance
 			else if (uniformName.substr(0, 2) == "C_")
 			{
@@ -177,7 +179,6 @@ void Material::update_uniforms_mutable() const
 		std::string uniformName = mShader->mShaderData->get_uniform_names()[i];
 		std::string uniformType = mShader->mShaderData->get_uniform_types()[i];
 
-		
 	}
 }
 
@@ -202,8 +203,17 @@ void Material::update_uniforms_mutable_all()
 				if (uniformName == "T_VP")
 					shader->set_mat4(uniformName, projectedMatrix);
 			}
-			else if (uniformName == "M_CamPos")
-				shader->set_vec3(uniformName, Window::MainCamera.get_transform()->get_transform_pos());
+			else if (uniformName.substr(0, 2) == "M_")
+			{
+				if(uniformName == "M_CamPos")
+					shader->set_vec3(uniformName, Window::MainCamera.get_transform()->get_transform_pos());
+				else if (uniformType == "vec3")
+					shader->set_vec3(uniformName, md->get_vec3(uniformName));
+				else if (uniformType == "float")
+					shader->set_float(uniformName, md->get_float(uniformName));
+				else
+					throw uniformType + " is not supported by the Material class";
+			}
 		}
 	}
 }

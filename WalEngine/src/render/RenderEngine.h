@@ -16,11 +16,11 @@ public:
 	virtual ~RenderEngine() {}
 
 	void render(Entity& object);
-	inline unsigned int get_sampler_slot(const std::string& samplerName) const { return mSamplerMap.find(samplerName)->second; }
-	inline void set_sampler_slot(const std::string& name, unsigned int value) { mSamplerMap[name] = value; }
+	static unsigned int get_sampler_slot(const std::string& samplerName) { return SamplerMap.find(samplerName)->second; }
+	static void set_sampler_slot(const std::string& name, unsigned int value) { SamplerMap[name] = value; }
 
 private:
 	const Window*                       mWindow;
 	const Camera*                       mMainCamera;
-	std::map<std::string, unsigned int> mSamplerMap;
+	static std::map<std::string, unsigned int> SamplerMap;
 };

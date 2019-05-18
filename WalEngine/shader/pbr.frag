@@ -3,8 +3,8 @@ in vec3 WorldPos;
 in vec2 Tex;
 in vec3 Normal;
 
-uniform vec3 lightPos;
-uniform vec3 lightColor;
+uniform vec3 M_lightPos;
+uniform vec3 M_lightColor;
 
 uniform sampler2D albedoMap;
 uniform sampler2D normalMap;
@@ -75,7 +75,7 @@ void main()
 
    vec3 N = GetNormalFromMap();
    vec3 V = normalize(M_CamPos - WorldPos);
-   vec3 L = normalize(lightPos - WorldPos);
+   vec3 L = normalize(M_lightPos - WorldPos);
    vec3 H = normalize(V + L);
 
    vec3 R0 = vec3(0.04f);
@@ -83,9 +83,9 @@ void main()
 
    vec3 L0 = vec3(0.0f);
 
-   float distance = length(lightPos - WorldPos);
+   float distance = length(M_lightPos - WorldPos);
    float atten = 1.0 / (distance * distance);
-   vec3 radiance = lightColor * atten;
+   vec3 radiance = M_lightColor * atten;
 
    float D = NDFGGX(N, H, roughness);
    float G = GeometrySmith(N, V, L, roughness);

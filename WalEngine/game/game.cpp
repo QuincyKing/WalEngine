@@ -22,18 +22,16 @@ void Game::init()
 
 	mat = std::make_shared<Material>("pbr");
 	mat->set_shader("pbr.vert", "pbr.frag");
-	mat->mShader->use();
 
-	mat->mShader->set_int("albedoMap", 0);
-	mat->mShader->set_int("normalMap", 1);
-	mat->mShader->set_int("metallicMap", 2);
-	mat->mShader->set_int("roughnessMap", 3);
-	//shader.set_int("aoMap", 4);
-	albedo.bind(0);
-	normal.bind(1);
-	metallic.bind(2);
-	roughness.bind(3);
-	//ao.bind(4);
+	mat->set_texture("albedoMap", albedo);
+	mat->set_texture("normalMap", normal);
+	mat->set_texture("metallicMap", metallic);
+	mat->set_texture("roughnessMap", roughness);
+
+	RenderEngine::set_sampler_slot("albedoMap", 0);
+	RenderEngine::set_sampler_slot("normalMap", 1);
+	RenderEngine::set_sampler_slot("metallicMap", 2);
+	RenderEngine::set_sampler_slot("roughnessMap", 3);
 
 	sphere1.mTransform->set_pos(glm::vec3(1.0, 0.0, 0.0));
 	sphere1.add_child(&sphere2);
@@ -63,10 +61,9 @@ void Game::render(RenderEngine &renderer)
 	curScreen.y = 5 * float(0 - (Window::Inputs.get_mouse_y()) - Window::Inputs.get_win_size_y() / 2.0f) / float(Window::Inputs.get_win_size_y());
 	glm::vec3 lightPosition = glm::vec3(0.0f, 0.0f, 10.0f);
 	glm::vec3 lightColor = glm::vec3(255.0f, 255.0f, 255.0f);
-	mat->mShader->use();
 
-	mat->mShader->set_vec3("lightPos", lightPosition + glm::vec3(curScreen, 0.0));
-	mat->mShader->set_vec3("lightColor", lightColor);
+	mat->set_vec3("M_lightPos", lightPosition + glm::vec3(curScreen, 0.0));
+	mat->set_vec3("M_lightColor", lightColor);
 
 	renderer.render(root);
 	//cube1.render(shader2);
