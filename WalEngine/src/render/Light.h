@@ -7,10 +7,9 @@
 class BaseLight
 {
 public:
-	BaseLight(const glm::vec3& color, float intensity, const Shader& shader) :
+	BaseLight(const glm::vec3& color, float intensity) :
 		mColor(color),
-		mIntensity(intensity),
-		mShader(shader)
+		mIntensity(intensity)
 	{}
 		//mShadowInfo(ShadowInfo()) {}
 
@@ -19,7 +18,6 @@ public:
 
 	inline const glm::vec3& get_color()        const { return mColor; }
 	inline const float get_intensity()        const { return mIntensity; }
-	inline const Shader& get_shader()         const { return mShader; }
 	//inline const ShadowInfo& get_shadow_info() const { return mShadowInfo; }
 
 protected:
@@ -28,7 +26,6 @@ protected:
 private:
 	glm::vec3    mColor;
 	float       mIntensity;
-	Shader      mShader;
 	//ShadowInfo  mShadowInfo;
 };
 

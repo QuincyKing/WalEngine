@@ -91,3 +91,16 @@ vec4 CalcPointLight(PointLight pointLight, vec3 normal, vec3 worldPos, float spe
                          
     return color / attenuation;
 }
+
+#ifdef DIRECTION 
+	uniform vec3 C_eyePos;
+	uniform float specularIntensity;
+	uniform float specularPower;
+	uniform DirectionalLight R_directionalLight;
+
+	vec4 CalcLightingEffect(vec3 normal, vec3 worldPos)
+	{
+		return CalcLight(R_directionalLight.base, -R_directionalLight.direction, normal, worldPos,
+						 specularIntensity, specularPower, C_eyePos);
+	}
+#endif

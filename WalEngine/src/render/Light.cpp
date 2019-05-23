@@ -66,7 +66,7 @@
 
 DirectionalLight::DirectionalLight(const glm::vec3& color, float intensity, int shadowMapSizeAsPowerOf2,
 	float shadowArea, float shadowSoftness, float lightBleedReductionAmount, float minVariance) :
-	BaseLight(color, intensity, Shader("direction.vert", "direction.frag")),
+	BaseLight(color, intensity),
 	mHalfShadowArea(shadowArea / 2.0f)
 {
 	/*if (shadowMapSizeAsPowerOf2 != 0)

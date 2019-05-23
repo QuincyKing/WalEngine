@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -123,19 +123,26 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="game\game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\core\Entity.cpp" />
     <ClCompile Include="src\core\Input.cpp" />
-    <ClCompile Include="src\core\Mesh.cpp" />
+    <ClCompile Include="src\core\MapVal.cpp" />
     <ClCompile Include="src\core\Transform.cpp" />
     <ClCompile Include="src\core\Window.cpp" />
     <ClCompile Include="src\editor\Hierarchy.cpp" />
     <ClCompile Include="src\editor\Menu.cpp" />
     <ClCompile Include="src\editor\Panel.cpp" />
     <ClCompile Include="src\model\Cube.cpp" />
+    <ClCompile Include="src\model\Quad.cpp" />
     <ClCompile Include="src\model\Sphere.cpp" />
     <ClCompile Include="src\render\Camera.cpp" />
+    <ClCompile Include="src\render\Light.cpp" />
+    <ClCompile Include="src\render\Material.cpp" />
+    <ClCompile Include="src\render\RenderEngine.cpp" />
+    <ClCompile Include="src\render\Shader.cpp" />
     <ClCompile Include="src\render\Texture.cpp" />
+    <ClCompile Include="src\util\Util.cpp" />
     <ClCompile Include="ThirdParty\include\glad\src\glad.c" />
     <ClCompile Include="ThirdParty\include\imgui\imgui.cpp" />
     <ClCompile Include="ThirdParty\include\imgui\imgui_demo.cpp" />
@@ -145,23 +152,28 @@
     <ClCompile Include="ThirdParty\include\imgui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="game\game.h" />
     <ClInclude Include="src\core\Entity.h" />
     <ClInclude Include="src\core\Input.h" />
-    <ClInclude Include="pbr.h" />
-    <ClInclude Include="src\core\mesh.h" />
-    <ClInclude Include="src\core\Model.h" />
+    <ClInclude Include="src\core\MapVal.h" />
     <ClInclude Include="src\core\Quaternion.h" />
+    <ClInclude Include="src\core\Ref.h" />
     <ClInclude Include="src\core\Transform.h" />
     <ClInclude Include="src\core\Window.h" />
     <ClInclude Include="src\editor\Hierarchy.h" />
     <ClInclude Include="src\editor\Menu.h" />
     <ClInclude Include="src\editor\Panel.h" />
     <ClInclude Include="src\model\Cube.h" />
+    <ClInclude Include="src\model\Quad.h" />
     <ClInclude Include="src\model\Sphere.h" />
     <ClInclude Include="src\render\Camera.h" />
+    <ClInclude Include="src\render\Light.h" />
     <ClInclude Include="src\render\Material.h" />
+    <ClInclude Include="src\render\RenderEngine.h" />
     <ClInclude Include="src\render\Shader.h" />
+    <ClInclude Include="src\render\Shadow.h" />
     <ClInclude Include="src\render\Texture.h" />
+    <ClInclude Include="src\util\Util.h" />
     <ClInclude Include="ThirdParty\include\imgui\imconfig.h" />
     <ClInclude Include="ThirdParty\include\imgui\imgui.h" />
     <ClInclude Include="ThirdParty\include\imgui\imgui_impl_glfw.h" />
@@ -178,6 +190,7 @@
     <None Include="shader\forwardDirectional.vs" />
     <None Include="shader\forwardPoint.fs" />
     <None Include="shader\light.glh" />
+    <None Include="shader\light.inc" />
     <None Include="shader\sampling.glh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
