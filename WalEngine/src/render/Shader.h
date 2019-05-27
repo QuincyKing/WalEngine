@@ -98,8 +98,4 @@ private:
 	std::string mVsName;
 	std::string mFsName;
 	std::string mGeName;
-
-	/*void set_uniform_dirlight(const std::string& uniformName, const DirectionalLight& value) const;
-	void set_uniform_pointlight(const std::string& uniformName, const PointLight& value) const;
-	void set_uniform_spotlight(const std::string& uniformName, const SpotLight& value) const;*/
 };

@@ -447,33 +447,3 @@ void Shader::set_shader(const std::string& vsFile, const std::string& fsFile)
 	}
 }
 
-//void Shader::set_uniform_dirlight(const std::string& uniformName, const DirectionalLight& directionalLight) const
-//{
-//	set_uniformvec3(uniformName + ".direction", directionalLight.GetTransform().GetTransformedRot().GetForward());
-//	set_uniformvec3(uniformName + ".base.color", directionalLight.GetColor());
-//	set_uniformf(uniformName + ".base.intensity", directionalLight.GetIntensity());
-//}
-//
-//void Shader::set_uniform_pointlight(const std::string& uniformName, const PointLight& pointLight) const
-//{
-//	set_uniformvec3(uniformName + ".base.color", pointLight.GetColor());
-//	set_uniformf(uniformName + ".base.intensity", pointLight.GetIntensity());
-//	set_uniformf(uniformName + ".atten.constant", pointLight.GetAttenuation().GetConstant());
-//	set_uniformf(uniformName + ".atten.linear", pointLight.GetAttenuation().GetLinear());
-//	set_uniformf(uniformName + ".atten.exponent", pointLight.GetAttenuation().GetExponent());
-//	set_uniformvec3(uniformName + ".position", pointLight.GetTransform().GetTransformedPos());
-//	set_uniformf(uniformName + ".range", pointLight.GetRange());
-//}
-//
-//void Shader::set_uniform_spotlight(const std::string& uniformName, const SpotLight& spotLight) const
-//{
-//	set_uniformvec3(uniformName + ".pointLight.base.color", spotLight.GetColor());
-//	set_uniformf(uniformName + ".pointLight.base.intensity", spotLight.GetIntensity());
-//	set_uniformf(uniformName + ".pointLight.atten.constant", spotLight.GetAttenuation().GetConstant());
-//	set_uniformf(uniformName + ".pointLight.atten.linear", spotLight.GetAttenuation().GetLinear());
-//	set_uniformf(uniformName + ".pointLight.atten.exponent", spotLight.GetAttenuation().GetExponent());
-//	set_uniformvec3(uniformName + ".pointLight.position", spotLight.GetTransform().GetTransformedPos());
-//	set_uniformf(uniformName + ".pointLight.range", spotLight.GetRange());
-//	set_uniformvec3(uniformName + ".direction", spotLight.GetTransform().GetTransformedRot().GetForward());
-//	set_uniformf(uniformName + ".cutoff", spotLight.GetCutoff());
-//}

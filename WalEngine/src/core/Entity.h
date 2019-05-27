@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <map>
 
 #include "Transform.h"
 #include "Component.h"
@@ -49,7 +50,16 @@ public:
 		mMaterial = mat; 
 	};
 
-	//std::shared_ptr<Entity> add_component(std::shared_ptr<Component> component);
+	virtual bool add_component(ComType type, Component* component);
+
+	template<typename T>
+	T* get_component(ComType type) const
+	{
+		if (mComponents.count(type) > 0)
+			return dynamic_cast<T *>(mComponents.at(type));
+		else
+			return nullptr;
+	};
 
 	//void update_all(float delta);
 
@@ -66,7 +76,7 @@ public:
 
 protected:
 	//Entity*								mParent;
-	//std::vector<Component *>				mComponents;
+	std::map<ComType, Component* >	mComponents;
 	//void render(const Shader& shader, const Renderer& renderingEngine, const Camera& camera) const;
 	//void update(float delta);
 

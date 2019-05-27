@@ -3,6 +3,7 @@
 #include "../core/Window.h"
 #include "../core/MapVal.h"
 #include "Camera.h"
+#include "../model/Light.h"
 #include <memory>
 #include <map>
 
@@ -19,8 +20,12 @@ public:
 	static unsigned int get_sampler_slot(const std::string& samplerName) { return SamplerMap.find(samplerName)->second; }
 	static void set_sampler_slot(const std::string& name, unsigned int value) { SamplerMap[name] = value; }
 
+public:
+	static BaseLight*					ActiveLight;
+
 private:
+	static std::map<std::string, unsigned int> SamplerMap;
 	const Window*                       mWindow;
 	const Camera*                       mMainCamera;
-	static std::map<std::string, unsigned int> SamplerMap;
+	std::vector<BaseLight*>				mLights;
 };

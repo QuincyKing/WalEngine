@@ -1,10 +1,42 @@
 #include "material.h"
 #include "../core/Window.h"
 #include "RenderEngine.h"
+#include "../model/Light.h"
 #include <iostream>
 #include <cassert>
 
 std::map<std::string, DefineData> Material::ResourceMap;
+
+void set_uniform_dirlight(Shader* shader, const std::string& uniformName, const DirectionalLight& directionalLight)
+{
+	shader->set_vec3(uniformName + ".direction", directionalLight.get_transform().get_transform_rot().get_forward());
+	shader->set_vec3(uniformName + ".base.color", directionalLight.get_component<DirectionalLightCom>()->get_color());
+	shader->set_float(uniformName + ".base.intensity", directionalLight.get_component<DirectionalLightCom>()->get_intensity());
+}
+
+void set_uniform_pointlight(Shader* shader, const std::string& uniformName, const PointLight& pointLight)
+{
+	shader->set_vec3(uniformName + ".base.color", pointLight.get_component<PointLightCom>()->get_color());
+	shader->set_float(uniformName + ".base.intensity", pointLight.get_component<PointLightCom>()->get_intensity());
+	shader->set_float(uniformName + ".atten.constant", pointLight.get_component<PointLightCom>()->get_attenuation().get_constant());
+	shader->set_float(uniformName + ".atten.linear", pointLight.get_component<PointLightCom>()->get_attenuation().get_linear());
+	shader->set_float(uniformName + ".atten.exponent", pointLight.get_component<PointLightCom>()->get_attenuation().get_exponent());
+	shader->set_vec3(uniformName + ".position", pointLight.get_transform().get_transform_pos());
+	shader->set_float(uniformName + ".range", pointLight.get_component<PointLightCom>()->get_range());
+}
+
+void set_uniform_spotlight(Shader* shader, const std::string& uniformName, const SpotLight& spotLight)
+{
+	shader->set_vec3(uniformName + ".pointLight.base.color", spotLight.get_component<SpotLightCom>()->get_color());
+	shader->set_float(uniformName + ".pointLight.base.intensity", spotLight.get_component<SpotLightCom>()->get_intensity());
+	shader->set_float(uniformName + ".pointLight.atten.constant", spotLight.get_component<SpotLightCom>()->get_attenuation().get_constant());
+	shader->set_float(uniformName + ".pointLight.atten.linear", spotLight.get_component<SpotLightCom>()->get_attenuation().get_linear());
+	shader->set_float(uniformName + ".pointLight.atten.exponent", spotLight.get_component<SpotLightCom>()->get_attenuation().get_exponent());
+	shader->set_vec3(uniformName + ".pointLight.position", spotLight.get_transform().get_transform_pos());
+	shader->set_float(uniformName + ".pointLight.range", spotLight.get_component<SpotLightCom>()->get_range());
+	shader->set_vec3(uniformName + ".direction", spotLight.get_transform().get_transform_rot().get_forward());
+	shader->set_float(uniformName + ".cutoff", spotLight.get_component<SpotLightCom>()->get_cutoff());
+}
 
 Material::Material(const std::string& materialName) :
 	mMaterialName(materialName)
@@ -58,8 +90,8 @@ void Material::update_uniforms_constant() const
 		std::string uniformType = mShader->mShaderData->get_uniform_types()[i];
 
 		// RenderEngine variance  
-		if (uniformName.substr(0, 2) == "R_")
-		{
+		//if (uniformName.substr(0, 2) == "R_")
+		//{
 			/*std::string unprefixedName = uniformName.substr(2, uniformName.length());
 
 			if (unprefixedName == "lightMatrix")
@@ -82,9 +114,9 @@ void Material::update_uniforms_constant() const
 					set_uniform_spotlight(uniformName, *(const SpotLight*)&renderEngine.GetActiveLight());*/
 					/*else
 						renderEngine.update_uniformstruct(transform, material, *this, uniformName, uniformType);*/
-		}
+		//}
 		//texture variance
-		else if (uniformType == "sampler2D")
+		if (uniformType == "sampler2D")
 		{
 			//int samplerSlot = renderEngine.get_sampler_slot(uniformName);
 			//get_texture(uniformName).bind(samplerSlot);
@@ -125,34 +157,8 @@ void Material::update_uniforms_constant_all()
 			std::string uniformName = shader->mShaderData->get_uniform_names()[i];
 			std::string uniformType = shader->mShaderData->get_uniform_types()[i];
 
-			// RenderEngine variance  
-			if (uniformName.substr(0, 2) == "R_")
-			{
-				/*std::string unprefixedName = uniformName.substr(2, uniformName.length());
-
-				if (unprefixedName == "lightMatrix")
-					set_uniformmat4(uniformName, renderEngine.GetLightMatrix() * worldMatrix);
-				else if (uniformType == "sampler2D")
-				{
-					int samplerSlot = renderEngine.GetSamplerSlot(unprefixedName);
-					renderEngine.GetTexture(unprefixedName).bind(samplerSlot);
-					set_uniformi(uniformName, samplerSlot);
-				}
-				else if (uniformType == "vec3")
-					set_uniformvec3(uniformName, renderEngine.GetVector3f(unprefixedName));
-				else if (uniformType == "float")
-					set_uniformf(uniformName, renderEngine.GetFloat(unprefixedName));*/
-					/*else if (uniformType == "DirectionalLight")
-						set_uniform_dirlight(uniformName, *(const DirectionalLight*)&renderEngine.GetActiveLight());
-					else if (uniformType == "PointLight")
-						set_uniform_pointlight(uniformName, *(const PointLight*)&renderEngine.GetActiveLight());
-					else if (uniformType == "SpotLight")
-						set_uniform_spotlight(uniformName, *(const SpotLight*)&renderEngine.GetActiveLight());*/
-						/*else
-							renderEngine.update_uniformstruct(transform, material, *this, uniformName, uniformType);*/
-			}
 			//texture variance
-			else if (uniformType == "sampler2D")
+			if (uniformType == "sampler2D")
 			{
 				int samplerSlot = RenderEngine::get_sampler_slot(uniformName);
 				md->get_texture(uniformName).bind(samplerSlot);
@@ -213,6 +219,15 @@ void Material::update_uniforms_mutable_all()
 					shader->set_float(uniformName, md->get_float(uniformName));
 				else
 					throw uniformType + " is not supported by the Material class";
+			}
+			else if (uniformName.substr(0, 2) == "R_")
+			{
+				if (uniformType == "DirectionalLight")
+					set_uniform_dirlight(shader, uniformName, *(const DirectionalLight*)&RenderEngine::ActiveLight);
+				else if (uniformType == "PointLight")
+					set_uniform_pointlight(shader, uniformName, *(const PointLight*)&RenderEngine::ActiveLight);
+				else if (uniformType == "SpotLight")
+					set_uniform_spotlight(shader, uniformName, *(const SpotLight*)&RenderEngine::ActiveLight);
 			}
 		}
 	}

@@ -26,12 +26,11 @@ void Entity::render_all(const Camera& camera)
 	}
 }
 
-//std::shared_ptr<Entity> Entity::add_component(std::shared_ptr<Component> component)
-//{
-//	mComponents.push_back(component);
-//	component->set_parent(std::make_shared<Entity>(this));
-//	return std::make_shared<Entity>(this);
-//}
+bool Entity::add_component(ComType type, Component* component)
+{
+	auto ret = mComponents.insert(std::pair<ComType, Component* >(type, component));
+	return ret.second;
+}
 
 //void Entity::render(const Shader& shader, const Renderer& renderingEngine, const Camera& camera) const
 //{
