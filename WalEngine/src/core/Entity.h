@@ -9,7 +9,7 @@
 #include "Transform.h"
 #include "Component.h"
 #include "../render/Camera.h"
-#include "../render/Material.h"
+#include "../component/Material.h"
 
 class RenderEngine;
 

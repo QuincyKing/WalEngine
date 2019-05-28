@@ -3,7 +3,7 @@
 #include "../src/core/Window.h"
 #include "../src/core/Quaternion.h";
 //#include "../src/core/Model.h"
-#include "../src/render/Material.h"
+#include "../src/component/Material.h"
 #include "../src/render/Texture.h"
 #include "../src/model/Sphere.h"
 #include "../src/model/Cube.h"

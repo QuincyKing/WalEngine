@@ -1,7 +1,7 @@
 #include "RenderEngine.h"
 #include "Shader.h"
 #include "../util/Util.h"
-#include "Material.h"
+#include "../component/Material.h"
 #include <cassert>
 
 ///////////////////////////////////////

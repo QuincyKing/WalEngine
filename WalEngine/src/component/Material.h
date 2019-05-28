@@ -2,12 +2,12 @@
 
 #include <map>
 
-#include "Texture.h"
+#include "../render/Texture.h"
 #include "../core/MapVal.h"
 #include "../core/Ref.h"
 #include "../core/Transform.h"
 #include "../core/Component.h"
-#include "Shader.h"
+#include "../render/Shader.h"
 
 class MaterialData : public MapVal, public Ref
 {
