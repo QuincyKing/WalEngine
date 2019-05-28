@@ -26,7 +26,7 @@ public:
 	Cube cube1;
 	Sphere sphere4;
 	Entity root;
-	std::shared_ptr<Material> mat;
+	Material *mat;
 	PointLight dir;
 
 public:

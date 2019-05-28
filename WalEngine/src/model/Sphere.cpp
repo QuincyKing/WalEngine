@@ -16,8 +16,8 @@ void Sphere::draw()
 void Sphere::render()
 {
 	glm::mat4 model = mTransform->get_model();
-	mMaterial->mShader->use();
-	mMaterial->mShader->set_mat4("T_model", model);
+	get_component<Material>(ComType::Mat)->mShader->use();
+	get_component<Material>(ComType::Mat)->mShader->set_mat4("T_model", model);
 	draw();
 }
 

@@ -27,7 +27,8 @@ public:
 			mIndex = mCount;
 			mRoot.push_back(this);
 			mTransform = std::make_shared<Transform>(pos, rot, scale);
-			mMaterial = std::make_shared<Material>("default");
+			//TODO memory leak
+			mComponents[ComType::Mat] = new Material("default");
 		}
 
 	Entity(const Entity &entity)
@@ -45,9 +46,9 @@ public:
 	void add_child(Entity *child);
 	virtual void render() {};
 	void render_all(const Camera& camera);
-	void set_mat(std::shared_ptr<Material> mat) 
+	void set_mat(Material* mat) 
 	{ 
-		mMaterial = mat; 
+		mComponents[ComType::Mat] = mat;
 	};
 
 	virtual bool add_component(ComType type, Component* component);
@@ -72,14 +73,10 @@ public:
 	static std::vector<Entity*>			mRoot;
 	int									mIndex;
 	static int							mCount;
-	std::shared_ptr<Material>			mMaterial;
 
 protected:
 	//Entity*								mParent;
 	std::map<ComType, Component* >	mComponents;
 	//void render(const Shader& shader, const Renderer& renderingEngine, const Camera& camera) const;
 	//void update(float delta);
-
-	//protected:
-
 };

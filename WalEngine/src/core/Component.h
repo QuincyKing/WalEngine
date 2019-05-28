@@ -4,7 +4,8 @@ enum class ComType
 {
 	DirLit,
 	PointLit,
-	SpotLit
+	SpotLit,
+	Mat
 };
 
 class Component

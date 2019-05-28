@@ -3,16 +3,7 @@ in vec3 WorldPos;
 in vec2 Tex;
 in vec3 Normal;
 
-struct PointLight
-{
-	vec3 position;
-	vec3 color;
-	float constant;
-	float intensity;
-    float linear;
-    float exponent;
-    float range;
-};
+#include <light.inc>
 
 layout(location = 3) uniform PointLight R_dir;
 uniform sampler2D albedoMap;

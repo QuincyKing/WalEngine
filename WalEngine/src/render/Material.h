@@ -6,6 +6,7 @@
 #include "../core/MapVal.h"
 #include "../core/Ref.h"
 #include "../core/Transform.h"
+#include "../core/Component.h"
 #include "Shader.h"
 
 class MaterialData : public MapVal, public Ref
@@ -30,7 +31,7 @@ public:
 	Shader*		  mShader;
 };
 
-class Material
+class Material : public Component
 {
 public:
 	Material(const std::string& materialName = "default");

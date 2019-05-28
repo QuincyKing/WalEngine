@@ -20,7 +20,7 @@ void Game::init()
 	roughness.process();
 	ao.process();
 
-	mat = std::make_shared<Material>("pbr");
+	mat = new Material("pbr");
 	mat->set_shader("pbr.vert", "pbr.frag");
 
 	mat->set_texture("albedoMap", albedo);
@@ -61,8 +61,6 @@ void Game::render(RenderEngine &renderer)
 
 	dir.get_component<PointLightCom>()->set_color(lightColor);
 	dir.set_pos(lightPosition + glm::vec3(curScreen, 0.0));
-	//mat->set_vec3("M_lightPos", lightPosition + glm::vec3(curScreen, 0.0));
-	//mat->set_vec3("M_lightColor", lightColor);
 
 	renderer.add_light(dir);
 	renderer.render(root);
