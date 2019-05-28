@@ -167,6 +167,12 @@ Texture::Texture(const std::string& fileName)
 	mFileName = fileName;
 }
 
+Texture::Texture(int width, int height, unsigned char* data, GLenum textureTarget, GLfloat filter, GLenum internalFormat, GLenum format, bool clamp, GLenum attachment)
+{
+	mFileName = "";
+	mTextureData = std::make_shared<TextureData>(textureTarget, width, height, 1, &data, &filter, &internalFormat, &format, clamp, &attachment);
+}
+
 void Texture::process
 (
 	GLenum textureTarget,

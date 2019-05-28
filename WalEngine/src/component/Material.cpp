@@ -161,8 +161,11 @@ void Material::update_uniforms_constant_all()
 			if (uniformType == "sampler2D")
 			{
 				int samplerSlot = RenderEngine::get_sampler_slot(uniformName);
-				md->get_texture(uniformName).bind(samplerSlot);
-				shader->set_int(uniformName, samplerSlot);
+				if (samplerSlot != INVALID_VALUE)
+				{
+					md->get_texture(uniformName).bind(samplerSlot);
+					shader->set_int(uniformName, samplerSlot);
+				}
 			}
 			//constant variance
 			else if (uniformName.substr(0, 2) == "C_")
@@ -188,7 +191,7 @@ void Material::update_uniforms_mutable() const
 	}
 }
 
-void Material::update_uniforms_mutable_all()
+void Material::update_uniforms_mutable_all(RenderEngine* render)
 {
 	for (auto iter = ResourceMap.begin(); iter != ResourceMap.end(); iter++)
 	{
@@ -222,12 +225,18 @@ void Material::update_uniforms_mutable_all()
 			}
 			else if (uniformName.substr(0, 2) == "R_")
 			{
+				std::string varianceName = uniformName.substr(2, uniformName.length());
+
 				if (uniformType == "DirectionalLight")
 					set_uniform_dirlight(shader, uniformName, *dynamic_cast<DirectionalLight *>(RenderEngine::ActiveLight));
 				else if (uniformType == "PointLight")
 					set_uniform_pointlight(shader, uniformName, *dynamic_cast<PointLight *>(RenderEngine::ActiveLight));
 				else if (uniformType == "SpotLight")
 					set_uniform_spotlight(shader, uniformName, *dynamic_cast<SpotLight *>(RenderEngine::ActiveLight));
+				else if (uniformType == "vec3")
+					shader->set_vec3(uniformName, render->get_vec3(varianceName));
+				else if (uniformType == "float")
+					shader->set_float(uniformName, render->get_float(varianceName));
 			}
 		}
 	}

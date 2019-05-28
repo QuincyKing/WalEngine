@@ -31,6 +31,8 @@ public:
 	Shader*		  mShader;
 };
 
+class RenderEngine;
+
 class Material : public Component
 {
 public:
@@ -49,7 +51,7 @@ public:
 	void update_uniforms_constant() const;
 	static void update_uniforms_constant_all();
 	void update_uniforms_mutable() const;
-	static void update_uniforms_mutable_all();
+	static void update_uniforms_mutable_all(RenderEngine* render);
 	void operator=(const Material& other) {}
 	void set_shader(const std::string& vsFile, const std::string& fsFile);
 

@@ -75,8 +75,6 @@ public:
 	static int							mCount;
 
 protected:
-	//Entity*								mParent;
 	std::map<ComType, Component* >	mComponents;
-	//void render(const Shader& shader, const Renderer& renderingEngine, const Camera& camera) const;
 	//void update(float delta);
 };

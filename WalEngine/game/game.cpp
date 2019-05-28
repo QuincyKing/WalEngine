@@ -62,7 +62,8 @@ void Game::render(RenderEngine &renderer)
 	dir.get_component<PointLightCom>()->set_color(lightColor);
 	dir.set_pos(lightPosition + glm::vec3(curScreen, 0.0));
 
-	renderer.add_light(dir);
+	//renderer.add_light(dir);
+	renderer.add_light(dir); 
 	renderer.render(root);
 	//cube1.render(shader2);
 	//model.draw(shader);
