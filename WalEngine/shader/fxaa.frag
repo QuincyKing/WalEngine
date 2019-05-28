@@ -3,7 +3,7 @@ out vec4 FragColor;
 
 in vec2 texCoord0;
 
-uniform sampler2D R_filterTexture;
+uniform sampler2D filterTexture;
 uniform vec3 R_inverseFilterTextureSize;
 uniform float R_fxaaSpanMax;
 uniform float R_fxaaReduceMin;

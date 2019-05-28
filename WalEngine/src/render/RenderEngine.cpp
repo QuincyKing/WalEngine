@@ -6,7 +6,8 @@ std::map<std::string, unsigned int> RenderEngine::SamplerMap;
 BaseLight*  RenderEngine::ActiveLight = NULL;
 
 RenderEngine::RenderEngine(const Window& window)
-	:mWindow(&window)
+	:mWindow(&window),
+	mFxaaFilter("fxaa")
 {
 	set_float("fxaaSpanMax", 8.0f);
 	set_float("fxaaReduceMin", 1.0f / 128.0f);
@@ -67,9 +68,9 @@ void RenderEngine::render(Entity& object)
 
 	get_texture("displayTexture").bind_render_target();
 
-	for (int i = 0; i < mLights.size(); i++)
-	{
-		ActiveLight = mLights[i];
+	//for (int i = 0; i < mLights.size(); i++)
+	//{
+		ActiveLight = mLights[0];
 		Material::update_uniforms_mutable_all(this);
 
 
@@ -81,9 +82,9 @@ void RenderEngine::render(Entity& object)
 		//glDepthMask(GL_TRUE);
 		//glDepthFunc(GL_LESS);
 		//glDisable(GL_BLEND);
-	}
+	//}
 
-	post_processing(mFxaaFilter, get_texture("displayTexture"), 0);
+	//post_processing(mFxaaFilter, get_texture("displayTexture"), 0);
 }
 
 void RenderEngine::post_processing(Material& filter, const Texture& source, const Texture* dest)
@@ -101,6 +102,7 @@ void RenderEngine::post_processing(Material& filter, const Texture& source, cons
 
 	glClear(GL_DEPTH_BUFFER_BIT);
 	filter.mShader->use();
+	filter.update_uniform("filterTexture");
 	//filter.UpdateUniforms(m_planeTransform, m_planeMaterial, *this, m_altCamera);
 	draw();
 

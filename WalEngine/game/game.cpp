@@ -60,7 +60,7 @@ void Game::render(RenderEngine &renderer)
 	glm::vec3 lightColor = glm::vec3(255.0f, 255.0f, 255.0f);
 
 	dir.get_component<PointLightCom>()->set_color(lightColor);
-	dir.set_pos(lightPosition + glm::vec3(curScreen, 0.0));
+	dir.mTransform->set_pos(lightPosition + glm::vec3(curScreen, 0.0));
 
 	//renderer.add_light(dir);
 	renderer.add_light(dir); 

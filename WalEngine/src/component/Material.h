@@ -36,7 +36,7 @@ class RenderEngine;
 class Material : public Component
 {
 public:
-	Material(const std::string& materialName = "default");
+	Material(const std::string& materialName);
 	Material(const Material& other);
 	virtual ~Material();
 
@@ -54,6 +54,7 @@ public:
 	static void update_uniforms_mutable_all(RenderEngine* render);
 	void operator=(const Material& other) {}
 	void set_shader(const std::string& vsFile, const std::string& fsFile);
+	void update_uniform(std::string varianceName);
 
 public:
 	Shader*		  mShader;
