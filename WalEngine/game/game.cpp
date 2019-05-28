@@ -52,9 +52,6 @@ void Game::init()
 
 void Game::render(RenderEngine &renderer)
 {
-	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 	glm::vec2 curScreen;
 
 	curScreen.x = 5 * float((Window::Inputs.get_mouse_x()) - Window::Inputs.get_win_size_x() / 2.0f) / float(Window::Inputs.get_win_size_x());
@@ -62,9 +59,12 @@ void Game::render(RenderEngine &renderer)
 	glm::vec3 lightPosition = glm::vec3(0.0f, 0.0f, 10.0f);
 	glm::vec3 lightColor = glm::vec3(255.0f, 255.0f, 255.0f);
 
-	mat->set_vec3("M_lightPos", lightPosition + glm::vec3(curScreen, 0.0));
-	mat->set_vec3("M_lightColor", lightColor);
+	dir.get_component<PointLightCom>()->set_color(lightColor);
+	dir.set_pos(lightPosition + glm::vec3(curScreen, 0.0));
+	//mat->set_vec3("M_lightPos", lightPosition + glm::vec3(curScreen, 0.0));
+	//mat->set_vec3("M_lightColor", lightColor);
 
+	renderer.add_light(dir);
 	renderer.render(root);
 	//cube1.render(shader2);
 	//model.draw(shader);

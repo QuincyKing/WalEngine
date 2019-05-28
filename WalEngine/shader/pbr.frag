@@ -3,9 +3,18 @@ in vec3 WorldPos;
 in vec2 Tex;
 in vec3 Normal;
 
-uniform vec3 M_lightPos;
-uniform vec3 M_lightColor;
+struct PointLight
+{
+	vec3 position;
+	vec3 color;
+	float constant;
+	float intensity;
+    float linear;
+    float exponent;
+    float range;
+};
 
+layout(location = 3) uniform PointLight R_dir;
 uniform sampler2D albedoMap;
 uniform sampler2D normalMap;
 uniform sampler2D metallicMap;
@@ -75,7 +84,7 @@ void main()
 
    vec3 N = GetNormalFromMap();
    vec3 V = normalize(M_CamPos - WorldPos);
-   vec3 L = normalize(M_lightPos - WorldPos);
+   vec3 L = normalize(R_dir.position - WorldPos);
    vec3 H = normalize(V + L);
 
    vec3 R0 = vec3(0.04f);
@@ -83,9 +92,9 @@ void main()
 
    vec3 L0 = vec3(0.0f);
 
-   float distance = length(M_lightPos - WorldPos);
+   float distance = length(R_dir.position - WorldPos);
    float atten = 1.0 / (distance * distance);
-   vec3 radiance = M_lightColor * atten;
+   vec3 radiance = R_dir.color * atten;
 
    float D = NDFGGX(N, H, roughness);
    float G = GeometrySmith(N, V, L, roughness);

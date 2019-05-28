@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "../model/Light.h"
 #include <memory>
+#include <vector>
 #include <map>
 
 class Entity;
@@ -19,6 +20,7 @@ public:
 	void render(Entity& object);
 	static unsigned int get_sampler_slot(const std::string& samplerName) { return SamplerMap.find(samplerName)->second; }
 	static void set_sampler_slot(const std::string& name, unsigned int value) { SamplerMap[name] = value; }
+	void add_light(BaseLight& light) { mLights.push_back(&light); }
 
 public:
 	static BaseLight*					ActiveLight;

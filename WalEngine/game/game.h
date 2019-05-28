@@ -27,6 +27,7 @@ public:
 	Sphere sphere4;
 	Entity root;
 	std::shared_ptr<Material> mat;
+	PointLight dir;
 
 public:
 	Game() :
@@ -34,7 +35,8 @@ public:
 		sphere2("223333"),
 		cube1("cube"),
 		sphere4("sphere4"),
-		root("root")
+		root("root"),
+		dir("dl")
 	{}
 
 	~Game()

@@ -310,7 +310,7 @@ void ShaderData::add_uniform(const std::string& uniformName, const std::string& 
 
 	unsigned int location = glGetUniformLocation(mProgram, uniformName.c_str());
 
-	assert(location != INVALID_VALUE);
+	//assert();
 
 	mUniformMap.insert(std::pair<std::string, unsigned int>(uniformName, location));
 }
@@ -389,34 +389,26 @@ void Shader::use() const
 
 void Shader::set_int(const std::string& uniformName, int value) const
 {
-	if (mShaderData->get_uniform_map().count(uniformName) > 0)
+	if (mShaderData->get_uniform_map().count(uniformName) > 0 && mShaderData->get_uniform_map().at(uniformName) != INVALID_VALUE)
 		glUniform1i(mShaderData->get_uniform_map().at(uniformName), value);
-	else
-		throw uniformName + "is not existed";
 }
 
 void Shader::set_float(const std::string& uniformName, float value) const
 {
-	if (mShaderData->get_uniform_map().count(uniformName) > 0)
+	if (mShaderData->get_uniform_map().count(uniformName) > 0 && mShaderData->get_uniform_map().at(uniformName) != INVALID_VALUE)
 		glUniform1f(mShaderData->get_uniform_map().at(uniformName), value);
-	else
-		throw uniformName + "is not existed";
 }
 
 void Shader::set_vec3(const std::string& uniformName, const glm::vec3& value) const
 {
-	if (mShaderData->get_uniform_map().count(uniformName) > 0)
+	if (mShaderData->get_uniform_map().count(uniformName) > 0 && mShaderData->get_uniform_map().at(uniformName) != INVALID_VALUE)
 		glUniform3f(mShaderData->get_uniform_map().at(uniformName), value.x, value.y, value.z);
-	else
-		throw uniformName + "is not existed";
 }
 
 void Shader::set_mat4(const std::string& uniformName, const glm::mat4& value) const
 {
-	if (mShaderData->get_uniform_map().count(uniformName) > 0)
+	if (mShaderData->get_uniform_map().count(uniformName) > 0 && mShaderData->get_uniform_map().at(uniformName) != INVALID_VALUE)
 		glUniformMatrix4fv(mShaderData->get_uniform_map().at(uniformName), 1, GL_FALSE, &(value[0][0]));
-	else
-		throw uniformName + "is not existed";
 }
 
 bool Shader::is_default()
