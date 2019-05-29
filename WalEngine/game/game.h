@@ -23,8 +23,6 @@ public:
 	//Model model;
 	Sphere sphere1;
 	Sphere sphere2;
-	Cube cube1;
-	Sphere sphere4;
 	Entity root;
 	Material *mat;
 	PointLight dir;
@@ -33,8 +31,6 @@ public:
 	Game() :
 		sphere1("123455"),
 		sphere2("223333"),
-		cube1("cube"),
-		sphere4("sphere4"),
 		root("root"),
 		dir("dl")
 	{}

@@ -2,11 +2,11 @@
 
 void Game::init()
 {
-	albedo = Texture("pbr/rusted_iron/albedo.png");
-	normal = Texture("pbr/rusted_iron/normal.png");
-	metallic = Texture("pbr/rusted_iron/metallic.png");
-	roughness = Texture("pbr/rusted_iron/roughness.png");
-	ao = Texture("pbr/rusted_iron/ao.png");
+	albedo = Texture("pbr/plastic/albedo.png");
+	normal = Texture("pbr/plastic/normal.png");
+	metallic = Texture("pbr/plastic/metallic.png");
+	roughness = Texture("pbr/plastic/roughness.png");
+	ao = Texture("pbr/plastic/ao.png");
 
 	Sphere::load();
 	Cube::load();
@@ -35,17 +35,13 @@ void Game::init()
 
 	sphere1.mTransform->set_pos(glm::vec3(1.0, 0.0, 0.0));
 	sphere1.add_child(&sphere2);
-	sphere2.add_child(&cube1);
 	sphere2.mTransform->set_pos(glm::vec3(1.0, 1.0, 0.0));
-	cube1.mTransform->set_pos(glm::vec3(-1.0, 0.0, 0.0));
-	cube1.mTransform->set_rot(Quaternion(glm::vec3(1.0, 1.0, 0.0), glm::pi<float>() * 1 / 6));
 
 	sphere1.set_mat(mat);
 	sphere2.set_mat(mat);
 	//cube1.set_shader(shader);
 
 	root.add_child(&sphere1);
-	root.add_child(&sphere4);
 
 	Material::update_uniforms_constant_all();
 }

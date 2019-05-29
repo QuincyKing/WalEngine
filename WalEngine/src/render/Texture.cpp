@@ -95,7 +95,7 @@ void TextureData::init
 
 void TextureData::init_render_targets(GLenum* attachments)
 {
-	if (attachments == 0)
+	if (*attachments == 0)
 		return;
 
 	GLenum drawBuffers[32];      //32 is the max number of bound textures in OpenGL
@@ -107,7 +107,7 @@ void TextureData::init_render_targets(GLenum* attachments)
 		if (attachments[i] == GL_DEPTH_ATTACHMENT)
 		{
 			drawBuffers[i] = GL_NONE;
-			hasDepth = true;
+			//hasDepth = true;
 		}
 		else
 			drawBuffers[i] = attachments[i];
