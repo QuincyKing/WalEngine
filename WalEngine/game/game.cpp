@@ -2,11 +2,11 @@
 
 void Game::init()
 {
-	albedo = Texture("pbr/plastic/albedo.png");
-	normal = Texture("pbr/plastic/normal.png");
-	metallic = Texture("pbr/plastic/metallic.png");
-	roughness = Texture("pbr/plastic/roughness.png");
-	ao = Texture("pbr/plastic/ao.png");
+	albedo = Texture("pbr/rusted_iron/albedo.png");
+	normal = Texture("pbr/rusted_iron/normal.png");
+	metallic = Texture("pbr/rusted_iron/metallic.png");
+	roughness = Texture("pbr/rusted_iron/roughness.png");
+	ao = Texture("pbr/rusted_iron/ao.png");
 
 	Sphere::load();
 	Cube::load();

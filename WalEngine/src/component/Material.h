@@ -54,7 +54,10 @@ public:
 	static void update_uniforms_mutable_all(RenderEngine* render);
 	void operator=(const Material& other) {}
 	void set_shader(const std::string& vsFile, const std::string& fsFile);
-	void update_uniform(std::string varianceName);
+	void update_uniform_sampler(std::string varianceName, int);
+	inline void update_uniform_vec3(std::string varianceName, glm::vec3 &v) { mShader->set_vec3(varianceName, v); };
+	inline void update_uniform_mat4(std::string varianceName, glm::mat4 &m) { mShader->set_mat4(varianceName, m); };
+	inline void update_uniform_float(std::string varianceName, float f) { mShader->set_float(varianceName, f); };
 
 public:
 	Shader*		  mShader;

@@ -6,10 +6,10 @@ in vec3 Normal;
 #include <light.inc>
 
 layout(location = 3) uniform PointLight R_dir;
-uniform sampler2D C_albedoMap;
-uniform sampler2D C_normalMap;
-uniform sampler2D C_metallicMap;
-uniform sampler2D C_roughnessMap;
+uniform sampler2D M_albedoMap;
+uniform sampler2D M_normalMap;
+uniform sampler2D M_metallicMap;
+uniform sampler2D M_roughnessMap;
 //uniform sampler2D aoMap;
 
 uniform vec3 M_CamPos;
@@ -20,7 +20,7 @@ const float PI = 3.14159265359f;
 
 vec3 GetNormalFromMap()
 {
-    vec3 tangentNormal = texture(C_normalMap, Tex).xyz * 2.0 - 1.0;
+    vec3 tangentNormal = texture(M_normalMap, Tex).xyz * 2.0 - 1.0;
 
     vec3 Q1  = dFdx(WorldPos);
     vec3 Q2  = dFdy(WorldPos);
@@ -68,9 +68,9 @@ vec3 FresnelSchlick(vec3 H, vec3 V, vec3 F0)
 
 void main()
 {
-   vec3 albedo = pow(texture(C_albedoMap, Tex).rgb, vec3(2.2));
-   float metallic = texture(C_metallicMap, Tex).r;
-   float roughness = texture(C_roughnessMap, Tex).r;
+   vec3 albedo = pow(texture(M_albedoMap, Tex).rgb, vec3(2.2));
+   float metallic = texture(M_metallicMap, Tex).r;
+   float roughness = texture(M_roughnessMap, Tex).r;
 //   float ao = texture(aoMap, Tex).r;
 
    vec3 N = GetNormalFromMap();

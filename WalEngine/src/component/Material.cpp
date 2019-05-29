@@ -164,16 +164,6 @@ void Material::update_uniforms_constant_all()
 					shader->set_vec3(uniformName, md->get_vec3(uniformName));
 				else if(uniformType == "float")
 					shader->set_float(uniformName, md->get_float(uniformName));
-				else if (uniformType == "sampler2D")
-				{
-					std::string varianceName = uniformName.substr(2, uniformName.length());
-					int samplerSlot = RenderEngine::get_sampler_slot(varianceName);
-					if (samplerSlot != INVALID_VALUE)
-					{
-						md->get_texture(varianceName).bind(samplerSlot);
-						shader->set_int(uniformName, samplerSlot);
-					}
-				}
 				else
 					throw uniformType + " is not supported by the Material class";
 			}
@@ -220,6 +210,16 @@ void Material::update_uniforms_mutable_all(RenderEngine* render)
 					shader->set_vec3(uniformName, md->get_vec3(uniformName));
 				else if (uniformType == "float")
 					shader->set_float(uniformName, md->get_float(uniformName));
+				else if (uniformType == "sampler2D")
+				{
+					std::string varianceName = uniformName.substr(2, uniformName.length());
+					int samplerSlot = RenderEngine::get_sampler_slot(varianceName);
+					if (samplerSlot != INVALID_VALUE)
+					{
+						md->get_texture(varianceName).bind(samplerSlot);
+						shader->set_int(uniformName, samplerSlot);
+					}
+				}
 				else
 					throw uniformType + " is not supported by the Material class";
 			}
@@ -242,9 +242,8 @@ void Material::update_uniforms_mutable_all(RenderEngine* render)
 	}
 }
 
-void Material::update_uniform(std::string varianceName)
+void Material::update_uniform_sampler(std::string varianceName, int samplerSlot)
 {
-	int samplerSlot = RenderEngine::get_sampler_slot(varianceName);
 	if (samplerSlot != INVALID_VALUE)
 	{
 		mMateriaData->get_texture(varianceName).bind(samplerSlot);
