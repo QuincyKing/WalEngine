@@ -2,6 +2,7 @@
 
 #include <glad/glad.h>
 #include <string>
+#include <memory>
 #include <map>
 
 class TextureData
@@ -13,12 +14,13 @@ public:
 		int width, 
 		int height,
 		int numTextures, 
-		unsigned char** data, 
+		void** data, 
 		GLfloat* filters,
 		GLenum* internalFormat, 
 		GLenum* format, 
 		bool clamp, 
-		GLenum* attachments
+		GLenum* attachments,
+		bool ishdr
 	);
 
 	void bind(int textureNum) const;
@@ -35,11 +37,12 @@ private:
 
 	void init
 	(
-		unsigned char** data, 
+		void** data, 
 		GLfloat* filter, 
 		GLenum* internalFormat, 
 		GLenum* format, 
-		bool clamp
+		bool clamp,
+		bool ishdr
 	);
 	void init_render_targets(GLenum* attachments);
 
@@ -56,7 +59,7 @@ class Texture
 {
 public:
 	Texture( const std::string& fileName );
-	Texture( int width = 0, int height = 0, unsigned char* data = 0, GLenum textureTarget = GL_TEXTURE_2D, GLfloat filter = GL_LINEAR_MIPMAP_LINEAR, GLenum internalFormat = GL_RGBA, GLenum format = GL_RGBA, bool clamp = false, GLenum attachment = GL_NONE );
+	Texture( int width = 0, int height = 0, void* data = 0, GLenum textureTarget = GL_TEXTURE_2D, GLfloat filter = GL_LINEAR_MIPMAP_LINEAR, GLenum internalFormat = GL_RGBA, GLenum format = GL_RGBA, bool clamp = false, GLenum attachment = GL_NONE, bool ishdr = false);
 
 	Texture(const Texture& texture);
 	void operator=(Texture texture);
@@ -66,6 +69,7 @@ public:
 	(
 		GLenum textureTarget = GL_TEXTURE_2D,
 		GLfloat filter = GL_LINEAR_MIPMAP_LINEAR,
+		GLenum internalFormat = GL_RGB,
 		bool clamp = true,
 		GLenum attachment = GL_NONE
 	);
@@ -74,13 +78,14 @@ public:
 	(
 		int width,
 		int height,
-		unsigned char* data,
+		void* data,
 		GLenum textureTarget = GL_TEXTURE_2D,
 		GLfloat filter = GL_LINEAR_MIPMAP_LINEAR,
 		GLenum internalFormat = GL_RGBA,
 		GLenum format = GL_RGBA,
 		bool clamp = false,
-		GLenum attachment = GL_NONE
+		GLenum attachment = GL_NONE,
+		bool ishdr = false
 	);
 
 	void bind(unsigned int unit = 0) const;

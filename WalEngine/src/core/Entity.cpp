@@ -17,12 +17,12 @@ void Entity::add_child(Entity* child)
 	}
 }
 
-void Entity::render_all(const Camera& camera)
+void Entity::render_all()
 {
 	render();
 	for (unsigned int i = 0; i < mChildren.size(); i++)
 	{
-		mChildren[i]->render_all(camera);
+		mChildren[i]->render_all();
 	}
 }
 

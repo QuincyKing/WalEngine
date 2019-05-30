@@ -23,15 +23,15 @@ public:
 	//Model model;
 	Sphere sphere1;
 	Sphere sphere2;
-	Entity root;
+	Entity renderRoot;
 	Material *mat;
 	PointLight dir;
 
 public:
 	Game() :
-		sphere1("123455"),
-		sphere2("223333"),
-		root("root"),
+		sphere1("ibl-material-ball"),
+		sphere2("layered-material-ball"),
+		renderRoot("root"),
 		dir("dl")
 	{}
 

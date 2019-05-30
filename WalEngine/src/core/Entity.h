@@ -25,7 +25,7 @@ public:
 			mName = name;
 			mCount++;
 			mIndex = mCount;
-			mRoot.push_back(this);
+			//mRoot.push_back(this);
 			mTransform = std::make_shared<Transform>(pos, rot, scale);
 			//TODO memory leak
 			mComponents[ComType::Mat] = new Material("default");
@@ -45,7 +45,7 @@ public:
 
 	void add_child(Entity *child);
 	virtual void render() {};
-	void render_all(const Camera& camera);
+	void render_all();
 	void set_mat(Material* mat) 
 	{ 
 		mComponents[ComType::Mat] = mat;

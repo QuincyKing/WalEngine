@@ -30,7 +30,14 @@ public:
 private:
 	static std::map<std::string, unsigned int> SamplerMap;
 	const Window*                       mWindow;
-	const Camera*                       mMainCamera;
 	std::vector<BaseLight*>				mLights;
 	Material                            mFxaaFilter;
+	Shader								equirectangularToCubemapShader;
+	Shader								backgroundShader;
+	Shader								irradianceShader;
+	Shader								prefilterShader;
+	Shader								brdfShader;
+	unsigned int irradianceMap;
+	unsigned int prefilterMap;
+	unsigned int brdfLUTTexture;
 };

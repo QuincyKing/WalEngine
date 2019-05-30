@@ -15,12 +15,13 @@ TextureData::TextureData
 	int width, 
 	int height, 
 	int numTextures, 
-	unsigned char** data, 
+	void** data, 
 	GLfloat* filters,
 	GLenum* internalFormat, 
 	GLenum* format,
 	bool clamp, 
-	GLenum* attachments
+	GLenum* attachments,
+	bool ishdr
 )
 {
 	mTextureID = new GLuint[numTextures];
@@ -33,7 +34,7 @@ TextureData::TextureData
 	mFrameBuffer = 0;
 	mRenderBuffer = 0;
 
-	init(data, filters, internalFormat, format, clamp);
+	init(data, filters, internalFormat, format, clamp, ishdr);
 	init_render_targets(attachments);
 }
 
@@ -47,11 +48,12 @@ TextureData::~TextureData()
 
 void TextureData::init
 (
-	unsigned char** data,
+	void** data,
 	GLfloat* filters, 
 	GLenum* internalFormat,
 	GLenum* format, 
-	bool clamp
+	bool clamp,
+	bool ishdr
 )
 {
 	glGenTextures(mNumTexs, mTextureID);
@@ -59,7 +61,10 @@ void TextureData::init
 	{
 		glBindTexture(mTextureTarget, mTextureID[i]);
 
-		glTexImage2D(mTextureTarget, 0, format[i], mWidth, mHeight, 0, format[i], GL_UNSIGNED_BYTE, data[i]);
+		if(ishdr)
+			glTexImage2D(mTextureTarget, 0, internalFormat[i], mWidth, mHeight, 0, format[i], GL_FLOAT, data[i]);
+		else
+			glTexImage2D(mTextureTarget, 0, internalFormat[i], mWidth, mHeight, 0, format[i], GL_UNSIGNED_BYTE, data[i]);
 
 		glTexParameterf(mTextureTarget, GL_TEXTURE_MIN_FILTER, filters[i]);
 		glTexParameterf(mTextureTarget, GL_TEXTURE_MAG_FILTER, filters[i]);
@@ -167,16 +172,17 @@ Texture::Texture(const std::string& fileName)
 	mFileName = fileName;
 }
 
-Texture::Texture(int width, int height, unsigned char* data, GLenum textureTarget, GLfloat filter, GLenum internalFormat, GLenum format, bool clamp, GLenum attachment)
+Texture::Texture(int width, int height, void* data, GLenum textureTarget, GLfloat filter, GLenum internalFormat, GLenum format, bool clamp, GLenum attachment, bool ishdr)
 {
 	mFileName = "";
-	mTextureData = std::make_shared<TextureData>(textureTarget, width, height, 1, &data, &filter, &internalFormat, &format, clamp, &attachment);
+	mTextureData = std::make_shared<TextureData>(textureTarget, width, height, 1, &data, &filter, &internalFormat, &format, clamp, &attachment, ishdr);
 }
 
 void Texture::process
 (
 	GLenum textureTarget,
 	GLfloat filter,
+	GLenum internalFormat, 
 	bool clamp,
 	GLenum attachment
 )
@@ -189,7 +195,15 @@ void Texture::process
 	else
 	{
 		int x, y, bytesPerPixel;
-		unsigned char* data = stbi_load(("../res/textures/" + mFileName).c_str(), &x, &y, &bytesPerPixel, 0);
+		void* data;
+		bool ishdr = false;
+		if (mFileName.substr(mFileName.length() - 4, mFileName.length()) == ".hdr")
+		{
+			data = stbi_loadf(("../res/textures/" + mFileName).c_str(), &x, &y, &bytesPerPixel, 0);
+			ishdr = true;
+		}
+		else 
+			data = stbi_load(("../res/textures/" + mFileName).c_str(), &x, &y, &bytesPerPixel, 0);
 
 		mComponents = bytesPerPixel;
 
@@ -206,7 +220,7 @@ void Texture::process
 		else if (mComponents == 4)
 			format = GL_RGBA;
 
-		mTextureData = std::make_shared<TextureData>(textureTarget, x, y, 1, &data, &filter, &format, &format, clamp, &attachment);
+		mTextureData = std::make_shared<TextureData>(textureTarget, x, y, 1, &data, &filter, &internalFormat, &format, clamp, &attachment, ishdr);
 		stbi_image_free(data);
 
 		sResMap.insert(std::pair<std::string, std::shared_ptr<TextureData> >(mFileName, mTextureData));
@@ -217,16 +231,17 @@ void Texture::process
 (
 	int width,
 	int height,
-	unsigned char* data,
+	void* data,
 	GLenum textureTarget,
 	GLfloat filter,
 	GLenum internalFormat,
 	GLenum format,
 	bool clamp,
-	GLenum attachment
+	GLenum attachment,
+	bool ishdr
 )
 {
-	mTextureData = std::make_shared<TextureData>(textureTarget, width, height, 1, &data, &filter, &internalFormat, &format, clamp, &attachment);
+	mTextureData = std::make_shared<TextureData>(textureTarget, width, height, 1, &data, &filter, &internalFormat, &format, clamp, &attachment, ishdr);
 }
 
 Texture::Texture(const Texture& texture) :
