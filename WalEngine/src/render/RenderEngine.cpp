@@ -1,6 +1,7 @@
 #include "RenderEngine.h"
 #include "../core/Entity.h"
 #include "../model/Cube.h"
+#include "FrameBuffer.h"
 #include <stb_image/stb_image.h>
 
 std::map<std::string, unsigned int> RenderEngine::SamplerMap;
@@ -71,16 +72,8 @@ void RenderEngine::skybox()
 	backgroundShader.use();
 	backgroundShader.set_int("environmentMap", 0);
 
-	unsigned int captureFBO;
-	unsigned int captureRBO;
-	glGenFramebuffers(1, &captureFBO);
-	glGenRenderbuffers(1, &captureRBO);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-	glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
-
+	FrameBuffer capture(512, 512);
+	
 	stbi_set_flip_vertically_on_load(true);
 	Texture hdr("hdr/uffizi.hdr");
 	hdr.process(GL_TEXTURE_2D, GL_LINEAR_MIPMAP_LINEAR, GL_RGB16F);
@@ -106,24 +99,20 @@ void RenderEngine::skybox()
 	equirectangularToCubemapShader.set_mat4("projection", captureProjection);
 	hdr.bind(0);
 
-	glViewport(0, 0, 512, 512); // don't forget to configure the viewport to the capture dimensions.
-	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+	capture.bind_render_target();
 	for (unsigned int i = 0; i < 6; ++i)
 	{
 		equirectangularToCubemapShader.set_mat4("view", captureViews[i]);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, envCubemap.get_ID()[0], 0);
+		capture.bind_texture(GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, envCubemap.get_ID()[0]);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		//renderCube();
 		box.draw();
 	}
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	FrameBuffer::bind_render_targer_reset();
 
 	irradianceMap = Texture(32, 32, 0, GL_TEXTURE_CUBE_MAP, GL_LINEAR, GL_RGB16F, GL_RGB, true);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-	glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 32, 32);
+	
+	capture.change_render_buffer_storage(32, 32);
 
 	// pbr: solve diffuse integral by convolution to create an irradiance (cube)map.
 	// -----------------------------------------------------------------------------
@@ -133,16 +122,16 @@ void RenderEngine::skybox()
 	envCubemap.bind(0);
 
 	glViewport(0, 0, 32, 32); // don't forget to configure the viewport to the capture dimensions.
-	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+	capture.bind();
 	for (unsigned int i = 0; i < 6; ++i)
 	{
 		irradianceShader.set_mat4("view", captureViews[i]);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, irradianceMap.get_ID()[0], 0);
+		capture.bind_texture(GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, irradianceMap.get_ID()[0]);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		box.draw();
 	}
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	FrameBuffer::bind_render_targer_reset();
 
 	prefilterMap = Texture(128, 128, 0, GL_TEXTURE_CUBE_MAP, GL_LINEAR_MIPMAP_LINEAR, GL_RGB16F, GL_RGB, true);
 
@@ -153,15 +142,14 @@ void RenderEngine::skybox()
 	prefilterShader.set_mat4("projection", captureProjection);
 	envCubemap.bind(0);
 
-	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+	capture.bind();
 	unsigned int maxMipLevels = 5;
 	for (unsigned int mip = 0; mip < maxMipLevels; ++mip)
 	{
 		// reisze framebuffer according to mip-level size.
 		unsigned int mipWidth = 128 * std::pow(0.5, mip);
 		unsigned int mipHeight = 128 * std::pow(0.5, mip);
-		glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipWidth, mipHeight);
+		capture.change_render_buffer_storage(mipWidth, mipHeight);
 		glViewport(0, 0, mipWidth, mipHeight);
 
 		float roughness = (float)mip / (float)(maxMipLevels - 1);
@@ -169,28 +157,24 @@ void RenderEngine::skybox()
 		for (unsigned int i = 0; i < 6; ++i)
 		{
 			prefilterShader.set_mat4("view", captureViews[i]);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterMap.get_ID()[0], mip);
-
+			capture.bind_texture(GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterMap.get_ID()[0], mip);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			box.draw();
 		}
 	}
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	FrameBuffer::bind_render_targer_reset();
 
 	brdfLUTTexture = Texture(512, 512, 0, GL_TEXTURE_2D, GL_LINEAR, GL_RG16F, GL_RG, true);
 
-	// then re-configure capture framebuffer object and render screen-space quad with BRDF shader.
-	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-	glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, brdfLUTTexture.get_ID()[0], 0);
+	capture.change_render_buffer_storage(512, 512);
+	capture.bind_texture(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, brdfLUTTexture.get_ID()[0]);
 
 	glViewport(0, 0, 512, 512);
 	brdfShader.use();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	draw_quad();
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	FrameBuffer::bind_render_targer_reset();
 
 	glm::mat4 pro = glm::mat4(1);
 	backgroundShader.use();

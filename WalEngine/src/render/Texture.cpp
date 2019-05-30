@@ -67,8 +67,6 @@ void TextureData::init
 			glTexImage2D(mTextureTarget, 0, internalFormat[i], mWidth, mHeight, 0, format[i], GL_UNSIGNED_BYTE, data[i]);
 		else if (type == TexType::CUBEMAP)
 		{
-			if (format[0] == GL_RGB)
-				std::cout << "fdfdfdfd" << std::endl;
 			for (unsigned int j = 0; j < 6; ++j)
 			{
 				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + j, 0, internalFormat[i], mWidth, mHeight, 0, format[i], GL_FLOAT, data[i]);
