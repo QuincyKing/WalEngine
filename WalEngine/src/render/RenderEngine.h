@@ -4,6 +4,7 @@
 #include "../core/MapVal.h"
 #include "Camera.h"
 #include "../model/Light.h"
+#include "../model/Cube.h"
 #include <memory>
 #include <vector>
 #include <map>
@@ -37,7 +38,9 @@ private:
 	Shader								irradianceShader;
 	Shader								prefilterShader;
 	Shader								brdfShader;
-	unsigned int irradianceMap;
-	unsigned int prefilterMap;
-	unsigned int brdfLUTTexture;
+	Texture								envCubemap;
+	Texture								irradianceMap;
+	Texture								prefilterMap;
+	Texture								brdfLUTTexture;
+	Cube								box;
 };

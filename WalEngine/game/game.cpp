@@ -8,9 +8,6 @@ void Game::init()
 	roughness = Texture("pbr/gold/roughness.png");
 	ao = Texture("pbr/gold/ao.png");
 
-	Sphere::load();
-	Cube::load();
-
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
 

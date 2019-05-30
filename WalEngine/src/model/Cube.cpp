@@ -13,16 +13,6 @@ void Cube::render()
 
 void Cube::draw()
 {
-	if (vao != 0)
-	{
-		glBindVertexArray(vao);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		glBindVertexArray(0);
-	}
-}
-
-void Cube::load()
-{
 	if (vao == 0)
 	{
 		unsigned int cubeVBO = 0;
@@ -68,7 +58,7 @@ void Cube::load()
 			1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
 			1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
 			-1.0f, 1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-			-1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,         
+			-1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
 		};
 		glGenVertexArrays(1, &vao);
 		glGenBuffers(1, &cubeVBO);
@@ -84,4 +74,7 @@ void Cube::load()
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 	}
+	glBindVertexArray(vao);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
 }

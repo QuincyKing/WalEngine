@@ -15,7 +15,6 @@ public:
 	}
 
 	void render();
-	static void load();
 	void draw();
 
 private:

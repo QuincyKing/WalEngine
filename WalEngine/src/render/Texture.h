@@ -5,6 +5,13 @@
 #include <memory>
 #include <map>
 
+enum class TexType
+{
+	Normal,
+	HDR,
+	CUBEMAP
+};
+
 class TextureData
 {
 public:
@@ -20,7 +27,7 @@ public:
 		GLenum* format, 
 		bool clamp, 
 		GLenum* attachments,
-		bool ishdr
+		TexType type
 	);
 
 	void bind(int textureNum) const;
@@ -28,6 +35,7 @@ public:
 
 	inline int get_width()  const { return mWidth; }
 	inline int get_height() const { return mHeight; }
+	inline GLuint* get_ID() const { return mTextureID; }
 
 	virtual ~TextureData();
 
@@ -42,7 +50,7 @@ private:
 		GLenum* internalFormat, 
 		GLenum* format, 
 		bool clamp,
-		bool ishdr
+		TexType type
 	);
 	void init_render_targets(GLenum* attachments);
 
@@ -59,7 +67,7 @@ class Texture
 {
 public:
 	Texture( const std::string& fileName );
-	Texture( int width = 0, int height = 0, void* data = 0, GLenum textureTarget = GL_TEXTURE_2D, GLfloat filter = GL_LINEAR_MIPMAP_LINEAR, GLenum internalFormat = GL_RGBA, GLenum format = GL_RGBA, bool clamp = false, GLenum attachment = GL_NONE, bool ishdr = false);
+	Texture(int width = 0, int height = 0, void* data = 0, GLenum textureTarget = GL_TEXTURE_2D, GLfloat filter = GL_LINEAR_MIPMAP_LINEAR, GLenum internalFormat = GL_RGBA, GLenum format = GL_RGBA, bool clamp = false, GLenum attachment = GL_NONE);
 
 	Texture(const Texture& texture);
 	void operator=(Texture texture);
@@ -84,8 +92,7 @@ public:
 		GLenum internalFormat = GL_RGBA,
 		GLenum format = GL_RGBA,
 		bool clamp = false,
-		GLenum attachment = GL_NONE,
-		bool ishdr = false
+		GLenum attachment = GL_NONE
 	);
 
 	void bind(unsigned int unit = 0) const;
@@ -93,7 +100,7 @@ public:
 
 	inline int get_width()  const { return mTextureData->get_width(); }
 	inline int get_height() const { return mTextureData->get_height(); }
-
+	GLuint* get_ID() const { return mTextureData->get_ID(); }
 	bool operator==(const Texture& texture) const { return mTextureData == texture.mTextureData; }
 	bool operator!=(const Texture& texture) const { return !operator==(texture); }
 

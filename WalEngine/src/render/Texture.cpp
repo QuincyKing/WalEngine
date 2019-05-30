@@ -21,7 +21,7 @@ TextureData::TextureData
 	GLenum* format,
 	bool clamp, 
 	GLenum* attachments,
-	bool ishdr
+	TexType type
 )
 {
 	mTextureID = new GLuint[numTextures];
@@ -34,7 +34,7 @@ TextureData::TextureData
 	mFrameBuffer = 0;
 	mRenderBuffer = 0;
 
-	init(data, filters, internalFormat, format, clamp, ishdr);
+	init(data, filters, internalFormat, format, clamp, type);
 	init_render_targets(attachments);
 }
 
@@ -53,7 +53,7 @@ void TextureData::init
 	GLenum* internalFormat,
 	GLenum* format, 
 	bool clamp,
-	bool ishdr
+	TexType type
 )
 {
 	glGenTextures(mNumTexs, mTextureID);
@@ -61,10 +61,19 @@ void TextureData::init
 	{
 		glBindTexture(mTextureTarget, mTextureID[i]);
 
-		if(ishdr)
+		if (type == TexType::HDR)
 			glTexImage2D(mTextureTarget, 0, internalFormat[i], mWidth, mHeight, 0, format[i], GL_FLOAT, data[i]);
-		else
+		else if (type == TexType::Normal)
 			glTexImage2D(mTextureTarget, 0, internalFormat[i], mWidth, mHeight, 0, format[i], GL_UNSIGNED_BYTE, data[i]);
+		else if (type == TexType::CUBEMAP)
+		{
+			if (format[0] == GL_RGB)
+				std::cout << "fdfdfdfd" << std::endl;
+			for (unsigned int j = 0; j < 6; ++j)
+			{
+				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + j, 0, internalFormat[i], mWidth, mHeight, 0, format[i], GL_FLOAT, data[i]);
+			}
+		}
 
 		glTexParameterf(mTextureTarget, GL_TEXTURE_MIN_FILTER, filters[i]);
 		glTexParameterf(mTextureTarget, GL_TEXTURE_MAG_FILTER, filters[i]);
@@ -73,11 +82,15 @@ void TextureData::init
 		{
 			glTexParameterf(mTextureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 			glTexParameterf(mTextureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			if (type == TexType::CUBEMAP)
+				glTexParameterf(mTextureTarget, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 		}
 		else
 		{
 			glTexParameteri(mTextureTarget, GL_TEXTURE_WRAP_S, GL_REPEAT);
 			glTexParameteri(mTextureTarget, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			if (type == TexType::CUBEMAP)
+				glTexParameterf(mTextureTarget, GL_TEXTURE_WRAP_R, GL_REPEAT);
 		}
 
 		if (filters[i] == GL_NEAREST_MIPMAP_NEAREST ||
@@ -96,6 +109,7 @@ void TextureData::init
 			glTexParameteri(mTextureTarget, GL_TEXTURE_MAX_LEVEL, 0);
 		}
 	}
+
 }
 
 void TextureData::init_render_targets(GLenum* attachments)
@@ -172,10 +186,13 @@ Texture::Texture(const std::string& fileName)
 	mFileName = fileName;
 }
 
-Texture::Texture(int width, int height, void* data, GLenum textureTarget, GLfloat filter, GLenum internalFormat, GLenum format, bool clamp, GLenum attachment, bool ishdr)
+Texture::Texture(int width, int height, void* data, GLenum textureTarget, GLfloat filter, GLenum internalFormat, GLenum format, bool clamp, GLenum attachment)
 {
 	mFileName = "";
-	mTextureData = std::make_shared<TextureData>(textureTarget, width, height, 1, &data, &filter, &internalFormat, &format, clamp, &attachment, ishdr);
+	TexType type = TexType::Normal;
+	if(textureTarget == GL_TEXTURE_CUBE_MAP)
+		type = TexType::CUBEMAP;
+	mTextureData = std::make_shared<TextureData>(textureTarget, width, height, 1, &data, &filter, &internalFormat, &format, clamp, &attachment, type);
 }
 
 void Texture::process
@@ -194,13 +211,16 @@ void Texture::process
 	}
 	else
 	{
+		
 		int x, y, bytesPerPixel;
 		void* data;
-		bool ishdr = false;
+		TexType type = TexType::Normal;
+		if (textureTarget == GL_TEXTURE_CUBE_MAP)
+			type = TexType::CUBEMAP;
 		if (mFileName.substr(mFileName.length() - 4, mFileName.length()) == ".hdr")
 		{
 			data = stbi_loadf(("../res/textures/" + mFileName).c_str(), &x, &y, &bytesPerPixel, 0);
-			ishdr = true;
+			type = TexType::HDR;
 		}
 		else 
 			data = stbi_load(("../res/textures/" + mFileName).c_str(), &x, &y, &bytesPerPixel, 0);
@@ -220,7 +240,7 @@ void Texture::process
 		else if (mComponents == 4)
 			format = GL_RGBA;
 
-		mTextureData = std::make_shared<TextureData>(textureTarget, x, y, 1, &data, &filter, &internalFormat, &format, clamp, &attachment, ishdr);
+		mTextureData = std::make_shared<TextureData>(textureTarget, x, y, 1, &data, &filter, &internalFormat, &format, clamp, &attachment, type);
 		stbi_image_free(data);
 
 		sResMap.insert(std::pair<std::string, std::shared_ptr<TextureData> >(mFileName, mTextureData));
@@ -237,11 +257,13 @@ void Texture::process
 	GLenum internalFormat,
 	GLenum format,
 	bool clamp,
-	GLenum attachment,
-	bool ishdr
+	GLenum attachment
 )
 {
-	mTextureData = std::make_shared<TextureData>(textureTarget, width, height, 1, &data, &filter, &internalFormat, &format, clamp, &attachment, ishdr);
+	TexType type = TexType::Normal;
+	if (textureTarget == GL_TEXTURE_CUBE_MAP)
+		type = TexType::CUBEMAP;
+	mTextureData = std::make_shared<TextureData>(textureTarget, width, height, 1, &data, &filter, &internalFormat, &format, clamp, &attachment, type);
 }
 
 Texture::Texture(const Texture& texture) :

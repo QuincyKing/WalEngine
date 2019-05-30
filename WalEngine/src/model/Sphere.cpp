@@ -5,24 +5,6 @@ unsigned int Sphere::count = 0;
 
 void Sphere::draw()
 {
-	if (vao != 0)
-	{
-		glBindVertexArray(vao);
-		glDrawElements(GL_TRIANGLE_STRIP, count, GL_UNSIGNED_INT, 0);
-		glBindVertexArray(0);
-	}
-}
-
-void Sphere::render()
-{
-	glm::mat4 model = mTransform->get_model();
-	get_component<Material>(ComType::Mat)->mShader->use();
-	get_component<Material>(ComType::Mat)->mShader->set_mat4("T_model", model);
-	draw();
-}
-
-void Sphere::load()
-{
 	if (vao == 0)
 	{
 		glGenVertexArrays(1, &vao);
@@ -109,4 +91,15 @@ void Sphere::load()
 		glEnableVertexAttribArray(2);
 		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, stride, (void*)(5 * sizeof(float)));
 	}
+	glBindVertexArray(vao);
+	glDrawElements(GL_TRIANGLE_STRIP, count, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
+}
+
+void Sphere::render()
+{
+	glm::mat4 model = mTransform->get_model();
+	get_component<Material>(ComType::Mat)->mShader->use();
+	get_component<Material>(ComType::Mat)->mShader->set_mat4("T_model", model);
+	draw();
 }
