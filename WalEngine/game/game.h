@@ -25,6 +25,7 @@ public:
 	Sphere sphere2;
 	Entity renderRoot;
 	Material *mat;
+	Material *mat_layered;
 	PointLight dir;
 
 public:
