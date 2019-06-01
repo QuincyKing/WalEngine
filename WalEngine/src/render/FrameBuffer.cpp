@@ -1,6 +1,12 @@
 #include "FrameBuffer.h"
 #include <cassert>
 
+FrameBuffer::~FrameBuffer()
+{
+	if (mFrameBuffer) glDeleteFramebuffers(1, &mFrameBuffer);
+	if (mRenderBuffer) glDeleteRenderbuffers(1, &mRenderBuffer);
+}
+
 void FrameBuffer::bind_render_target() const
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, mFrameBuffer);
@@ -104,7 +110,7 @@ void FrameBuffer::change_render_buffer_storage(int width, int height)
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
 }
 
-void FrameBuffer::bind_texture(GLenum attachment, GLenum textureTarget, GLuint mTextureID, unsigned int mip)
+void FrameBuffer::bind_texture(GLuint mTextureID, GLenum attachment, GLenum textureTarget, unsigned int mip)
 {
 	glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, textureTarget, mTextureID, mip);
 }

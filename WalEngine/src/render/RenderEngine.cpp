@@ -1,7 +1,6 @@
 #include "RenderEngine.h"
 #include "../core/Entity.h"
 #include "../model/Cube.h"
-#include "FrameBuffer.h"
 #include <stb_image/stb_image.h>
 
 std::map<std::string, unsigned int> RenderEngine::SamplerMap;
@@ -17,7 +16,8 @@ RenderEngine::RenderEngine(const Window& window)
 	irradianceShader("cubemap.vert", "irradiance_convolution.frag"),
 	prefilterShader("cubemap.vert", "prefilter.frag"),
 	brdfShader("brdf.vert", "brdf.frag"),
-	box("box")
+	box("box"),
+	displayFrame(Window::Inputs.get_win_size_x(), Window::Inputs.get_win_size_y())
 {
 	set_float("fxaaSpanMax", 8.0f);
 	set_float("fxaaReduceMin", 1.0f / 128.0f);
@@ -25,7 +25,8 @@ RenderEngine::RenderEngine(const Window& window)
 	set_float("fxaaAspectDistortion", 150.0f);
 
 	set_sampler_slot("screenTexture", 0);
-	set_texture("displayTexture", Texture(Window::Inputs.get_win_size_x(), Window::Inputs.get_win_size_y(), 0, GL_TEXTURE_2D, GL_LINEAR, GL_RGBA, GL_RGBA, true, GL_COLOR_ATTACHMENT0));
+	set_texture("displayTexture", Texture(Window::Inputs.get_win_size_x(), Window::Inputs.get_win_size_y(), 0, GL_TEXTURE_2D, GL_LINEAR, GL_RGBA, GL_RGBA, true));
+
 
 	mFxaaFilter.set_shader("fxaa.vert", "fxaa.frag");
 	mFxaaFilter.mShader->set_int("screenTexture", RenderEngine::get_sampler_slot("screenTexture"));
@@ -103,7 +104,7 @@ void RenderEngine::skybox()
 	for (unsigned int i = 0; i < 6; ++i)
 	{
 		equirectangularToCubemapShader.set_mat4("view", captureViews[i]);
-		capture.bind_texture(GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, envCubemap.get_ID()[0]);
+		capture.bind_texture(envCubemap.get_ID()[0], GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		box.draw();
@@ -126,7 +127,7 @@ void RenderEngine::skybox()
 	for (unsigned int i = 0; i < 6; ++i)
 	{
 		irradianceShader.set_mat4("view", captureViews[i]);
-		capture.bind_texture(GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, irradianceMap.get_ID()[0]);
+		capture.bind_texture(irradianceMap.get_ID()[0], GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		box.draw();
@@ -157,7 +158,7 @@ void RenderEngine::skybox()
 		for (unsigned int i = 0; i < 6; ++i)
 		{
 			prefilterShader.set_mat4("view", captureViews[i]);
-			capture.bind_texture(GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterMap.get_ID()[0], mip);
+			capture.bind_texture(prefilterMap.get_ID()[0], GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, mip);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			box.draw();
 		}
@@ -167,7 +168,7 @@ void RenderEngine::skybox()
 	brdfLUTTexture = Texture(512, 512, 0, GL_TEXTURE_2D, GL_LINEAR, GL_RG16F, GL_RG, true);
 
 	capture.change_render_buffer_storage(512, 512);
-	capture.bind_texture(GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, brdfLUTTexture.get_ID()[0]);
+	capture.bind_texture(brdfLUTTexture.get_ID()[0]);
 
 	glViewport(0, 0, 512, 512);
 	brdfShader.use();
@@ -183,7 +184,9 @@ void RenderEngine::skybox()
 
 void RenderEngine::render(Entity& object)
 {
-	get_texture("displayTexture").bind_render_target();
+	//get_texture("displayTexture").bind_render_target();
+	displayFrame.bind_render_target();
+	displayFrame.bind_texture(get_texture("displayTexture").get_ID()[0]);
 	//Material::update_uniforms_constant_all();
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -212,10 +215,10 @@ void RenderEngine::render(Entity& object)
 		//glDisable(GL_BLEND);
 	//}
 		
-	post_processing(mFxaaFilter, get_texture("displayTexture"), 0);
+	post_processing(mFxaaFilter, displayFrame, 0);
 }
 
-void RenderEngine::post_processing(Material& filter, const Texture& source, const Texture* dest)
+void RenderEngine::post_processing(Material& filter, const FrameBuffer& source, const FrameBuffer* dest)
 {
 	assert(&source != dest);
 	if (dest == 0) mWindow->bind_render_target();
@@ -231,6 +234,6 @@ void RenderEngine::post_processing(Material& filter, const Texture& source, cons
 	glDisable(GL_DEPTH_TEST);
 
 	filter.mShader->use();
-	source.bind(0);
+	get_texture("displayTexture").bind(0);
 	draw_quad();
 }

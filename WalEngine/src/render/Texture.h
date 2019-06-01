@@ -26,13 +26,10 @@ public:
 		GLenum* internalFormat, 
 		GLenum* format, 
 		bool clamp, 
-		GLenum* attachments,
 		TexType type
 	);
 
 	void bind(int textureNum) const;
-	void bind_render_target() const;
-
 	inline int get_width()  const { return mWidth; }
 	inline int get_height() const { return mHeight; }
 	inline GLuint* get_ID() const { return mTextureID; }
@@ -40,9 +37,6 @@ public:
 	virtual ~TextureData();
 
 private:
-	/*TextureData(TextureData& other) {}
-	void operator=(TextureData& other) {}*/
-
 	void init
 	(
 		void** data, 
@@ -52,12 +46,9 @@ private:
 		bool clamp,
 		TexType type
 	);
-	void init_render_targets(GLenum* attachments);
 
 	GLuint* mTextureID;
 	GLenum mTextureTarget;
-	GLuint mFrameBuffer;
-	GLuint mRenderBuffer;
 	int mNumTexs;
 	int mWidth;
 	int mHeight;
@@ -67,7 +58,7 @@ class Texture
 {
 public:
 	Texture( const std::string& fileName );
-	Texture(int width = 0, int height = 0, void* data = 0, GLenum textureTarget = GL_TEXTURE_2D, GLfloat filter = GL_LINEAR_MIPMAP_LINEAR, GLenum internalFormat = GL_RGBA, GLenum format = GL_RGBA, bool clamp = false, GLenum attachment = GL_NONE);
+	Texture(int width = 0, int height = 0, void* data = 0, GLenum textureTarget = GL_TEXTURE_2D, GLfloat filter = GL_LINEAR_MIPMAP_LINEAR, GLenum internalFormat = GL_RGBA, GLenum format = GL_RGBA, bool clamp = false);
 
 	Texture(const Texture& texture);
 	void operator=(Texture texture);
@@ -78,8 +69,7 @@ public:
 		GLenum textureTarget = GL_TEXTURE_2D,
 		GLfloat filter = GL_LINEAR_MIPMAP_LINEAR,
 		GLenum internalFormat = GL_RGB,
-		bool clamp = true,
-		GLenum attachment = GL_NONE
+		bool clamp = true
 	);
 
 	void process
@@ -91,12 +81,10 @@ public:
 		GLfloat filter = GL_LINEAR_MIPMAP_LINEAR,
 		GLenum internalFormat = GL_RGBA,
 		GLenum format = GL_RGBA,
-		bool clamp = false,
-		GLenum attachment = GL_NONE
+		bool clamp = false
 	);
 
 	void bind(unsigned int unit = 0) const;
-	void bind_render_target() const;
 
 	inline int get_width()  const { return mTextureData->get_width(); }
 	inline int get_height() const { return mTextureData->get_height(); }

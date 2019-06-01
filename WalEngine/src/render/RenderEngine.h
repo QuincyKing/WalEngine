@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "../model/Light.h"
 #include "../model/Cube.h"
+#include "FrameBuffer.h"
 #include <memory>
 #include <vector>
 #include <map>
@@ -22,7 +23,7 @@ public:
 	static unsigned int get_sampler_slot(const std::string& samplerName) { return SamplerMap.count(samplerName) > 0 ? SamplerMap.at(samplerName) : INVALID_VALUE; }
 	static void set_sampler_slot(const std::string& name, unsigned int value) { SamplerMap[name] = value; }
 	void add_light(BaseLight& light) { mLights.push_back(&light); }
-	void post_processing(Material& filter, const Texture& source, const Texture* dest);
+	void post_processing(Material& filter, const FrameBuffer& source, const FrameBuffer* dest);
 	void skybox();
 
 public:
@@ -43,4 +44,5 @@ private:
 	Texture								prefilterMap;
 	Texture								brdfLUTTexture;
 	Cube								box;
+	FrameBuffer							displayFrame;
 };

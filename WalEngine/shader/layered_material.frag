@@ -322,7 +322,7 @@ void computeAddingDoubling(float _cti, out vec3 coeffs[3], out float alphas[3], 
 
 void main()
 {		
-	computeAddingDoubling(float _cti, out vec3 coeffs[3], out float alphas[3], out int nb_valid)
+//	computeAddingDoubling(float _cti, out vec3 coeffs[3], out float alphas[3], out int nb_valid)
     vec3 albedo = pow(texture(M_albedoMap, Tex).rgb, vec3(2.2));
     float metallic = texture(M_metallicMap, Tex).r;
     float roughness = texture(M_roughnessMap, Tex).r;

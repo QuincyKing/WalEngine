@@ -20,7 +20,6 @@ TextureData::TextureData
 	GLenum* internalFormat, 
 	GLenum* format,
 	bool clamp, 
-	GLenum* attachments,
 	TexType type
 )
 {
@@ -31,18 +30,12 @@ TextureData::TextureData
 	mWidth = width;
 	mHeight = height;
 
-	mFrameBuffer = 0;
-	mRenderBuffer = 0;
-
 	init(data, filters, internalFormat, format, clamp, type);
-	init_render_targets(attachments);
 }
 
 TextureData::~TextureData()
 {
 	if (*mTextureID) glDeleteTextures(mNumTexs, mTextureID);
-	if (mFrameBuffer) glDeleteFramebuffers(1, &mFrameBuffer);
-	if (mRenderBuffer) glDeleteRenderbuffers(1, &mRenderBuffer);
 	if (mTextureID) delete[] mTextureID;
 }
 
@@ -107,73 +100,11 @@ void TextureData::init
 			glTexParameteri(mTextureTarget, GL_TEXTURE_MAX_LEVEL, 0);
 		}
 	}
-
-}
-
-void TextureData::init_render_targets(GLenum* attachments)
-{
-	if (*attachments == 0)
-		return;
-
-	GLenum drawBuffers[32];      //32 is the max number of bound textures in OpenGL
-	assert(mNumTexs <= 32); //Assert to be sure no buffer overrun should occur
-
-	bool hasDepth = false;
-	for (int i = 0; i < mNumTexs; i++)
-	{
-		if (attachments[i] == GL_DEPTH_ATTACHMENT)
-		{
-			drawBuffers[i] = GL_NONE;
-			//hasDepth = true;
-		}
-		else
-			drawBuffers[i] = attachments[i];
-
-		if (attachments[i] == GL_NONE)
-			continue;
-
-		if (mFrameBuffer == 0)
-		{
-			glGenFramebuffers(1, &mFrameBuffer);
-			glBindFramebuffer(GL_FRAMEBUFFER, mFrameBuffer);
-		}
-
-		glFramebufferTexture2D(GL_FRAMEBUFFER, attachments[i], mTextureTarget, mTextureID[i], 0);
-	}
-
-	if (mFrameBuffer == 0)
-		return;
-
-	if (!hasDepth)
-	{
-		glGenRenderbuffers(1, &mRenderBuffer);
-		glBindRenderbuffer(GL_RENDERBUFFER, mRenderBuffer);
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, mWidth, mHeight);
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mRenderBuffer);
-	}
-
-	glDrawBuffers(mNumTexs, drawBuffers);
-
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-	{
-		std::cerr << "Framebuffer creation failed!" << std::endl;
-		assert(false);
-	}
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void TextureData::bind(int textureNum) const
 {
 	glBindTexture(mTextureTarget, mTextureID[textureNum]);
-}
-
-void TextureData::bind_render_target() const
-{
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, mFrameBuffer);
-
-	glViewport(0, 0, mWidth, mHeight);
 }
 
 #pragma endregion
@@ -184,13 +115,13 @@ Texture::Texture(const std::string& fileName)
 	mFileName = fileName;
 }
 
-Texture::Texture(int width, int height, void* data, GLenum textureTarget, GLfloat filter, GLenum internalFormat, GLenum format, bool clamp, GLenum attachment)
+Texture::Texture(int width, int height, void* data, GLenum textureTarget, GLfloat filter, GLenum internalFormat, GLenum format, bool clamp)
 {
 	mFileName = "";
 	TexType type = TexType::Normal;
 	if(textureTarget == GL_TEXTURE_CUBE_MAP)
 		type = TexType::CUBEMAP;
-	mTextureData = std::make_shared<TextureData>(textureTarget, width, height, 1, &data, &filter, &internalFormat, &format, clamp, &attachment, type);
+	mTextureData = std::make_shared<TextureData>(textureTarget, width, height, 1, &data, &filter, &internalFormat, &format, clamp, type);
 }
 
 void Texture::process
@@ -198,8 +129,7 @@ void Texture::process
 	GLenum textureTarget,
 	GLfloat filter,
 	GLenum internalFormat, 
-	bool clamp,
-	GLenum attachment
+	bool clamp
 )
 {
 	std::map<std::string, std::shared_ptr<TextureData> >::const_iterator it = sResMap.find(mFileName);
@@ -238,7 +168,7 @@ void Texture::process
 		else if (mComponents == 4)
 			format = GL_RGBA;
 
-		mTextureData = std::make_shared<TextureData>(textureTarget, x, y, 1, &data, &filter, &internalFormat, &format, clamp, &attachment, type);
+		mTextureData = std::make_shared<TextureData>(textureTarget, x, y, 1, &data, &filter, &internalFormat, &format, clamp, type);
 		stbi_image_free(data);
 
 		sResMap.insert(std::pair<std::string, std::shared_ptr<TextureData> >(mFileName, mTextureData));
@@ -254,14 +184,13 @@ void Texture::process
 	GLfloat filter,
 	GLenum internalFormat,
 	GLenum format,
-	bool clamp,
-	GLenum attachment
+	bool clamp
 )
 {
 	TexType type = TexType::Normal;
 	if (textureTarget == GL_TEXTURE_CUBE_MAP)
 		type = TexType::CUBEMAP;
-	mTextureData = std::make_shared<TextureData>(textureTarget, width, height, 1, &data, &filter, &internalFormat, &format, clamp, &attachment, type);
+	mTextureData = std::make_shared<TextureData>(textureTarget, width, height, 1, &data, &filter, &internalFormat, &format, clamp, type);
 }
 
 Texture::Texture(const Texture& texture) :
@@ -270,7 +199,6 @@ Texture::Texture(const Texture& texture) :
 {
 
 }
-
 
 void Texture::operator=(Texture texture)
 {
@@ -295,11 +223,6 @@ void Texture::bind(unsigned int unit) const
 	assert(unit >= 0 && unit <= 31);
 	glActiveTexture(GL_TEXTURE0 + unit);
 	mTextureData->bind(0);
-}
-
-void Texture::bind_render_target() const
-{
-	mTextureData->bind_render_target();
 }
 
 #pragma endregion
