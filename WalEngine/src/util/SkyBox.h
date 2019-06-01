@@ -11,12 +11,13 @@ public:
 	void precompute();
 
 public:
-	glm::mat4 captureProjection;
-	glm::mat4* captureViews;
+	static glm::mat4 CubeProjection;
+	static glm::mat4 CubeViews[6];
 
 private:
 	Cube		mBox;
 	Shader		mSkyboxShader;
 	Shader		mToCubemapShader;
 	Texture		mEnvCubemap;
+	Texture		mHdr;
 };

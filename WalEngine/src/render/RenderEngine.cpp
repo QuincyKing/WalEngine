@@ -11,13 +11,12 @@ unsigned int quadVAO = 0, quadVBO = 0;
 RenderEngine::RenderEngine(const Window& window)
 	:mWindow(&window),
 	mFxaaFilter("fxaa"),
-	equirectangularToCubemapShader("cubemap.vert", "equirectangular_to_cubemap.frag"),
-	backgroundShader("background.vert", "background.frag"),
 	irradianceShader("cubemap.vert", "irradiance_convolution.frag"),
 	prefilterShader("cubemap.vert", "prefilter.frag"),
 	brdfShader("brdf.vert", "brdf.frag"),
 	box("box"),
-	displayFrame(Window::Inputs.get_win_size_x(), Window::Inputs.get_win_size_y())
+	displayFrame(Window::Inputs.get_win_size_x(), Window::Inputs.get_win_size_y()),
+	mSkyBox("hdr/uffizi.hdr")
 {
 	set_float("fxaaSpanMax", 8.0f);
 	set_float("fxaaReduceMin", 1.0f / 128.0f);
@@ -31,7 +30,7 @@ RenderEngine::RenderEngine(const Window& window)
 	mFxaaFilter.set_shader("fxaa.vert", "fxaa.frag");
 	mFxaaFilter.mShader->set_int("screenTexture", RenderEngine::get_sampler_slot("screenTexture"));
 
-	skybox();
+	precompute();
 }
 
 void draw_quad()
@@ -65,68 +64,27 @@ void draw_quad()
 	glBindVertexArray(0);
 }
 
-void RenderEngine::skybox()
+void RenderEngine::precompute()
 {
 	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL); // set depth function to less than AND equal for skybox depth trick.
+	glDepthFunc(GL_LEQUAL); 
 
-	backgroundShader.use();
-	backgroundShader.set_int("environmentMap", 0);
+	mSkyBox.precompute();
 
 	FrameBuffer capture(512, 512);
-	
-	stbi_set_flip_vertically_on_load(true);
-	Texture hdr("hdr/uffizi.hdr");
-	hdr.process(GL_TEXTURE_2D, GL_LINEAR_MIPMAP_LINEAR, GL_RGB16F);
-	envCubemap = Texture(512, 512, 0, GL_TEXTURE_CUBE_MAP, GL_LINEAR, GL_RGB16F, GL_RGB, true);
-
-	// pbr: set up projection and view matrices for capturing data onto the 6 cubemap face directions
-	// ----------------------------------------------------------------------------------------------
-	glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
-	glm::mat4 captureViews[] =
-	{
-		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f)),
-		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)),
-		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-		glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
-	};
-
-	// pbr: convert HDR equirectangular environment map to cubemap equivalent
-	// ----------------------------------------------------------------------
-	equirectangularToCubemapShader.use();
-	equirectangularToCubemapShader.set_int("equirectangularMap", 0);
-	equirectangularToCubemapShader.set_mat4("projection", captureProjection);
-	hdr.bind(0);
-
-	capture.bind_render_target();
-	for (unsigned int i = 0; i < 6; ++i)
-	{
-		equirectangularToCubemapShader.set_mat4("view", captureViews[i]);
-		capture.bind_texture(envCubemap.get_ID()[0], GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		box.draw();
-	}
-	FrameBuffer::bind_render_targer_reset();
-
 	irradianceMap = Texture(32, 32, 0, GL_TEXTURE_CUBE_MAP, GL_LINEAR, GL_RGB16F, GL_RGB, true);
-	
 	capture.change_render_buffer_storage(32, 32);
 
-	// pbr: solve diffuse integral by convolution to create an irradiance (cube)map.
-	// -----------------------------------------------------------------------------
 	irradianceShader.use();
 	irradianceShader.set_int("environmentMap", 0);
-	irradianceShader.set_mat4("projection", captureProjection);
-	envCubemap.bind(0);
+	irradianceShader.set_mat4("projection", SkyBox::CubeProjection);
+	mSkyBox.get_env_cubemap().bind(0);
 
-	glViewport(0, 0, 32, 32); // don't forget to configure the viewport to the capture dimensions.
+	glViewport(0, 0, 32, 32); 
 	capture.bind();
 	for (unsigned int i = 0; i < 6; ++i)
 	{
-		irradianceShader.set_mat4("view", captureViews[i]);
+		irradianceShader.set_mat4("view", SkyBox::CubeViews[i]);
 		capture.bind_texture(irradianceMap.get_ID()[0], GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -136,18 +94,15 @@ void RenderEngine::skybox()
 
 	prefilterMap = Texture(128, 128, 0, GL_TEXTURE_CUBE_MAP, GL_LINEAR_MIPMAP_LINEAR, GL_RGB16F, GL_RGB, true);
 
-	// pbr: run a quasi monte-carlo simulation on the environment lighting to create a prefilter (cube)map.
-	// ----------------------------------------------------------------------------------------------------
 	prefilterShader.use();
 	prefilterShader.set_int("environmentMap", 0);
-	prefilterShader.set_mat4("projection", captureProjection);
-	envCubemap.bind(0);
+	prefilterShader.set_mat4("projection", SkyBox::CubeProjection);
+	mSkyBox.get_env_cubemap().bind(0);
 
 	capture.bind();
 	unsigned int maxMipLevels = 5;
 	for (unsigned int mip = 0; mip < maxMipLevels; ++mip)
 	{
-		// reisze framebuffer according to mip-level size.
 		unsigned int mipWidth = 128 * std::pow(0.5, mip);
 		unsigned int mipHeight = 128 * std::pow(0.5, mip);
 		capture.change_render_buffer_storage(mipWidth, mipHeight);
@@ -157,7 +112,7 @@ void RenderEngine::skybox()
 		prefilterShader.set_float("roughness", roughness);
 		for (unsigned int i = 0; i < 6; ++i)
 		{
-			prefilterShader.set_mat4("view", captureViews[i]);
+			prefilterShader.set_mat4("view", SkyBox::CubeViews[i]);
 			capture.bind_texture(prefilterMap.get_ID()[0], GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, mip);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			box.draw();
@@ -176,15 +131,10 @@ void RenderEngine::skybox()
 	draw_quad();
 
 	FrameBuffer::bind_render_targer_reset();
-
-	glm::mat4 pro = glm::mat4(1);
-	backgroundShader.use();
-	backgroundShader.set_mat4("projection", pro);
 }
 
 void RenderEngine::render(Entity& object)
 {
-	//get_texture("displayTexture").bind_render_target();
 	displayFrame.bind_render_target();
 	displayFrame.bind_texture(get_texture("displayTexture").get_ID()[0]);
 	//Material::update_uniforms_constant_all();
@@ -206,10 +156,7 @@ void RenderEngine::render(Entity& object)
 
 		object.render_all();
 
-		backgroundShader.use();
-		backgroundShader.set_mat4("view", Window::MainCamera.get_view_projection());
-		envCubemap.bind(0);
-		box.draw();
+		mSkyBox.render();
 		//glDepthMask(GL_TRUE);
 		//glDepthFunc(GL_LESS);
 		//glDisable(GL_BLEND);

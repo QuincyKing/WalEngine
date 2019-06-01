@@ -6,6 +6,7 @@
 #include "../model/Light.h"
 #include "../model/Cube.h"
 #include "FrameBuffer.h"
+#include "../util/SkyBox.h"
 #include <memory>
 #include <vector>
 #include <map>
@@ -24,7 +25,7 @@ public:
 	static void set_sampler_slot(const std::string& name, unsigned int value) { SamplerMap[name] = value; }
 	void add_light(BaseLight& light) { mLights.push_back(&light); }
 	void post_processing(Material& filter, const FrameBuffer& source, const FrameBuffer* dest);
-	void skybox();
+	void precompute();
 
 public:
 	static BaseLight*					ActiveLight;
@@ -34,15 +35,13 @@ private:
 	const Window*                       mWindow;
 	std::vector<BaseLight*>				mLights;
 	Material                            mFxaaFilter;
-	Shader								equirectangularToCubemapShader;
-	Shader								backgroundShader;
 	Shader								irradianceShader;
 	Shader								prefilterShader;
 	Shader								brdfShader;
-	Texture								envCubemap;
 	Texture								irradianceMap;
 	Texture								prefilterMap;
 	Texture								brdfLUTTexture;
 	Cube								box;
 	FrameBuffer							displayFrame;
+	SkyBox								mSkyBox;
 };
