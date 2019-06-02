@@ -2,7 +2,7 @@
 
 #include "../src/core/Window.h"
 #include "../src/core/Quaternion.h";
-//#include "../src/core/Model.h"
+#include "../src/core/Model.h"
 #include "../src/component/Material.h"
 #include "../src/render/Texture.h"
 #include "../src/model/Sphere.h"
@@ -20,7 +20,7 @@ class Game
 {
 public:
 	Texture albedo, normal, metallic, roughness, ao;
-	//Model model;
+	Model model;
 	Sphere sphere1;
 	Sphere sphere2;
 	Entity renderRoot;
@@ -33,7 +33,8 @@ public:
 		sphere1("ibl-material-ball"),
 		sphere2("layered-material-ball"),
 		renderRoot("root"),
-		dir("dl")
+		dir("dl"),
+		model("nano", "nanosuit/nanosuit.obj")
 	{}
 
 	~Game()

@@ -45,10 +45,12 @@ void Game::init()
 
 	sphere1.set_mat(mat);
 	sphere2.set_mat(mat_layered);
+	model.set_mat(mat_layered);
 	//cube1.set_shader(shader);
 
 	renderRoot.add_child(&sphere1);
 	renderRoot.add_child(&sphere2);
+	renderRoot.add_child(&model);
 
 	Entity::mRoot.push_back(&renderRoot);
 
