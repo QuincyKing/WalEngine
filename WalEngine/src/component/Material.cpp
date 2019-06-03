@@ -3,6 +3,7 @@
 #include "../render/RenderEngine.h"
 #include "../model/Light.h"
 #include <iostream>
+#include <algorithm>
 #include <cassert>
 
 std::map<std::string, DefineData> Material::ResourceMap;
@@ -228,11 +229,23 @@ void Material::update_uniforms_mutable_all(RenderEngine* render)
 				std::string varianceName = uniformName.substr(2, uniformName.length());
 
 				if (uniformType == "DirectionalLight")
-					set_uniform_dirlight(shader, uniformName, *dynamic_cast<DirectionalLight *>(RenderEngine::ActiveLight));
+				{
+					auto iter = std::find_if(RenderEngine::Lights.begin(), RenderEngine::Lights.end(), [&varianceName](const BaseLight* b) { return b->mName == varianceName; });
+					BaseLight* light = *iter;
+					set_uniform_dirlight(shader, uniformName, *dynamic_cast<DirectionalLight *>(light));
+				}
 				else if (uniformType == "PointLight")
-					set_uniform_pointlight(shader, uniformName, *dynamic_cast<PointLight *>(RenderEngine::ActiveLight));
+				{
+					auto iter = std::find_if(RenderEngine::Lights.begin(), RenderEngine::Lights.end(), [&varianceName](const BaseLight* b) { return b->mName == varianceName; });
+					BaseLight* light = *iter;
+					set_uniform_pointlight(shader, uniformName, *dynamic_cast<PointLight *>(light));
+				}
 				else if (uniformType == "SpotLight")
-					set_uniform_spotlight(shader, uniformName, *dynamic_cast<SpotLight *>(RenderEngine::ActiveLight));
+				{
+					auto iter = std::find_if(RenderEngine::Lights.begin(), RenderEngine::Lights.end(), [&varianceName](const BaseLight* b) { return b->mName == varianceName; });
+					BaseLight* light = *iter;
+					set_uniform_spotlight(shader, uniformName, *dynamic_cast<SpotLight *>(light));
+				}
 				else if (uniformType == "vec3")
 					shader->set_vec3(uniformName, render->get_vec3(varianceName));
 				else if (uniformType == "float")

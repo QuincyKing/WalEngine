@@ -21,20 +21,20 @@ class Game
 public:
 	Texture albedo, normal, metallic, roughness, ao;
 	Model model;
-	Sphere sphere1;
-	Sphere sphere2;
+	Model model2;
 	Entity renderRoot;
 	Material *mat;
 	Material *mat_layered;
 	PointLight dir;
+	PointLight dir2;
 
 public:
 	Game() :
-		sphere1("ibl-material-ball"),
-		sphere2("layered-material-ball"),
+		model("pbr-ball", "mitsuba/mitsuba-sphere.obj"),
+		model2("layered-material-ball", "mitsuba/mitsuba-sphere.obj"),
 		renderRoot("root"),
-		dir("dl"),
-		model("nano", "nanosuit/nanosuit.obj")
+		dir("dir"),
+		dir2("dir2")
 	{}
 
 	~Game()

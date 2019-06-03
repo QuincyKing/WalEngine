@@ -15,6 +15,8 @@ uniform samplerCube irradianceMap;
 uniform samplerCube prefilterMap;
 uniform sampler2D brdfLUT;
 
+uniform vec3 albedo_mix;
+
 #include <light.inc>
 
 uniform PointLight R_dir;
@@ -92,7 +94,7 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
 void main()
 {		
     // material properties
-    vec3 albedo = pow(texture(M_albedoMap, Tex).rgb, vec3(2.2));
+    vec3 albedo = pow(texture(M_albedoMap, Tex).rgb, vec3(2.2)) * albedo_mix;
     float metallic = texture(M_metallicMap, Tex).r;
     float roughness = texture(M_roughnessMap, Tex).r;
        
@@ -124,7 +126,7 @@ void main()
     vec3 nominator    = NDF * G * F;
     float denominator = 4 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.001; // 0.001 to prevent divide by zero.
     vec3 specular = nominator / denominator;
-        
+
         // kS is equal to Fresnel
     vec3 kS = F;
     // for energy conservation, the diffuse and specular light can't
@@ -144,7 +146,7 @@ void main()
     
     // ambient lighting (we now use IBL as the ambient term)
     F = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
-    
+
     kS = F;
     kD = 1.0 - kS;
     kD *= 1.0 - metallic;	  
@@ -160,7 +162,7 @@ void main()
 
     vec3 ambient = (kD * diffuse + specular);
     
-    vec3 color = ambient + Lo;
+    vec3 color = Lo;
 
     // HDR tonemapping
     color = color / (color + vec3(1.0));

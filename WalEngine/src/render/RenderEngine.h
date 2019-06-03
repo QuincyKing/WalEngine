@@ -23,17 +23,15 @@ public:
 	void render(Entity& object);
 	static unsigned int get_sampler_slot(const std::string& samplerName) { return SamplerMap.count(samplerName) > 0 ? SamplerMap.at(samplerName) : INVALID_VALUE; }
 	static void set_sampler_slot(const std::string& name, unsigned int value) { SamplerMap[name] = value; }
-	void add_light(BaseLight& light) { mLights.push_back(&light); }
 	void post_processing(Material& filter, const FrameBuffer& source, const FrameBuffer* dest);
 	void precompute();
 
 public:
-	static BaseLight*					ActiveLight;
+	static std::vector<BaseLight*>		Lights;
 
 private:
 	static std::map<std::string, unsigned int> SamplerMap;
 	const Window*                       mWindow;
-	std::vector<BaseLight*>				mLights;
 	Material                            mFxaaFilter;
 	Shader								irradianceShader;
 	Shader								prefilterShader;

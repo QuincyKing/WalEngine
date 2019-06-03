@@ -15,8 +15,8 @@ uniform sampler2D brdfLUT;
 
 #include <light.inc>
 
-uniform PointLight R_dir;
-
+uniform PointLight R_dir2;
+uniform vec3 albedo_mix;
 uniform vec3 M_CamPos;
 
 const float PI = 3.14159265359;
@@ -83,13 +83,13 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
     return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(1.0 - cosTheta, 5.0);
 }   
 
-float m_depths[2] = float[2] ( 0.0, 0.0 );
+float m_depths[2] = float[2] ( 2.0, 0.0 );
 vec3 m_etas[3] = vec3[3]( vec3(1.0), vec3(1.49), vec3(1.0) );
 vec3 m_kappas[3] = vec3[3]( vec3(0.0), vec3(0.0), vec3(1.0, 0.1, 0.1) );
 //TODO
-float m_alphas[3] = float[3] (0.1, 0.1, 0.1);
+
 int nb_layers = 2;
-vec3 m_sigma_a[2] = vec3[2] ( vec3(0.0f, 1.0, 0.0), vec3(0.0f, 0.4f, 0.7f) );
+vec3 m_sigma_a[2] = vec3[2] ( vec3(0.2f, 0.8, 0.4), vec3(0.4f, 1.0f, 0.3f) );
 vec3 m_sigma_s[2] = vec3[2] ( vec3(0.0f), vec3(0.0f) );
 
 const bool m_useTIR = false;
@@ -124,7 +124,7 @@ bool isZero(vec3 s)
     return s.r - 0.0f > 0.00001f || s.g - 0.0 > 0.00001f || s.b - 0.0 > 0.00001f ? false : true;
 }
 
-void FGD(float cti, float temp_alpha, vec3 R12, vec3 T12)
+void FGD(float cti, float temp_alpha, out vec3 R12, out vec3 T12)
 {
     vec2 brdf  = texture(brdfLUT, vec2(max(cti, 0.0), temp_alpha)).rg;
     vec3 F = fresnelSchlickRoughness(cti, vec3(0.04), temp_alpha);
@@ -132,9 +132,59 @@ void FGD(float cti, float temp_alpha, vec3 R12, vec3 T12)
     T12 = vec3(1) - R12;
 }
 
-void computeAddingDoubling(float _cti, out vec3 coeffs[3], out float alphas[3], out int nb_valid)
-{
-    float cti  = _cti;
+void main()
+{			  
+    vec3 albedo = pow(texture(M_albedoMap, Tex).rgb, vec3(2.2)) * albedo_mix;
+    float metallic = texture(M_metallicMap, Tex).r;
+    float roughness = texture(M_roughnessMap, Tex).r;
+	float m_alphas[3] = float[3] (1.0, 1.0, 1.0);
+
+    vec3 N = getNormalFromMap();
+    vec3 V = normalize(M_CamPos - WorldPos);
+    vec3 R = reflect(-V, N); 
+
+    vec3 F0 = vec3(0.04); 
+    F0 = mix(F0, albedo, metallic);
+
+    vec3 Lo = vec3(0.0);
+
+    vec3 L = normalize(R_dir2.position - WorldPos);
+    vec3 H = normalize(V + L);
+    float distance = length(R_dir2.position - WorldPos);
+    float attenuation = 1.0 / (distance * distance);
+    vec3 radiance = R_dir2.color * attenuation;
+
+    float NDF = DistributionGGX(N, H, roughness);   
+    float G   = GeometrySmith(N, V, L, roughness);    
+    vec3 F    = fresnelSchlick(max(dot(H, V), 0.0), F0);        
+        
+    vec3 nominator    = NDF * G * F;
+    float denominator = 4 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.001; // 0.001 to prevent divide by zero.
+    vec3 specular = nominator / denominator;
+        
+    vec3 kS = F;
+    vec3 kD = vec3(1.0) - kS;
+    kD *= 1.0 - metallic;	                
+            
+    float NdotL = max(dot(N, L), 0.0);        
+	
+   // Lo += (kD * albedo / PI + specular) * radiance * NdotL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
+    
+    F = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
+    
+    kS = F;
+    kD = 1.0 - kS;
+    kD *= 1.0 - metallic;	  
+    
+    vec3 irradiance = texture(irradianceMap, N).rgb;
+    vec3 diffuse      = irradiance * albedo;
+    
+	//layered-material
+	int nb_valid;
+	vec3 coeffs[3];
+	float alphas[3];
+
+	float cti  = max(dot(N, V), 0.0);
     vec3 R0i = vec3(0.0f);
     vec3 Ri0 = vec3(0.0f);
     vec3 T0i = vec3(1.0f);
@@ -145,6 +195,8 @@ void computeAddingDoubling(float _cti, out vec3 coeffs[3], out float alphas[3], 
     float s_ti0=0.0f;
     float j0i=1.0f;
     float ji0=1.0f;
+
+	vec3 R12, T12, R21, T21;
 
     // Iterate over the layers
     for(int i=0; i<nb_layers; ++i)
@@ -159,7 +211,7 @@ void computeAddingDoubling(float _cti, out vec3 coeffs[3], out float alphas[3], 
         float n12    = average(eta);
         float depth  = m_depths[i];
 
-        vec3 R12, T12, R21, T21;
+        
         float s_r12=0.0f, s_r21=0.0f, s_t12=0.0f, s_t21=0.0f, j12=1.0f, j21=1.0f, ctt;
 
         //calculate 2nd layer and 3rd layer statistics 
@@ -279,7 +331,7 @@ void computeAddingDoubling(float _cti, out vec3 coeffs[3], out float alphas[3], 
 
         // Store the coefficient and variance
         if(m_r0i > 0.0f)
-         {
+        {
             coeffs[i] = m_R0i;
             alphas[i] = varianceToRoughness(s_ti0 + j0i*(s_t0i + s_r12 + m_rr*(s_r12+s_ri0)));
         } 
@@ -312,72 +364,45 @@ void computeAddingDoubling(float _cti, out vec3 coeffs[3], out float alphas[3], 
         if(average(kappa) > 0.0f) 
         {
             nb_valid = i+1;
-            return;
+            break;
         }
     }
 
     nb_valid = nb_layers;
-}
 
+	vec3 f = vec3(0.0);
+	for(int index=0; index<nb_valid; ++index)
+	{
+        // Skip zero contributions
+        if(isZero(coeffs[index]))
+		{
+            continue;
+        }
 
-void main()
-{		
-//	computeAddingDoubling(float _cti, out vec3 coeffs[3], out float alphas[3], out int nb_valid)
-    vec3 albedo = pow(texture(M_albedoMap, Tex).rgb, vec3(2.2));
-    float metallic = texture(M_metallicMap, Tex).r;
-    float roughness = texture(M_roughnessMap, Tex).r;
-     
-    vec3 N = getNormalFromMap();
-    vec3 V = normalize(M_CamPos - WorldPos);
-    vec3 R = reflect(-V, N); 
+        // Fetch current roughness
+        const float a = alphas[index];
 
-    vec3 F0 = vec3(0.04); 
-    F0 = mix(F0, albedo, metallic);
+        const float D = DistributionGGX(N, H, a);
+        const float G = GeometrySmith(N, V, L, a);
 
-    vec3 Lo = vec3(0.0);
+        // Add to the contribution
+        f += D*G * coeffs[index] / denominator;
+    }
+	Lo += (f) * radiance * NdotL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
 
-    vec3 L = normalize(R_dir.position - WorldPos);
-    vec3 H = normalize(V + L);
-    float distance = length(R_dir.position - WorldPos);
-    float attenuation = 1.0 / (distance * distance);
-    vec3 radiance = R_dir.color * attenuation;
+	//computeAddingDoubling(NdotL, coeffs, alphas, nb_valid);
 
-    float NDF = DistributionGGX(N, H, roughness);   
-    float G   = GeometrySmith(N, V, L, roughness);    
-    vec3 F    = fresnelSchlick(max(dot(H, V), 0.0), F0);        
-        
-    vec3 nominator    = NDF * G * F;
-    float denominator = 4 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.001; // 0.001 to prevent divide by zero.
-    vec3 specular = nominator / denominator;
-        
-    vec3 kS = F;
-    vec3 kD = vec3(1.0) - kS;
-    kD *= 1.0 - metallic;	                
-            
-    float NdotL = max(dot(N, L), 0.0);        
-
-    Lo += (kD * albedo / PI + specular) * radiance * NdotL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
-    
-    F = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
-    
-    kS = F;
-    kD = 1.0 - kS;
-    kD *= 1.0 - metallic;	  
-    
-    vec3 irradiance = texture(irradianceMap, N).rgb;
-    vec3 diffuse      = irradiance * albedo;
-    
     const float MAX_REFLECTION_LOD = 4.0;
     vec3 prefilteredColor = textureLod(prefilterMap, R,  roughness * MAX_REFLECTION_LOD).rgb;    
     vec2 brdf  = texture(brdfLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
     specular = prefilteredColor * (F * brdf.x + brdf.y);
 
-    vec3 ambient = (kD * diffuse + specular);
+    vec3 ambient = ( specular);
     
-    vec3 color = ambient + Lo;
-
+    vec3 color = Lo;
+	
     color = color / (color + vec3(1.0));
     color = pow(color, vec3(1.0/2.2)); 
-
+		
     FragColor = vec4(color , 1.0);
 }

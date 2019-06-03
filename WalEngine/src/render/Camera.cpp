@@ -19,3 +19,8 @@ void Camera::move(glm::vec3 dir)
 {
 	get_transform()->add_pos(dir * -sensitive);
 }
+
+void Camera::rotate(const glm::vec3& axis, float angle)
+{
+	get_transform()->rotate(axis, angle);
+}

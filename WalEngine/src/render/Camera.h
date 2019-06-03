@@ -29,6 +29,8 @@ public:
 	inline void set_transform(std::shared_ptr<Transform> transform) { mTransform = transform; }
 
 	void move(glm::vec3 dir);
+	void rotate(const glm::vec3& axis, float angle);
+
 private:
 	glm::mat4   mProjection;
 	std::shared_ptr<Transform>	mTransform;

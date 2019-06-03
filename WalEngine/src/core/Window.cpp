@@ -230,6 +230,13 @@ void Window::_update()
 		if(fabs(Inputs.get_offset_x()) + fabs(Inputs.get_offset_y()) > 1.0)
 			MainCamera.move(glm::normalize(glm::vec3(Inputs.get_offset_x(), Inputs.get_offset_y(), 0.0)));
 	}
+	//if (Inputs.get_mouse(Input::MOUSE_BUTTON_RIGHT))
+	//{
+	//	if (fabs(Inputs.get_offset_x()) > 4.0)
+	//		MainCamera.rotate(glm::vec3(0.0, 1.0, 0.0), Inputs.get_offset_x() * 0.01);
+	//	if(fabs(Inputs.get_offset_y()) > 4.0)
+	//		MainCamera.rotate(glm::vec3(1.0, 0.0, 0.0), Inputs.get_offset_x() * 0.01);
+	//}
 	//if (Inputs.get_key(Input::KEY_W))
 	//	MainCamera.ProcessKeyboard(FORWARD, 0.01f);
 	//if (Inputs.get_key(Input::KEY_S))

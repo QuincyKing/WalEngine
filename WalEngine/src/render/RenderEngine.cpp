@@ -4,7 +4,7 @@
 #include <stb_image/stb_image.h>
 
 std::map<std::string, unsigned int> RenderEngine::SamplerMap;
-BaseLight*  RenderEngine::ActiveLight = NULL;
+std::vector<BaseLight*>		RenderEngine::Lights = std::vector<BaseLight*>();
 
 unsigned int quadVAO = 0, quadVBO = 0;
 
@@ -25,7 +25,6 @@ RenderEngine::RenderEngine(const Window& window)
 
 	set_sampler_slot("screenTexture", 0);
 	set_texture("displayTexture", Texture(Window::Inputs.get_win_size_x(), Window::Inputs.get_win_size_y(), 0, GL_TEXTURE_2D, GL_LINEAR, GL_RGBA, GL_RGBA, true));
-
 
 	mFxaaFilter.set_shader("fxaa.vert", "fxaa.frag");
 	mFxaaFilter.mShader->set_int("screenTexture", RenderEngine::get_sampler_slot("screenTexture"));
@@ -147,7 +146,7 @@ void RenderEngine::render(Entity& object)
 	brdfLUTTexture.bind(2);
 	//for (int i = 0; i < mLights.size(); i++)
 	//{
-		ActiveLight = mLights[0];
+		//ActiveLight = mLights[0];
 		Material::update_uniforms_mutable_all(this);
 
 
