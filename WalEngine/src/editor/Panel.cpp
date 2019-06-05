@@ -8,6 +8,7 @@ void Panel::make_panel()
 		show_about();
 	if (mMenu.mHierarchyW)
 		show_hierarchy();
+	show_layer_material_panel();
 }
 
 //ÏÔÊ¾About´°¿Ú
@@ -36,7 +37,24 @@ void Panel::show_hierarchy()
 
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
 
-	mHierarchy.show_hierarchy(Entity::mRoot);
+	mHierarchy.show(Entity::Root);
+	ImGui::PopStyleVar();
+	ImGui::End();
+}
+
+void Panel::show_layer_material_panel()
+{
+	bool flag = true;
+	ImGui::SetNextWindowSize(ImVec2(430, 450), ImGuiCond_FirstUseEver);
+	if (!ImGui::Begin("LayerMaterialPanel", &flag))
+	{
+		ImGui::End();
+		return;
+	}
+
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
+
+	mLayerMaterialPanel.show();
 	ImGui::PopStyleVar();
 	ImGui::End();
 }

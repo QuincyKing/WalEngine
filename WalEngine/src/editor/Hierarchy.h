@@ -5,12 +5,14 @@
 #include <imgui/imgui_impl_opengl3.h>
 #include <vector>
 
+#include "UI.h"
+
 class Entity;
 
-class Hierarchy
+class Hierarchy : public UI
 {
 public:
-	void show_hierarchy(std::vector<Entity*> root);
+	void show(std::vector<Entity*> root);
 
 private:
 	static int selected;

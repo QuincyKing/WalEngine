@@ -49,7 +49,7 @@ void Game::init()
 	renderRoot.add_child(&model);
 	renderRoot.add_child(&model2);
 
-	Entity::mRoot.push_back(&renderRoot);
+	Entity::Root.push_back(&renderRoot);
 
 	Material::update_uniforms_constant_all();
 }

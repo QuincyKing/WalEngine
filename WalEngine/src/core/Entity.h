@@ -25,7 +25,6 @@ public:
 			mName = name;
 			mCount++;
 			mIndex = mCount;
-			//mRoot.push_back(this);
 			mTransform = std::make_shared<Transform>(pos, rot, scale);
 			//TODO memory leak
 			mComponents[ComType::Mat] = new Material("default");
@@ -36,7 +35,7 @@ public:
 		mName = entity.mName;
 		mChildren = entity.mChildren;
 		mTransform = entity.mTransform;
-		mRoot.push_back(this);
+		Root.push_back(this);
 		mCount++;
 		mIndex = mCount;
 	}
@@ -70,9 +69,9 @@ public:
 	std::vector<Entity*>				mChildren;
 	std::shared_ptr<Transform>          mTransform;
 	std::string							mName;
-	static std::vector<Entity*>			mRoot;
 	int									mIndex;
 	static int							mCount;
+	static std::vector<Entity*>			Root;
 
 protected:
 	std::map<ComType, Component* >	mComponents;

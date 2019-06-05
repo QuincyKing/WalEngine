@@ -2,16 +2,16 @@
 #include "../render/RenderEngine.h"
 #include <algorithm>
 
-std::vector<Entity*> Entity::mRoot = std::vector<Entity *>();
+std::vector<Entity*> Entity::Root = std::vector<Entity *>();
 int Entity::mCount = 0;
 
 void Entity::add_child(Entity* child)
 {
 	if (std::find(mChildren.begin(), mChildren.end(), child) == mChildren.end())
 	{	
-		auto iter = std::find(Entity::mRoot.begin(), Entity::mRoot.end(), child);
-		if(iter != Entity::mRoot.end())
-			mRoot.erase(iter);
+		auto iter = std::find(Entity::Root.begin(), Entity::Root.end(), child);
+		if(iter != Entity::Root.end())
+			Root.erase(iter);
 		mChildren.push_back(child);
 		child->mTransform->set_parent(mTransform);
 	}
