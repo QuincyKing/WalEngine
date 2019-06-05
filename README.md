@@ -5,16 +5,16 @@
 - [x] FxAA
 - [x] PBR
 - [x] IBL
-- [] AO
-- [] TAA
-- [] Voxelize
-- [] Fog
-- [] Water
-- [] Shadow
-- [] SSS
-- [] SSR
-- [] SSSS
-- [] Layered Material PBR
+- [ ] AO
+- [ ] TAA
+- [ ] Voxelize
+- [ ] Fog
+- [ ] Water
+- [ ] Shadow
+- [ ] SSS
+- [ ] SSR
+- [ ] SSSS
+- [ ] Layered Material PBR
 ### Rendering
 - [x] Material Complie
 - [x] Scene Graph
@@ -22,16 +22,17 @@
 - [x] SkyBox
 - [x] Entity-Component System
 - [x] Mesh
-- [] Forward+ Rendering
-- [] DX12 API
-- [] Physics Lib
-- [] Transparent Rendering
-- [] Support LOD
-- [] Particle System
-- [] Baking
+- [x] OpenGL API
+- [ ] Forward+ Rendering
+- [ ] DX12 API
+- [ ] Physics Lib
+- [ ] Transparent Rendering
+- [ ] Support LOD
+- [ ] Particle System
+- [ ] Baking
 ### GUI
 - [x] Menu
 - [x] Panel
-- [] Gizmos
+- [ ] Gizmos
 ### Off-Rendering
-- [] Ray Tracer
+- [ ] Ray Tracer
