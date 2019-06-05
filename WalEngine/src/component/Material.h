@@ -3,13 +3,13 @@
 #include <map>
 
 #include "../render/Texture.h"
-#include "../core/MapVal.h"
+#include "../core/DataPool.h"
 #include "../core/Ref.h"
 #include "../core/Transform.h"
 #include "../core/Component.h"
 #include "../render/Shader.h"
 
-class MaterialData : public MapVal, public Ref
+class MaterialData : public DataPool, public Ref
 {
 };
 
@@ -51,7 +51,7 @@ public:
 	void update_uniforms_constant() const;
 	static void update_uniforms_constant_all();
 	void update_uniforms_mutable() const;
-	static void update_uniforms_mutable_all(RenderEngine* render);
+	static void update_uniforms_mutable_all();
 	void operator=(const Material& other) {}
 	void set_shader(const std::string& vsFile, const std::string& fsFile);
 	void update_uniform_sampler(std::string varianceName, int);

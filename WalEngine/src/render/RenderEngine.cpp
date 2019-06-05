@@ -5,6 +5,7 @@
 
 std::map<std::string, unsigned int> RenderEngine::SamplerMap;
 std::vector<BaseLight*>		RenderEngine::Lights = std::vector<BaseLight*>();
+DataPool					RenderEngine::Data = DataPool();
 
 unsigned int quadVAO = 0, quadVBO = 0;
 
@@ -18,13 +19,13 @@ RenderEngine::RenderEngine(const Window& window)
 	displayFrame(Window::Inputs.get_win_size_x(), Window::Inputs.get_win_size_y()),
 	mSkyBox("hdr/uffizi.hdr")
 {
-	set_float("fxaaSpanMax", 8.0f);
-	set_float("fxaaReduceMin", 1.0f / 128.0f);
-	set_float("fxaaReduceMul", 1.0f / 8.0f);
-	set_float("fxaaAspectDistortion", 150.0f);
+	Data.set_float("fxaaSpanMax", 8.0f);
+	Data.set_float("fxaaReduceMin", 1.0f / 128.0f);
+	Data.set_float("fxaaReduceMul", 1.0f / 8.0f);
+	Data.set_float("fxaaAspectDistortion", 150.0f);
 
 	set_sampler_slot("screenTexture", 0);
-	set_texture("displayTexture", Texture(Window::Inputs.get_win_size_x(), Window::Inputs.get_win_size_y(), 0, GL_TEXTURE_2D, GL_LINEAR, GL_RGBA, GL_RGBA, true));
+	Data.set_texture("displayTexture", Texture(Window::Inputs.get_win_size_x(), Window::Inputs.get_win_size_y(), 0, GL_TEXTURE_2D, GL_LINEAR, GL_RGBA, GL_RGBA, true));
 
 	mFxaaFilter.set_shader("fxaa.vert", "fxaa.frag");
 	mFxaaFilter.mShader->set_int("screenTexture", RenderEngine::get_sampler_slot("screenTexture"));
@@ -135,7 +136,7 @@ void RenderEngine::precompute()
 void RenderEngine::render(Entity& object)
 {
 	displayFrame.bind_render_target();
-	displayFrame.bind_texture(get_texture("displayTexture").get_ID()[0]);
+	displayFrame.bind_texture(Data.get_texture("displayTexture").get_ID()[0]);
 	//Material::update_uniforms_constant_all();
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -144,22 +145,18 @@ void RenderEngine::render(Entity& object)
 	irradianceMap.bind(0);
 	prefilterMap.bind(1);
 	brdfLUTTexture.bind(2);
-	//for (int i = 0; i < mLights.size(); i++)
-	//{
-		//ActiveLight = mLights[0];
-		Material::update_uniforms_mutable_all(this);
+	
+	Material::update_uniforms_mutable_all();
 
+	//glEnable(GL_BLEND);
+	//glBlendFunc(GL_ONE, GL_ONE);
 
-		//glEnable(GL_BLEND);
-		//glBlendFunc(GL_ONE, GL_ONE);
+	object.render_all();
 
-		object.render_all();
-
-		mSkyBox.render();
-		//glDepthMask(GL_TRUE);
-		//glDepthFunc(GL_LESS);
-		//glDisable(GL_BLEND);
-	//}
+	mSkyBox.render();
+	//glDepthMask(GL_TRUE);
+	//glDepthFunc(GL_LESS);
+	//glDisable(GL_BLEND);
 		
 	post_processing(mFxaaFilter, displayFrame, 0);
 }
@@ -170,16 +167,16 @@ void RenderEngine::post_processing(Material& filter, const FrameBuffer& source, 
 	if (dest == 0) mWindow->bind_render_target();
 	else dest->bind_render_target();
 
-	float displayTextureAspect = (float)get_texture("displayTexture").get_width() / (float)get_texture("displayTexture").get_height();
-	float displayTextureHeightAdditive = displayTextureAspect * get_float("fxaaAspectDistortion");
-	set_vec3("inverseFilterTextureSize", glm::vec3(1.0f / (float)get_texture("displayTexture").get_width(),
-		1.0f / ((float)get_texture("displayTexture").get_height() + displayTextureHeightAdditive), 0.0f));
+	float displayTextureAspect = (float)Data.get_texture("displayTexture").get_width() / (float)Data.get_texture("displayTexture").get_height();
+	float displayTextureHeightAdditive = displayTextureAspect * Data.get_float("fxaaAspectDistortion");
+	Data.set_vec3("inverseFilterTextureSize", glm::vec3(1.0f / (float)Data.get_texture("displayTexture").get_width(),
+		1.0f / ((float)Data.get_texture("displayTexture").get_height() + displayTextureHeightAdditive), 0.0f));
 
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glDisable(GL_DEPTH_TEST);
 
 	filter.mShader->use();
-	get_texture("displayTexture").bind(0);
+	Data.get_texture("displayTexture").bind(0);
 	draw_quad();
 }

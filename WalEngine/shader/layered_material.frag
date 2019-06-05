@@ -83,17 +83,6 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
     return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(1.0 - cosTheta, 5.0);
 }   
 
-float m_depths[2] = float[2] ( 2.0, 0.0 );
-vec3 m_etas[3] = vec3[3]( vec3(1.0), vec3(1.49), vec3(1.0) );
-vec3 m_kappas[3] = vec3[3]( vec3(0.0), vec3(0.0), vec3(1.0, 0.1, 0.1) );
-//TODO
-
-int nb_layers = 2;
-vec3 m_sigma_a[2] = vec3[2] ( vec3(0.2f, 0.8, 0.4), vec3(0.4f, 1.0f, 0.3f) );
-vec3 m_sigma_s[2] = vec3[2] ( vec3(0.0f), vec3(0.0f) );
-
-const bool m_useTIR = false;
-
 float average(vec3 t)
 {
     return (t.r + t.g + t.b) * (1.0/ 3.0);
@@ -132,12 +121,28 @@ void FGD(float cti, float temp_alpha, out vec3 R12, out vec3 T12)
     T12 = vec3(1) - R12;
 }
 
+uniform float R_depth1;
+uniform float R_depth2;
+uniform vec3  R_eta1;
+uniform vec3  R_eta2;
+uniform vec3  R_eta3;
+uniform vec3  R_kappa1;
+uniform vec3  R_kappa2;
+uniform vec3  R_kappa3;
+uniform vec3  R_sigma_a1;
+uniform vec3  R_sigma_a2;
+uniform vec3  R_sigma_s1;
+uniform vec3  R_sigma_s2;
+uniform float alpha1;
+uniform float alpha2;
+
 void main()
 {			  
     vec3 albedo = pow(texture(M_albedoMap, Tex).rgb, vec3(2.2)) * albedo_mix;
-    float metallic = texture(M_metallicMap, Tex).r;
+    //vec3 albedo = pow(vec3(1.0), vec3(2.2)) * albedo_mix;
+	float metallic = texture(M_metallicMap, Tex).r;
     float roughness = texture(M_roughnessMap, Tex).r;
-	float m_alphas[3] = float[3] (1.0, 1.0, 1.0);
+	float m_alphas[3] = float[3] (alpha1, alpha2, roughness);
 
     vec3 N = getNormalFromMap();
     vec3 V = normalize(M_CamPos - WorldPos);
@@ -180,6 +185,25 @@ void main()
     vec3 diffuse      = irradiance * albedo;
     
 	//layered-material
+	//float m_depths[2] = float[2] ( 0.1, 0.0 );
+	//vec3 m_etas[3] = vec3[3]( vec3(1.0), vec3(2.0), vec3(1.0) );
+	//vec3 m_kappas[3] = vec3[3]( vec3(0.0), vec3(0.0), vec3(1.0, 0.1, 0.1) );
+	//TODO
+
+	//int nb_layers = 2;
+	//vec3 m_sigma_a[2] = vec3[2] ( vec3(0.2f, 0.1, 1.0), vec3(0.1f, 1.0f, 1.0f) );
+	//vec3 m_sigma_s[2] = vec3[2] ( vec3(0.0f), vec3(0.0f) );
+
+	float m_depths[2] = float[2] ( R_depth1, R_depth2 );
+	vec3 m_etas[3] = vec3[3]( R_eta1, R_eta2, R_eta3 );
+	vec3 m_kappas[3] = vec3[3]( R_kappa1, R_kappa2, R_kappa3 );
+	//TODO
+
+	int nb_layers = 2;
+	vec3 m_sigma_a[2] = vec3[2] ( R_sigma_a1, R_sigma_a2 );
+	vec3 m_sigma_s[2] = vec3[2] ( R_sigma_s1, R_sigma_s2 );
+
+	const bool m_useTIR = false;
 	int nb_valid;
 	vec3 coeffs[3];
 	float alphas[3];
@@ -376,6 +400,11 @@ void main()
         // Skip zero contributions
         if(isZero(coeffs[index]))
 		{
+			/* if(index == 2)
+			{
+				FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+				return;
+			}*/
             continue;
         }
 
@@ -388,18 +417,22 @@ void main()
         // Add to the contribution
         f += D*G * coeffs[index] / denominator;
     }
-	Lo += (f) * radiance * NdotL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
+
+	//FragColor = vec4(f, 1.0);
+	//return;
+
+	Lo += (kD * albedo / PI + f) * radiance * NdotL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
 
 	//computeAddingDoubling(NdotL, coeffs, alphas, nb_valid);
 
     const float MAX_REFLECTION_LOD = 4.0;
     vec3 prefilteredColor = textureLod(prefilterMap, R,  roughness * MAX_REFLECTION_LOD).rgb;    
     vec2 brdf  = texture(brdfLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
-    specular = prefilteredColor * (F * brdf.x + brdf.y);
+    specular = prefilteredColor * (f);
 
-    vec3 ambient = ( specular);
+    vec3 ambient = (kD * diffuse + specular);
     
-    vec3 color = Lo;
+    vec3 color = ambient + Lo;
 	
     color = color / (color + vec3(1.0));
     color = pow(color, vec3(1.0/2.2)); 

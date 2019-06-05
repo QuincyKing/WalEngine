@@ -49,7 +49,7 @@ void Game::init()
 	renderRoot.add_child(&model);
 	renderRoot.add_child(&model2);
 
-	Entity::mRoot.push_back(&renderRoot);
+	Entity::Root.push_back(&renderRoot);
 
 	Material::update_uniforms_constant_all();
 }
@@ -78,10 +78,7 @@ void Game::render(RenderEngine &renderer)
 	mat_layered->mShader->set_int("prefilterMap", 1);
 	mat_layered->mShader->set_int("brdfLUT", 2);
 
-	//renderer.add_light(dir);
 	RenderEngine::Lights.push_back(&dir);
 	RenderEngine::Lights.push_back(&dir2);
 	renderer.render(renderRoot);
-	//cube1.render(shader2);
-	//model.draw(shader);
 }

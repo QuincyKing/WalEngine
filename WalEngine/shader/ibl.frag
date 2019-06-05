@@ -95,7 +95,8 @@ void main()
 {		
     // material properties
     vec3 albedo = pow(texture(M_albedoMap, Tex).rgb, vec3(2.2)) * albedo_mix;
-    float metallic = texture(M_metallicMap, Tex).r;
+    //vec3 albedo = pow(vec3(1.0), vec3(2.2)) * albedo_mix;
+	float metallic = texture(M_metallicMap, Tex).r;
     float roughness = texture(M_roughnessMap, Tex).r;
        
     // input lighting data
@@ -162,7 +163,7 @@ void main()
 
     vec3 ambient = (kD * diffuse + specular);
     
-    vec3 color = Lo;
+    vec3 color = ambient + Lo;
 
     // HDR tonemapping
     color = color / (color + vec3(1.0));

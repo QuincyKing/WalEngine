@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../core/Window.h"
-#include "../core/MapVal.h"
+#include "../core/DataPool.h"
 #include "Camera.h"
 #include "../model/Light.h"
 #include "../model/Cube.h"
@@ -13,7 +13,7 @@
 
 class Entity;
 
-class RenderEngine : public MapVal
+class RenderEngine
 {
 public:
 	RenderEngine() = default;
@@ -28,6 +28,7 @@ public:
 
 public:
 	static std::vector<BaseLight*>		Lights;
+	static DataPool						Data;
 
 private:
 	static std::map<std::string, unsigned int> SamplerMap;

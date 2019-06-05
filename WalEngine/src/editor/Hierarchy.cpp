@@ -5,7 +5,7 @@
 
 int Hierarchy::selected = -1;
 
-void Hierarchy::show_hierarchy(std::vector<Entity*> root)
+void Hierarchy::show(std::vector<Entity*> root)
 {	
 	if (!root.empty())
 	{
@@ -26,7 +26,7 @@ void Hierarchy::show_hierarchy(std::vector<Entity*> root)
 					selected = e->mIndex;
 				if (node_open)
 				{
-					show_hierarchy(e->mChildren);
+					show(e->mChildren);
 					if (e->mName != "root")
 						ImGui::TreePop();
 				}

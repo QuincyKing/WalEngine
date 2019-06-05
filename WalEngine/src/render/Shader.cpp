@@ -281,6 +281,7 @@ void ShaderData::add_shader_uniforms(const std::string& shaderText)
 			std::string uniformName = uniformLine.substr(begin + 1);
 			std::string uniformType = uniformLine.substr(0, begin);
 
+			uniformName = Util::trim(uniformName);
 			mUniformNames.push_back(uniformName);
 			mUniformTypes.push_back(uniformType);
 			add_uniform(uniformName, uniformType, structs);

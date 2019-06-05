@@ -27,3 +27,15 @@ std::vector<std::string> Util::split(const std::string& s, char delim)
 
 	return elems;
 }
+
+std::string Util::trim(const std::string& str, const std::string& whitespace)
+{
+	const auto strBegin = str.find_first_not_of(whitespace);
+	if (strBegin == std::string::npos)
+		return ""; 
+
+	const auto strEnd = str.find_last_not_of(whitespace);
+	const auto strRange = strEnd - strBegin + 1;
+
+	return str.substr(strBegin, strRange);
+}

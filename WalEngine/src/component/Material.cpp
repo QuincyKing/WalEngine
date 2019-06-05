@@ -117,14 +117,14 @@ void Material::update_uniforms_constant() const
 						renderEngine.update_uniformstruct(transform, material, *this, uniformName, uniformType);*/
 		//}
 		//texture variance
-		if (uniformType == "sampler2D")
-		{
+		//if (uniformType == "sampler2D")
+		//{
 			//int samplerSlot = renderEngine.get_sampler_slot(uniformName);
 			//get_texture(uniformName).bind(samplerSlot);
 			//mShader.set_int(uniformName, samplerSlot);
-		}
+		//}
 		//constant variance
-		else if (uniformName.substr(0, 2) == "C_")
+		if (uniformName.substr(0, 2) == "C_")
 		{
 			if (uniformName == "C_CamPos")
 				mShader->set_vec3(uniformName, Window::MainCamera.get_transform()->get_transform_pos());
@@ -182,7 +182,7 @@ void Material::update_uniforms_mutable() const
 	}
 }
 
-void Material::update_uniforms_mutable_all(RenderEngine* render)
+void Material::update_uniforms_mutable_all()
 {
 	for (auto iter = ResourceMap.begin(); iter != ResourceMap.end(); iter++)
 	{
@@ -247,9 +247,9 @@ void Material::update_uniforms_mutable_all(RenderEngine* render)
 					set_uniform_spotlight(shader, uniformName, *dynamic_cast<SpotLight *>(light));
 				}
 				else if (uniformType == "vec3")
-					shader->set_vec3(uniformName, render->get_vec3(varianceName));
+					shader->set_vec3(uniformName, RenderEngine::Data.get_vec3(varianceName));
 				else if (uniformType == "float")
-					shader->set_float(uniformName, render->get_float(varianceName));
+					shader->set_float(uniformName, RenderEngine::Data.get_float(varianceName));
 			}
 		}
 	}

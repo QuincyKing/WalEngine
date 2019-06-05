@@ -46,13 +46,19 @@ public:
 		glm::mat4 model = mTransform->get_model();
 		get_component<Material>(ComType::Mat)->mShader->use();
 		get_component<Material>(ComType::Mat)->mShader->set_mat4("T_model", model);
-		draw();
+		for (unsigned int i = 0; i < meshes.size(); i++)
+		{
+			get_component<Material>(ComType::Mat)->mShader->set_vec3("albedo_mix", i == 0 ? glm::vec3(0.2, 0.6, 1.0) : glm::vec3(1.0, 1.0, 1.0));
+			meshes[i].draw();
+		}
 	}
 
     void draw()
     {
-        for(unsigned int i = 0; i < meshes.size(); i++)
-            meshes[i].draw();
+		for (unsigned int i = 0; i < meshes.size(); i++)
+		{
+			meshes[i].draw();
+		}
     }
     
 private:
