@@ -6,7 +6,8 @@ void Panel::make_panel()
 	mMenu.make_menu();
 	if (mMenu.mAboutW)
 		show_about();
-	if (mMenu.mHierarchyW)
+	//if (mMenu.mHierarchyW)
+	if(false)
 		show_hierarchy();
 	show_layer_material_panel();
 }

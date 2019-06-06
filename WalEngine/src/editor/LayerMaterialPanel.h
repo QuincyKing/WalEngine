@@ -13,19 +13,16 @@ public:
 
 	void show();
 
+private:
+	void update_variances();
+
 public:
 	static float  depth1;
-	static float  depth2;
 	static float  alpha1;
-	static float  alpha2;
+	static float  g;
 	static float  eta1[3];
 	static float  eta2[3];
-	static float  eta3[3];
 	static float  kappa1[3];
-	static float  kappa2[3];
-	static float  kappa3[3];
 	static ImVec4 sigma_a1;
-	static ImVec4 sigma_a2;
 	static ImVec4 sigma_s1;
-	static ImVec4 sigma_s2;
 };

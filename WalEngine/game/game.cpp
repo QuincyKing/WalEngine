@@ -2,11 +2,11 @@
 
 void Game::init()
 {
-	albedo = Texture("pbr/plastic/albedo.png");
-	normal = Texture("pbr/plastic/normal.png");
-	metallic = Texture("pbr/plastic/metallic.png");
-	roughness = Texture("pbr/plastic/roughness.png");
-	ao = Texture("pbr/plastic/ao.png");
+	albedo = Texture("pbr/gold/albedo.png");
+	normal = Texture("pbr/gold/normal.png");
+	metallic = Texture("pbr/gold/metallic.png");
+	roughness = Texture("pbr/gold/roughness.png");
+	ao = Texture("pbr/gold/ao.png");
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
@@ -40,8 +40,8 @@ void Game::init()
 	RenderEngine::set_sampler_slot("metallicMap", 5);
 	RenderEngine::set_sampler_slot("roughnessMap", 6);
 
-	model.mTransform->set_pos(glm::vec3(-1.5, -1.0, 0.0));
-	model2.mTransform->set_pos(glm::vec3(1.5, -1.0, 0.0));
+	model.mTransform->set_pos(glm::vec3(-2.5, -1.0, -1.0));
+	model2.mTransform->set_pos(glm::vec3(0.5, -1.0, -1.0));
 
 	model.set_mat(mat);
 	model2.set_mat(mat_layered);
@@ -64,9 +64,9 @@ void Game::render(RenderEngine &renderer)
 	glm::vec3 lightColor = glm::vec3(255.0f, 255.0f, 255.0f);
 
 	dir.get_component<PointLightCom>()->set_color(lightColor);
-	dir.mTransform->set_pos(glm::vec3(-1.5, -1.0, 4.0));
+	dir.mTransform->set_pos(glm::vec3(-2.5, -1.0, 5.0));
 	dir2.get_component<PointLightCom>()->set_color(lightColor);
-	dir2.mTransform->set_pos(glm::vec3(1.5, -1.0, 4.0));
+	dir2.mTransform->set_pos(glm::vec3(0.5, -1.0, 5.0));
 
 	mat->mShader->use();
 	mat->mShader->set_int("irradianceMap", 0);
