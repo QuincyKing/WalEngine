@@ -19,6 +19,7 @@ public:
 
 	inline std::shared_ptr<Transform> get_transform() { return mTransform; }
 	inline const Transform& get_transform() const { return *mTransform; }
+	inline void set_pos(glm::vec3 pos) { mTransform->set_pos(pos); }
 };
 
 class DirectionalLight : public BaseLight
@@ -32,6 +33,7 @@ public:
 		glm::vec3 scale = glm::vec3(1.0f) ) :
 	BaseLight(name, pos, rot, scale)
 	{
+		//TODO : memory leaking
 		add_component(ComType::DirLit, new DirectionalLightCom(color, intensity));
 	}
 	~DirectionalLight() {}

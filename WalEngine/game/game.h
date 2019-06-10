@@ -25,8 +25,8 @@ public:
 	Entity renderRoot;
 	Material *mat;
 	Material *mat_layered;
-	PointLight dir;
-	PointLight dir2;
+	DirectionalLight dir;
+	DirectionalLight dir2;
 
 public:
 	Game() :

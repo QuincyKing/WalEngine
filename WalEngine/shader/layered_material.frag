@@ -15,11 +15,21 @@ uniform sampler2D brdfLUT;
 
 #include <light.inc>
 
-uniform PointLight R_dir2;
+uniform DirectionalLight R_dir2;
 uniform vec3 albedo_mix;
 uniform vec3 M_CamPos;
 
 const float PI = 3.14159265359;
+
+float NDFGGX(vec3 N, vec3 H, float roughness)
+{
+    roughness *= roughness;
+    float elem1 = roughness * roughness;
+    float elem2 = max(dot(N, H), 0.0) * max(dot(N, H), 0.0) * (elem1 - 1) + 1;
+    float elem22 = elem2 * elem2;
+
+    return elem1 / (PI * max(elem22, 0.001));
+}
 
 vec3 getNormalFromMap()
 {
@@ -128,8 +138,8 @@ void FGD(float cti, float temp_alpha, out vec3 R12, out vec3 T12)
 }
 
 uniform float R_depth1;
-uniform vec3  R_eta1;
-uniform vec3  R_eta2;
+uniform float  R_eta1;
+uniform float  R_eta2;
 uniform vec3  R_kappa1;
 uniform vec3  R_sigma_a1;
 uniform vec3  R_sigma_s1;
@@ -139,7 +149,6 @@ uniform float R_g;
 void main()
 {			  
     vec3 albedo = pow(texture(M_albedoMap, Tex).rgb, vec3(2.2)) * albedo_mix;
-    //vec3 albedo = pow(vec3(1.0), vec3(2.2)) * albedo_mix;
 	float metallic = texture(M_metallicMap, Tex).r;
     float roughness = texture(M_roughnessMap, Tex).r;
 	float m_alphas[3] = float[3] (R_alpha1, R_g, roughness);
@@ -153,27 +162,21 @@ void main()
 
     vec3 Lo = vec3(0.0);
 
-    vec3 L = normalize(R_dir2.position - WorldPos);
+    vec3 L = normalize(R_dir2.direction);
     vec3 H = normalize(V + L);
-    float distance = length(R_dir2.position - WorldPos);
-    float attenuation = 1.0 / (distance * distance);
-    vec3 radiance = R_dir2.color * attenuation;
+    vec3 radiance = pow(R_dir2.color, vec3(R_dir2.intensity));
 
-    float NDF = DistributionGGX(N, H, roughness);   
+    float NDF = NDFGGX(N, H, roughness);
     float G   = GeometrySmith(N, V, L, roughness);    
     vec3 F    = fresnelSchlick(max(dot(H, V), 0.0), F0);        
-        
+
     vec3 nominator    = NDF * G * F;
     float denominator = 4 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.001; // 0.001 to prevent divide by zero.
     vec3 specular = nominator / denominator;
-        
-    vec3 kS = F;
-    vec3 kD = vec3(1.0) - kS;
-    kD *= 1.0 - metallic;	                
-            
+                       
     float NdotL = max(dot(N, L), 0.0);        
 	
-   // Lo += (kD * albedo / PI + specular) * radiance * NdotL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
+    //Lo += (kD * albedo / PI + specular) * radiance * NdotL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
     
 	//layered-material
 	//float m_depths[2] = float[2] ( 0.1, 0.0 );
@@ -186,19 +189,19 @@ void main()
 	//vec3 m_sigma_s[2] = vec3[2] ( vec3(0.0f), vec3(0.0f) );
 
 	float m_depths[3] = float[3] (0.0, R_depth1, 0.0);
-	vec3 m_etas[4] = vec3[4]( vec3(1.0), R_eta1, R_eta1, R_eta2 );
+	float m_etas[4] = float[4]( 1.0, R_eta1, R_eta1, R_eta2 );
 	vec3 m_kappas[4] = vec3[4]( vec3(0.0), vec3(0.0), vec3(0.0), R_kappa1 );
 
 	int nb_layers = 3;
 	vec3 m_sigma_a[3] = vec3[3] ( vec3(0.0), R_sigma_a1, vec3(0.0));
 	vec3 m_sigma_s[3] = vec3[3] ( vec3(0.0), R_sigma_s1, vec3(0.0));
 
-	const bool m_useTIR = false;
+	const bool m_useTIR = true;
 	int nb_valid;
 	vec3 coeffs[3];
 	float alphas[3];
 
-	float cti  = max(dot(N, V), 0.0);
+	float cti  = max(dot(N, L), 0.0);
     vec3 R0i = vec3(0.0f);
     vec3 Ri0 = vec3(0.0f);
     vec3 T0i = vec3(1.0f);
@@ -216,19 +219,18 @@ void main()
     for(int i=0; i<nb_layers; ++i)
 	{
         // Extract layer data
-        vec3 eta_1   = m_etas[i];
-        vec3 eta_2   = m_etas[i+1];
+        float eta_1   = m_etas[i];
+        float eta_2   = m_etas[i+1];
         vec3 kappa_2 = m_kappas[i+1];
-        vec3 eta     = eta_2 / eta_1;
-        vec3 kappa   = kappa_2 / eta_1;
+        float eta     = eta_2 / eta_1;
+        vec3 kappa   = kappa_2 / vec3(eta_1);
         float alpha  = m_alphas[i];
-        float n12    = average(eta);
+        float n12    = eta;
         float depth  = m_depths[i];
 
         
         float s_r12=0.0f, s_r21=0.0f, s_t12=0.0f, s_t21=0.0f, j12=1.0f, j21=1.0f, ctt;
 
-        //calculate 2nd layer and 3rd layer statistics 
         //Medium
         if(depth > 0.0f)
 		{
@@ -258,6 +260,11 @@ void main()
             if(stt <= 1.0f) ctt = sqrt(1.0f - stt*stt);
             else ctt = -1.0f;
 
+			if(i == 2)
+			{
+				FragColor = vec4(ctt);
+				return;
+			}
 
             // Ray is not block by conducting interface or total reflection
             const bool has_transmissive = ctt > 0.0f && isZero(kappa);
@@ -284,6 +291,7 @@ void main()
 
             // Evaluate r12, r21, t12, t21
             FGD(cti, temp_alpha, R12, T12);
+
             // Reflection / Refraction by a rough interface
             if(has_transmissive) 
             {
@@ -301,18 +309,21 @@ void main()
             // Evaluate TIR using the decoupling approximation
             if(i > 0 && m_useTIR)
             {
-          //       vec3 eta_0   = (i==0) ? m_etas[0] : m_etas[i-1];
-          //       float n10    = average(eta_0/eta_1);
+                 float eta_0   = (i==0) ? m_etas[0] : m_etas[i-1];
+                 float n10    = eta_0/eta_1;
 
-          //       const float _TIR  = m_TIR(cti, temp_alpha, n10);
-          //       Ri0 += (1.0f-_TIR) * Ti0;
-		        // Ri0.r = min(Ri0.r, 1.0f); Ri0.g = min(Ri0.g, 1.0f); Ri0.b = min(Ri0.b, 1.0f);
-          //       Ti0 *= _TIR;
+				 //TODO
+                 const float _TIR  = 0.8;
+                 Ri0 += (1.0f-_TIR) * Ti0;
+
+		         Ri0.r = min(Ri0.r, 1.0f); Ri0.g = min(Ri0.g, 1.0f); Ri0.b = min(Ri0.b, 1.0f);
+                 Ti0 *= _TIR;
             }
         }
 
         // Multiple scattering forms
         const vec3 denom = (vec3(1.0f) - Ri0*R12);
+		
         //TODO isZero()
         const vec3 m_R0i = (average(denom) <= 0.0f)? vec3(0.0f) : (T0i*R12*Ti0) / denom;
         const vec3 m_Ri0 = (average(denom) <= 0.0f)? vec3(0.0f) : (T21*Ri0*T12) / denom;
@@ -383,6 +394,7 @@ void main()
     nb_valid = nb_layers;
 
 	vec3 f = vec3(0.0);
+	vec3 F1 = vec3(0.0);
 	for(int index=0; index<nb_valid; ++index)
 	{
         // Skip zero contributions
@@ -394,15 +406,19 @@ void main()
         // Fetch current roughness
         const float a = alphas[index];
 
-        const float D = DistributionGGX(N, H, a);
+        const float D = NDFGGX(N, H, a);
         const float G = GeometrySmith(N, V, L, a);
 
         // Add to the contribution
-        f += D*G * coeffs[index] / denominator;
+        f += D * G * coeffs[index] / denominator;
+		F1 += coeffs[index];
     }
 
-	FragColor = vec4(f, 1.0);
-	return;
+	vec3 kS = F1;
+    vec3 kD = vec3(1.0) - kS;
+    kD *= 1.0 - metallic;	
+
+
 	Lo += (kD * albedo / PI + f) * radiance * NdotL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
 	
 	//computeAddingDoubling(NdotL, coeffs, alphas, nb_valid);

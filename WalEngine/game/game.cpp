@@ -2,11 +2,11 @@
 
 void Game::init()
 {
-	albedo = Texture("pbr/gold/albedo.png");
-	normal = Texture("pbr/gold/normal.png");
-	metallic = Texture("pbr/gold/metallic.png");
-	roughness = Texture("pbr/gold/roughness.png");
-	ao = Texture("pbr/gold/ao.png");
+	albedo = Texture("pbr/plastic/albedo.png");
+	normal = Texture("pbr/plastic/normal.png");
+	metallic = Texture("pbr/plastic/metallic.png");
+	roughness = Texture("pbr/plastic/roughness.png");
+	ao = Texture("pbr/plastic/ao.png");
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
@@ -63,10 +63,10 @@ void Game::render(RenderEngine &renderer)
 	glm::vec3 lightPosition = glm::vec3(0.0f, 0.0f, 5.0f);
 	glm::vec3 lightColor = glm::vec3(255.0f, 255.0f, 255.0f);
 
-	dir.get_component<PointLightCom>()->set_color(lightColor);
-	dir.mTransform->set_pos(glm::vec3(-2.5, -1.0, 5.0));
-	dir2.get_component<PointLightCom>()->set_color(lightColor);
-	dir2.mTransform->set_pos(glm::vec3(0.5, -1.0, 5.0));
+	dir.get_component<DirectionalLightCom>()->set_color(lightColor);
+	dir.get_component<DirectionalLightCom>()->set_intensity(0.3);
+	dir2.get_component<DirectionalLightCom>()->set_color(lightColor);
+	dir2.get_component<DirectionalLightCom>()->set_intensity(0.3);
 
 	mat->mShader->use();
 	mat->mShader->set_int("irradianceMap", 0);

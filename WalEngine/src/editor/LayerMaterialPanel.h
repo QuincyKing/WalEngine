@@ -20,8 +20,8 @@ public:
 	static float  depth1;
 	static float  alpha1;
 	static float  g;
-	static float  eta1[3];
-	static float  eta2[3];
+	static float  eta1;
+	static float  eta2;
 	static float  kappa1[3];
 	static ImVec4 sigma_a1;
 	static ImVec4 sigma_s1;

@@ -19,7 +19,7 @@ uniform vec3 albedo_mix;
 
 #include <light.inc>
 
-uniform PointLight R_dir;
+uniform DirectionalLight R_dir;
 
 uniform vec3 M_CamPos;
 
@@ -113,11 +113,12 @@ void main()
     vec3 Lo = vec3(0.0);
 
     // calculate per-light radiance
-    vec3 L = normalize(R_dir.position - WorldPos);
+    vec3 L = normalize(R_dir.direction);
     vec3 H = normalize(V + L);
-    float distance = length(R_dir.position - WorldPos);
-    float attenuation = 1.0 / (distance * distance);
-    vec3 radiance = R_dir.color * attenuation;
+    //float distance = length(R_dir.position - WorldPos);
+    //float attenuation = 1.0 / (distance * distance);
+    //vec3 radiance = R_dir.color * attenuation;
+	vec3 radiance = pow(R_dir.color, vec3(R_dir.intensity));
 
     // Cook-Torrance BRDF
     float NDF = DistributionGGX(N, H, roughness);   
