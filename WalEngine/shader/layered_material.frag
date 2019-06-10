@@ -129,12 +129,11 @@ bool isZero(vec3 s)
     return s.r - 0.0f > 0.00001f || s.g - 0.0 > 0.00001f || s.b - 0.0 > 0.00001f ? false : true;
 }
 
-void FGD(float cti, float temp_alpha, out vec3 R12, out vec3 T12)
+vec3 FGD(float cti, float temp_alpha)
 {
     vec2 brdf  = texture(brdfLUT, vec2(max(cti, 0.0), temp_alpha)).rg;
     vec3 F = fresnelSchlickRoughness(cti, vec3(0.04), temp_alpha);
-    R12 = (F * brdf.x + brdf.y);
-    T12 = vec3(1) - R12;
+    return (F * brdf.x + brdf.y);
 }
 
 uniform float R_depth1;
@@ -260,12 +259,6 @@ void main()
             if(stt <= 1.0f) ctt = sqrt(1.0f - stt*stt);
             else ctt = -1.0f;
 
-			if(i == 2)
-			{
-				FragColor = vec4(ctt);
-				return;
-			}
-
             // Ray is not block by conducting interface or total reflection
             const bool has_transmissive = ctt > 0.0f && isZero(kappa);
 
@@ -290,7 +283,8 @@ void main()
             float temp_alpha = varianceToRoughness(s_t0i + s_r12);
 
             // Evaluate r12, r21, t12, t21
-            FGD(cti, temp_alpha, R12, T12);
+            R12 = FGD(cti, temp_alpha);
+			T12 = vec3(1) - R12;
 
             // Reflection / Refraction by a rough interface
             if(has_transmissive) 
@@ -328,7 +322,7 @@ void main()
         const vec3 m_R0i = (average(denom) <= 0.0f)? vec3(0.0f) : (T0i*R12*Ti0) / denom;
         const vec3 m_Ri0 = (average(denom) <= 0.0f)? vec3(0.0f) : (T21*Ri0*T12) / denom;
         const vec3 m_Rr  = (average(denom) <= 0.0f)? vec3(0.0f) : (Ri0*R12) / denom;
-            
+           
         // Evaluate the adding operator on the energy
         const vec3 e_R0i = R0i + m_R0i;
         const vec3 e_T0i = (T0i*T12) / denom;
@@ -369,6 +363,12 @@ void main()
         T0i = e_T0i;
         Ri0 = e_Ri0;
         Ti0 = e_Ti0;
+
+		if(i == 0)
+		{
+			FragColor = vec4(T0i, 1.0);
+			return;
+		}
 
         // Update mean
         cti = ctt;
@@ -419,7 +419,7 @@ void main()
     kD *= 1.0 - metallic;	
 
 
-	Lo += (kD * albedo / PI + f) * radiance * NdotL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
+	Lo += (kD * albedo / PI + F1) * radiance * NdotL; // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
 	
 	//computeAddingDoubling(NdotL, coeffs, alphas, nb_valid);
 	F = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
