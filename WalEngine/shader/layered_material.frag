@@ -137,9 +137,8 @@ vec3 FGD(float cti, float temp_alpha)
 }
 
 uniform float R_depth1;
-uniform float  R_eta1;
-uniform float  R_eta2;
-uniform vec3  R_kappa1;
+uniform float R_eta1;
+uniform float R_eta2;
 uniform vec3  R_sigma_a1;
 uniform vec3  R_sigma_s1;
 uniform float R_alpha1;
@@ -188,8 +187,8 @@ void main()
 	//vec3 m_sigma_s[2] = vec3[2] ( vec3(0.0f), vec3(0.0f) );
 
 	float m_depths[3] = float[3] (0.0, R_depth1, 0.0);
-	float m_etas[4] = float[4]( 1.0, R_eta1, R_eta1, R_eta2 );
-	vec3 m_kappas[4] = vec3[4]( vec3(0.0), vec3(0.0), vec3(0.0), R_kappa1 );
+	float m_etas[4] = float[4]( 1.0, R_eta1 + 0.000001, R_eta1 + 0.000001, R_eta2 + 0.000001 );
+	vec3 m_kappas[4] = vec3[4]( vec3(0.0), vec3(0.0), vec3(0.0), vec3(1.0, 1.0, 1.0) );
 
 	int nb_layers = 3;
 	vec3 m_sigma_a[3] = vec3[3] ( vec3(0.0), R_sigma_a1, vec3(0.0));
@@ -227,7 +226,6 @@ void main()
         float n12    = eta;
         float depth  = m_depths[i];
 
-        
         float s_r12=0.0f, s_r21=0.0f, s_t12=0.0f, s_t21=0.0f, j12=1.0f, j21=1.0f, ctt;
 
         //Medium
@@ -258,6 +256,12 @@ void main()
             float stt = sti / n12;
             if(stt <= 1.0f) ctt = sqrt(1.0f - stt*stt);
             else ctt = -1.0f;
+
+			if(i == 0)
+			{
+				FragColor = vec4(ctt, 0.0, 0.0, 1.0);
+				return;
+			}
 
             // Ray is not block by conducting interface or total reflection
             const bool has_transmissive = ctt > 0.0f && isZero(kappa);
@@ -307,8 +311,8 @@ void main()
                  float n10    = eta_0/eta_1;
 
 				 //TODO
-                 const float _TIR  = 0.8;
-                 Ri0 += (1.0f-_TIR) * Ti0;
+                 const float _TIR  = 0.2;
+                 Ri0 += (1.0f-_TIR) * Ti0;    
 
 		         Ri0.r = min(Ri0.r, 1.0f); Ri0.g = min(Ri0.g, 1.0f); Ri0.b = min(Ri0.b, 1.0f);
                  Ti0 *= _TIR;
@@ -318,11 +322,11 @@ void main()
         // Multiple scattering forms
         const vec3 denom = (vec3(1.0f) - Ri0*R12);
 		
-        //TODO isZero()
-        const vec3 m_R0i = (average(denom) <= 0.0f)? vec3(0.0f) : (T0i*R12*Ti0) / denom;
+        //TODO 
+        const vec3 m_R0i = (average(denom) <= 0.0f)? vec3(0.0f) : i == 2 ? (T0i*Ti0) / denom : (T0i*R12*Ti0) / denom;
         const vec3 m_Ri0 = (average(denom) <= 0.0f)? vec3(0.0f) : (T21*Ri0*T12) / denom;
         const vec3 m_Rr  = (average(denom) <= 0.0f)? vec3(0.0f) : (Ri0*R12) / denom;
-           
+
         // Evaluate the adding operator on the energy
         const vec3 e_R0i = R0i + m_R0i;
         const vec3 e_T0i = (T0i*T12) / denom;
@@ -363,13 +367,7 @@ void main()
         T0i = e_T0i;
         Ri0 = e_Ri0;
         Ti0 = e_Ti0;
-
-		if(i == 0)
-		{
-			FragColor = vec4(T0i, 1.0);
-			return;
-		}
-
+						
         // Update mean
         cti = ctt;
 
@@ -438,7 +436,7 @@ void main()
 
     vec3 ambient = (kD * diffuse + specular);
 
-    vec3 color = ambient + Lo;
+    vec3 color = Lo;
 	
     color = color / (color + vec3(1.0));
     color = pow(color, vec3(1.0/2.2)); 
