@@ -7,7 +7,6 @@ float  LayerMaterialPanel::depth1 = 0.5f;
 float  LayerMaterialPanel::alpha1 = 0.8f;
 float  LayerMaterialPanel::g = 1.0f;
 float  LayerMaterialPanel::eta1 = 1.49f;
-float  LayerMaterialPanel::eta2 = 2.0f;
 ImVec4 LayerMaterialPanel::sigma_a1 = ImColor(1.0f, 1.0f, 1.0f);
 ImVec4 LayerMaterialPanel::sigma_s1 = ImColor(0.0f, 0.0f, 0.0f);
 
@@ -22,7 +21,6 @@ void LayerMaterialPanel::show()
 	ImGui::DragScalar("alpha1", ImGuiDataType_Float, &alpha1, 0.005, &g_lo, &g_hi);
 	ImGui::DragScalar("g", ImGuiDataType_Float, &g, 0.005, &g_lo, &g_hi); 
 	ImGui::DragScalar("eta1", ImGuiDataType_Float, &eta1, drag_speed, &eta_lo, &f32_hi_a);
-	ImGui::DragScalar("eta2", ImGuiDataType_Float, &eta2, drag_speed, &eta_lo, &f32_hi_a);
 
 	//color
 	ImGui::Text("Color:");
@@ -48,7 +46,6 @@ void LayerMaterialPanel::update_variances()
 	RenderEngine::Data.set_float("alpha1", alpha1);
 	RenderEngine::Data.set_float("g", g);
 	RenderEngine::Data.set_float("eta1", eta1);
-	RenderEngine::Data.set_float("eta2", eta2);
 	RenderEngine::Data.set_vec3("sigma_a1", glm::vec3(sigma_a1.x, sigma_a1.y, sigma_a1.z));
 	RenderEngine::Data.set_vec3("sigma_s1", glm::vec3(sigma_s1.x, sigma_s1.y, sigma_s1.z));
 }
