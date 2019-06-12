@@ -138,7 +138,6 @@ vec3 FGD(float cti, float temp_alpha)
 
 uniform float R_depth1;
 uniform float R_eta1;
-uniform float R_eta2;
 uniform vec3  R_sigma_a1;
 uniform vec3  R_sigma_s1;
 uniform float R_alpha1;
@@ -187,7 +186,7 @@ void main()
 	//vec3 m_sigma_s[2] = vec3[2] ( vec3(0.0f), vec3(0.0f) );
 
 	float m_depths[3] = float[3] (0.0, R_depth1, 0.0);
-	float m_etas[4] = float[4]( 1.0, R_eta1 + 0.000001, R_eta1 + 0.000001, R_eta2 + 0.000001 );
+	float m_etas[4] = float[4]( 1.0, R_eta1 + 0.000001, R_eta1 + 0.000001, 10 + 0.000001 );
 	vec3 m_kappas[4] = vec3[4]( vec3(0.0), vec3(0.0), vec3(0.0), vec3(1.0, 1.0, 1.0) );
 
 	int nb_layers = 3;
@@ -210,6 +209,7 @@ void main()
     float s_ti0=0.0f;
     float j0i=1.0f;
     float ji0=1.0f;
+
 
 	vec3 R12, T12, R21, T21;
 
@@ -256,13 +256,7 @@ void main()
             float stt = sti / n12;
             if(stt <= 1.0f) ctt = sqrt(1.0f - stt*stt);
             else ctt = -1.0f;
-
-			if(i == 0)
-			{
-				FragColor = vec4(ctt, 0.0, 0.0, 1.0);
-				return;
-			}
-
+			
             // Ray is not block by conducting interface or total reflection
             const bool has_transmissive = ctt > 0.0f && isZero(kappa);
 
@@ -287,7 +281,7 @@ void main()
             float temp_alpha = varianceToRoughness(s_t0i + s_r12);
 
             // Evaluate r12, r21, t12, t21
-            R12 = FGD(cti, temp_alpha);
+            R12 = FGD(max(dot(N, L), 0.0), temp_alpha);
 			T12 = vec3(1) - R12;
 
             // Reflection / Refraction by a rough interface
@@ -323,7 +317,7 @@ void main()
         const vec3 denom = (vec3(1.0f) - Ri0*R12);
 		
         //TODO 
-        const vec3 m_R0i = (average(denom) <= 0.0f)? vec3(0.0f) : i == 2 ? (T0i*Ti0) / denom : (T0i*R12*Ti0) / denom;
+        const vec3 m_R0i = (average(denom) <= 0.0f)? vec3(0.0f) : i == 2 ? (T0i*R12*Ti0) / denom : (T0i*R12*Ti0) / denom;
         const vec3 m_Ri0 = (average(denom) <= 0.0f)? vec3(0.0f) : (T21*Ri0*T12) / denom;
         const vec3 m_Rr  = (average(denom) <= 0.0f)? vec3(0.0f) : (Ri0*R12) / denom;
 
@@ -332,6 +326,12 @@ void main()
         const vec3 e_T0i = (T0i*T12) / denom;
         const vec3 e_Ri0 = R21 + m_Ri0;
         const vec3 e_Ti0 = (T21*Ti0) / denom;
+
+		if( i == 2)
+		{
+			FragColor = vec4(m_R0i , 1.0);
+			return;
+		}
 
         // Scalar forms for the spectral quantities
         const float r0i   = average(R0i);
