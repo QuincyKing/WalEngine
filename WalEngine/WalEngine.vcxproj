@@ -22,13 +22,13 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{6AC0B402-0F31-47DF-A801-A6D43C70F526}</ProjectGuid>
     <RootNamespace>WalEngine</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -41,7 +41,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -70,8 +70,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\QuincyKing\Desktop\WalEngine\WalEngine\ThirdParty\include\glad\include;C:\Users\QuincyKing\Desktop\WalEngine\WalEngine\ThirdParty\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\QuincyKing\Desktop\WalEngine\WalEngine\ThirdParty\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\jinqifeng\Desktop\WalEngine\WalEngine\ThirdParty\include\glad\include;C:\Users\jinqifeng\Desktop\WalEngine\WalEngine\ThirdParty\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\jinqifeng\Desktop\WalEngine\WalEngine\ThirdParty\lib;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)bin</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -83,7 +83,7 @@
       <PreprocessorDefinitions>_DISABLE_EXTENDED_ALIGNED_STORAGE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>kernel32.lib;user32.lib;SOIL.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;opengl32.lib;assimp.lib;glfw3.lib;STB_IMAGE.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib;opengl32.lib;assimp.lib;glfw3.lib;STB_IMAGE.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -125,23 +125,27 @@
   <ItemGroup>
     <ClCompile Include="game\game.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\component\LightCom.cpp" />
     <ClCompile Include="src\core\Entity.cpp" />
     <ClCompile Include="src\core\Input.cpp" />
-    <ClCompile Include="src\core\MapVal.cpp" />
+    <ClCompile Include="src\core\DataPool.cpp" />
+    <ClCompile Include="src\core\Mesh.cpp" />
+    <ClCompile Include="src\core\Model.cpp" />
     <ClCompile Include="src\core\Transform.cpp" />
     <ClCompile Include="src\core\Window.cpp" />
     <ClCompile Include="src\editor\Hierarchy.cpp" />
+    <ClCompile Include="src\editor\LayerMaterialPanel.cpp" />
     <ClCompile Include="src\editor\Menu.cpp" />
     <ClCompile Include="src\editor\Panel.cpp" />
     <ClCompile Include="src\model\Cube.cpp" />
-    <ClCompile Include="src\model\Quad.cpp" />
     <ClCompile Include="src\model\Sphere.cpp" />
     <ClCompile Include="src\render\Camera.cpp" />
-    <ClCompile Include="src\render\Light.cpp" />
-    <ClCompile Include="src\render\Material.cpp" />
+    <ClCompile Include="src\component\Material.cpp" />
+    <ClCompile Include="src\render\FrameBuffer.cpp" />
     <ClCompile Include="src\render\RenderEngine.cpp" />
     <ClCompile Include="src\render\Shader.cpp" />
     <ClCompile Include="src\render\Texture.cpp" />
+    <ClCompile Include="src\util\SkyBox.cpp" />
     <ClCompile Include="src\util\Util.cpp" />
     <ClCompile Include="ThirdParty\include\glad\src\glad.c" />
     <ClCompile Include="ThirdParty\include\imgui\imgui.cpp" />
@@ -153,25 +157,33 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game\game.h" />
+    <ClInclude Include="src\component\LightCom.h" />
+    <ClInclude Include="src\core\Component.h" />
     <ClInclude Include="src\core\Entity.h" />
     <ClInclude Include="src\core\Input.h" />
-    <ClInclude Include="src\core\MapVal.h" />
+    <ClInclude Include="src\core\DataPool.h" />
+    <ClInclude Include="src\core\Mesh.h" />
+    <ClInclude Include="src\core\Model.h" />
     <ClInclude Include="src\core\Quaternion.h" />
     <ClInclude Include="src\core\Ref.h" />
     <ClInclude Include="src\core\Transform.h" />
     <ClInclude Include="src\core\Window.h" />
     <ClInclude Include="src\editor\Hierarchy.h" />
+    <ClInclude Include="src\editor\LayerMaterialPanel.h" />
     <ClInclude Include="src\editor\Menu.h" />
     <ClInclude Include="src\editor\Panel.h" />
+    <ClInclude Include="src\editor\UI.h" />
     <ClInclude Include="src\model\Cube.h" />
-    <ClInclude Include="src\model\Quad.h" />
+    <ClInclude Include="src\model\Light.h" />
     <ClInclude Include="src\model\Sphere.h" />
     <ClInclude Include="src\render\Camera.h" />
+    <ClInclude Include="src\render\FrameBuffer.h" />
     <ClInclude Include="src\render\Light.h" />
-    <ClInclude Include="src\render\Material.h" />
+    <ClInclude Include="src\component\Material.h" />
     <ClInclude Include="src\render\RenderEngine.h" />
     <ClInclude Include="src\render\Shader.h" />
     <ClInclude Include="src\render\Shadow.h" />
+    <ClInclude Include="src\util\SkyBox.h" />
     <ClInclude Include="src\render\Texture.h" />
     <ClInclude Include="src\util\Util.h" />
     <ClInclude Include="ThirdParty\include\imgui\imconfig.h" />
@@ -184,14 +196,41 @@
     <ClInclude Include="ThirdParty\include\imgui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="shader\brdf.inc" />
+    <None Include="shader\common.inc" />
+    <None Include="shader\covariance.inc" />
+    <None Include="shader\default.frag" />
+    <None Include="shader\default.vert" />
+    <None Include="shader\filter_null.frag" />
+    <None Include="shader\filter_null.vert" />
+    <None Include="shader\ibl.frag" />
+    <None Include="shader\background.frag" />
+    <None Include="shader\background.vert" />
+    <None Include="shader\brdf.frag" />
+    <None Include="shader\brdf.vert" />
+    <None Include="shader\cubemap.vert" />
+    <None Include="shader\equirectangular_to_cubemap.frag" />
     <None Include="shader\forwardAmbient.fs" />
     <None Include="shader\forwardAmbient.vs" />
     <None Include="shader\forwardDirectional.fs" />
     <None Include="shader\forwardDirectional.vs" />
     <None Include="shader\forwardPoint.fs" />
+    <None Include="shader\fxaa.frag" />
+    <None Include="shader\fxaa.vert" />
+    <None Include="shader\irradiance_convolution.frag" />
+    <None Include="shader\layer.inc" />
+    <None Include="shader\layered_material.frag" />
     <None Include="shader\light.glh" />
     <None Include="shader\light.inc" />
+    <None Include="shader\media.inc" />
+    <None Include="shader\pbr.frag" />
+    <None Include="shader\pbr.vert" />
+    <None Include="shader\pivot.inc" />
+    <None Include="shader\prefilter.frag" />
+    <None Include="shader\random.inc" />
     <None Include="shader\sampling.glh" />
+    <None Include="shader\shadowmapgen.frag" />
+    <None Include="shader\shadowmapgen.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

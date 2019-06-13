@@ -14,13 +14,24 @@
     <ClCompile Include="src\editor\Panel.cpp" />
     <ClCompile Include="src\core\Window.cpp" />
     <ClCompile Include="src\core\Input.cpp" />
-    <ClCompile Include="src\core\Mesh.cpp" />
     <ClCompile Include="src\core\Transform.cpp" />
     <ClCompile Include="src\render\Camera.cpp" />
     <ClCompile Include="src\render\Texture.cpp" />
     <ClCompile Include="src\core\Entity.cpp" />
     <ClCompile Include="src\model\Sphere.cpp" />
     <ClCompile Include="src\model\Cube.cpp" />
+    <ClCompile Include="game\game.cpp" />
+    <ClCompile Include="src\render\RenderEngine.cpp" />
+    <ClCompile Include="src\render\Shader.cpp" />
+    <ClCompile Include="src\util\Util.cpp" />
+    <ClCompile Include="src\component\LightCom.cpp" />
+    <ClCompile Include="src\component\Material.cpp" />
+    <ClCompile Include="src\util\SkyBox.cpp" />
+    <ClCompile Include="src\render\FrameBuffer.cpp" />
+    <ClCompile Include="src\core\Mesh.cpp" />
+    <ClCompile Include="src\core\Model.cpp" />
+    <ClCompile Include="src\editor\LayerMaterialPanel.cpp" />
+    <ClCompile Include="src\core\DataPool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ThirdParty\include\imgui\imconfig.h" />
@@ -35,19 +46,32 @@
     <ClInclude Include="src\editor\Menu.h" />
     <ClInclude Include="src\editor\Panel.h" />
     <ClInclude Include="src\core\Window.h" />
-    <ClInclude Include="pbr.h" />
     <ClInclude Include="src\core\Input.h" />
     <ClInclude Include="src\core\Quaternion.h" />
-    <ClInclude Include="src\core\Model.h" />
-    <ClInclude Include="src\core\mesh.h" />
     <ClInclude Include="src\render\Shader.h" />
     <ClInclude Include="src\render\Camera.h" />
     <ClInclude Include="src\core\Transform.h" />
-    <ClInclude Include="src\render\Material.h" />
     <ClInclude Include="src\render\Texture.h" />
     <ClInclude Include="src\core\Entity.h" />
     <ClInclude Include="src\model\Sphere.h" />
     <ClInclude Include="src\model\Cube.h" />
+    <ClInclude Include="game\game.h" />
+    <ClInclude Include="src\core\Ref.h" />
+    <ClInclude Include="src\render\Light.h" />
+    <ClInclude Include="src\render\RenderEngine.h" />
+    <ClInclude Include="src\render\Shadow.h" />
+    <ClInclude Include="src\util\Util.h" />
+    <ClInclude Include="src\model\Light.h" />
+    <ClInclude Include="src\core\Component.h" />
+    <ClInclude Include="src\component\LightCom.h" />
+    <ClInclude Include="src\component\Material.h" />
+    <ClInclude Include="src\util\SkyBox.h" />
+    <ClInclude Include="src\render\FrameBuffer.h" />
+    <ClInclude Include="src\core\Model.h" />
+    <ClInclude Include="src\core\Mesh.h" />
+    <ClInclude Include="src\editor\LayerMaterialPanel.h" />
+    <ClInclude Include="src\editor\UI.h" />
+    <ClInclude Include="src\core\DataPool.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\forwardDirectional.vs" />
@@ -57,5 +81,33 @@
     <None Include="shader\forwardPoint.fs" />
     <None Include="shader\forwardAmbient.vs" />
     <None Include="shader\forwardAmbient.fs" />
+    <None Include="shader\light.inc" />
+    <None Include="shader\fxaa.vert" />
+    <None Include="shader\fxaa.frag" />
+    <None Include="shader\background.frag" />
+    <None Include="shader\background.vert" />
+    <None Include="shader\brdf.frag" />
+    <None Include="shader\brdf.vert" />
+    <None Include="shader\cubemap.vert" />
+    <None Include="shader\equirectangular_to_cubemap.frag" />
+    <None Include="shader\irradiance_convolution.frag" />
+    <None Include="shader\prefilter.frag" />
+    <None Include="shader\ibl.frag" />
+    <None Include="shader\default.vert" />
+    <None Include="shader\default.frag" />
+    <None Include="shader\pbr.frag" />
+    <None Include="shader\pbr.vert" />
+    <None Include="shader\shadowmapgen.frag" />
+    <None Include="shader\shadowmapgen.vert" />
+    <None Include="shader\layered_material.frag" />
+    <None Include="shader\filter_null.frag" />
+    <None Include="shader\filter_null.vert" />
+    <None Include="shader\random.inc" />
+    <None Include="shader\pivot.inc" />
+    <None Include="shader\media.inc" />
+    <None Include="shader\layer.inc" />
+    <None Include="shader\covariance.inc" />
+    <None Include="shader\common.inc" />
+    <None Include="shader\brdf.inc" />
   </ItemGroup>
 </Project>

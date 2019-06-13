@@ -1,10 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2046
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WalEngine", "WalEngine\WalEngine.vcxproj", "{6AC0B402-0F31-47DF-A801-A6D43C70F526}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Project1", "..\..\source\repos\Project1\Project1\Project1.vcxproj", "{17F4367D-41F5-46CC-9E57-7F31F04159BA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,11 +23,19 @@ Global
 		{6AC0B402-0F31-47DF-A801-A6D43C70F526}.Release|x64.Build.0 = Release|x64
 		{6AC0B402-0F31-47DF-A801-A6D43C70F526}.Release|x86.ActiveCfg = Release|Win32
 		{6AC0B402-0F31-47DF-A801-A6D43C70F526}.Release|x86.Build.0 = Release|Win32
+		{17F4367D-41F5-46CC-9E57-7F31F04159BA}.Debug|x64.ActiveCfg = Debug|x64
+		{17F4367D-41F5-46CC-9E57-7F31F04159BA}.Debug|x64.Build.0 = Debug|x64
+		{17F4367D-41F5-46CC-9E57-7F31F04159BA}.Debug|x86.ActiveCfg = Debug|Win32
+		{17F4367D-41F5-46CC-9E57-7F31F04159BA}.Debug|x86.Build.0 = Debug|Win32
+		{17F4367D-41F5-46CC-9E57-7F31F04159BA}.Release|x64.ActiveCfg = Release|x64
+		{17F4367D-41F5-46CC-9E57-7F31F04159BA}.Release|x64.Build.0 = Release|x64
+		{17F4367D-41F5-46CC-9E57-7F31F04159BA}.Release|x86.ActiveCfg = Release|Win32
+		{17F4367D-41F5-46CC-9E57-7F31F04159BA}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {B0E3EB1D-799E-4865-8725-39090AA23710}
+		SolutionGuid = {50A4C085-FCBD-4C05-88D6-7C9F5782BA2C}
 	EndGlobalSection
 EndGlobal
