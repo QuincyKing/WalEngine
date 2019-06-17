@@ -7,6 +7,7 @@
 #include "Menu.h"
 #include "Hierarchy.h"
 #include "LayerMaterialPanel.h"
+#include "FGDPanel.h"
 
 class Panel
 {
@@ -30,6 +31,7 @@ private:
 	Hierarchy mHierarchy;
 	ImVec2 mAboutSize;
 	LayerMaterialPanel mLayerMaterialPanel;
+	FGDPanel mFGDPanel;
 
 public:
 	ImVec2 mScreen;

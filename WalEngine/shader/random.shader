@@ -25,9 +25,10 @@ float pseudorandom(in vec2 coordinate, in float seed) {
 
 /* 2D Lattice grid for 1024 points
  */
-vec2 Lattice2D(int i) {
+vec2 Lattice2D(float i) {
+
     vec2 a = vec2(1.0, 275.0);
-    return mod((float(i) - 1.0) * a, 1024.0) / 1024.0;
+    return mod((i - 1.0) * a, 1024.0) / 1024.0;
 }
 
 /* Additive sub-random sequences: we use multiple of irrational numbers
@@ -36,42 +37,43 @@ vec2 Lattice2D(int i) {
  *
  * See: https://en.wikipedia.org/wiki/Low-discrepancy_sequence#Additive_recurrence
  */
-float QMC_Additive_1D(float alpha, int n) {
-    return mod(alpha * float(n), 1.0);
+float QMC_Additive_1D(float alpha, float n) {
+
+    return mod(alpha * n, 1.0);
 }
 
-float QMC_Additive_1D(int n) {
-    return mod(0.618034 * float(n), 1.0);
+float QMC_Additive_1D(float n) {
+    return mod(0.618034 * n, 1.0);
 }
 
-vec2 QMC_Additive_2D(vec2 alpha, int n) {
-    return mod(alpha * float(n), vec2(1.0, 1.0));
+vec2 QMC_Additive_2D(vec2 alpha, float n) {
+    return mod(alpha * n, vec2(1.0, 1.0));
 }
 
-vec2 QMC_Additive_2D(int n) {
-    return mod(vec2(0.5545497, 0.308517) * float(n), vec2(1.0, 1.0));
+vec2 QMC_Additive_2D(float n) {
+    return mod(vec2(0.5545497, 0.308517) * n, vec2(1.0, 1.0));
 }
 
-vec3 QMC_Additive_3D(vec3 alpha, int n) {
-    return mod(alpha * float(n), vec3(1.0, 1.0, 1.0));
+vec3 QMC_Additive_3D(vec3 alpha, float n) {
+    return mod(alpha * n, vec3(1.0, 1.0, 1.0));
 }
 
-vec3 QMC_Additive_3D(int n) {
-    return mod(vec3(0.645751311, 0.732050808, 0.31662479) * float(n), vec3(1.0, 1.0, 1.0));
+vec3 QMC_Additive_3D(float n) {
+    return mod(vec3(0.645751311, 0.732050808, 0.31662479) * n, vec3(1.0, 1.0, 1.0));
 }
 
-vec4 QMC_Additive_4D(vec4 alpha, int n) {
-    return mod(alpha * float(n), vec4(1.0, 1.0, 1.0, 1.0));
+vec4 QMC_Additive_4D(vec4 alpha, float n) {
+    return mod(alpha * n, vec4(1.0, 1.0, 1.0, 1.0));
 }
 
-vec4 QMC_Additive_4D(int n) {
+vec4 QMC_Additive_4D(float n) {
     return QMC_Additive_4D(vec4(0.414213562, 0.236067977, 0.645751311, 0.732050808), n);
 }
 
 
 /* Davenport sequence
  */
-vec2 QMC_Davenport(int n, int N) {
-    float alpha = 0.618034;
-    return vec2(float(n)/float(N), mod(alpha*float(n), 1.0));
-}
+//vec2 QMC_Davenport(int n, int N) {
+//    float alpha = 0.618034;
+//    return vec2(float(n)/float(N), mod(alpha*float(n), 1.0));
+//}

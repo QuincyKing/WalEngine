@@ -3,12 +3,12 @@
 
 void Panel::make_panel()
 {
-	mMenu.make_menu();
-	if (mMenu.mAboutW)
-		show_about();
-	//if (mMenu.mHierarchyW)
-	if(false)
-		show_hierarchy();
+	//mMenu.make_menu();
+	//if (mMenu.mAboutW)
+	//	show_about();
+	////if (mMenu.mHierarchyW)
+	//if(false)
+	//	show_hierarchy();
 	show_layer_material_panel();
 }
 
@@ -55,7 +55,8 @@ void Panel::show_layer_material_panel()
 
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
 
-	mLayerMaterialPanel.show();
+	//mLayerMaterialPanel.show();
+	mFGDPanel.show();
 	ImGui::PopStyleVar();
 	ImGui::End();
 }
