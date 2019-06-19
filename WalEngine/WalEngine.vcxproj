@@ -133,6 +133,7 @@
     <ClCompile Include="src\core\Model.cpp" />
     <ClCompile Include="src\core\Transform.cpp" />
     <ClCompile Include="src\core\Window.cpp" />
+    <ClCompile Include="src\editor\FGDPanel.cpp" />
     <ClCompile Include="src\editor\Hierarchy.cpp" />
     <ClCompile Include="src\editor\LayerMaterialPanel.cpp" />
     <ClCompile Include="src\editor\Menu.cpp" />
@@ -168,6 +169,7 @@
     <ClInclude Include="src\core\Ref.h" />
     <ClInclude Include="src\core\Transform.h" />
     <ClInclude Include="src\core\Window.h" />
+    <ClInclude Include="src\editor\FGDPanel.h" />
     <ClInclude Include="src\editor\Hierarchy.h" />
     <ClInclude Include="src\editor\LayerMaterialPanel.h" />
     <ClInclude Include="src\editor\Menu.h" />
@@ -196,9 +198,9 @@
     <ClInclude Include="ThirdParty\include\imgui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="shader\brdf.inc" />
-    <None Include="shader\common.inc" />
-    <None Include="shader\covariance.inc" />
+    <None Include="shader\brdf.shader" />
+    <None Include="shader\common.shader" />
+    <None Include="shader\compute-FGD.frag" />
     <None Include="shader\default.frag" />
     <None Include="shader\default.vert" />
     <None Include="shader\filter_null.frag" />
@@ -218,16 +220,14 @@
     <None Include="shader\fxaa.frag" />
     <None Include="shader\fxaa.vert" />
     <None Include="shader\irradiance_convolution.frag" />
-    <None Include="shader\layer.inc" />
+    <None Include="shader\layer.shader" />
     <None Include="shader\layered_material.frag" />
     <None Include="shader\light.glh" />
     <None Include="shader\light.inc" />
-    <None Include="shader\media.inc" />
     <None Include="shader\pbr.frag" />
     <None Include="shader\pbr.vert" />
-    <None Include="shader\pivot.inc" />
     <None Include="shader\prefilter.frag" />
-    <None Include="shader\random.inc" />
+    <None Include="shader\random.shader" />
     <None Include="shader\sampling.glh" />
     <None Include="shader\shadowmapgen.frag" />
     <None Include="shader\shadowmapgen.vert" />

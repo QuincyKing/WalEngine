@@ -5,7 +5,7 @@ in vec3 Normal;
 
 #include <light.inc>
 
-layout(location = 3) uniform PointLight R_dir;
+uniform DirectionalLight R_dir;
 uniform sampler2D M_albedoMap;
 uniform sampler2D M_normalMap;
 uniform sampler2D M_metallicMap;
@@ -71,11 +71,11 @@ void main()
    vec3 albedo = pow(texture(M_albedoMap, Tex).rgb, vec3(2.2));
    float metallic = texture(M_metallicMap, Tex).r;
    float roughness = texture(M_roughnessMap, Tex).r;
-//   float ao = texture(aoMap, Tex).r;
+// float ao = texture(aoMap, Tex).r;
 
    vec3 N = GetNormalFromMap();
    vec3 V = normalize(M_CamPos - WorldPos);
-   vec3 L = normalize(R_dir.position - WorldPos);
+   vec3 L = normalize(R_dir.direction);
    vec3 H = normalize(V + L);
 
    vec3 R0 = vec3(0.04f);
@@ -83,9 +83,10 @@ void main()
 
    vec3 L0 = vec3(0.0f);
 
-   float distance = length(R_dir.position - WorldPos);
-   float atten = 1.0 / (distance * distance);
-   vec3 radiance = R_dir.color * atten;
+   //float distance = length(R_dir.position - WorldPos);
+   //float atten = 1.0 / (distance * distance);
+   //vec3 radiance = R_dir.color * atten;
+   vec3 radiance = pow(R_dir.color, vec3(R_dir.intensity));
 
    float D = NDFGGX(N, H, roughness);
    float G = GeometrySmith(N, V, L, roughness);

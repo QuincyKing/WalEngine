@@ -18,7 +18,7 @@ void GetDesktopResolution(int& horizontal, int& vertical)
 int main()
 {
 	GetDesktopResolution(screen_width, screen_height);
-	Window window(457, 457);
+	Window window(screen_width, screen_height);
 	RenderEngine renderer(window);
 	game = std::make_shared<Game>();
 	window.mUpdateFun = [&renderer]() { game->render(renderer); };

@@ -107,10 +107,10 @@ void FresnelDielectric(in float ct1, in float n1, in float n2,
 void FresnelConductor(in float ct1, in float n1, in float n2, in float k,
                        out vec2 R, out vec2 phi) {
 
-    //if (k<=0.0) {
-    FresnelDielectric(ct1, n1, n2, R, phi);
-    return;
-    //}
+    if (k<=0.0) {
+		FresnelDielectric(ct1, n1, n2, R, phi);
+		return;
+    }
 
     float A = sqr(n2) * (1.0-sqr(k)) - sqr(n1) * (1.0-sqr(ct1));
     float B = sqrt( sqr(A) + sqr(2.0*sqr(n2)*k) );
