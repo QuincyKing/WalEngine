@@ -27,7 +27,7 @@ RenderEngine::RenderEngine(const Window& window)
 	set_sampler_slot("screenTexture", 0);
 	Data.set_texture("displayTexture", Texture(Window::Inputs.get_win_size_x(), Window::Inputs.get_win_size_y(), 0, GL_TEXTURE_2D, GL_LINEAR, GL_RGBA, GL_RGBA, true));
 
-	mFxaaFilter.set_shader("fxaa.vert", "fxaa.frag");
+	mFxaaFilter.set_shader("fxaa.vert", "pre_fgd_and_disney_diffuse.frag");
 	mFxaaFilter.mShader->set_int("screenTexture", RenderEngine::get_sampler_slot("screenTexture"));
 
 	precompute();
