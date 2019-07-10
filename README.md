@@ -36,7 +36,6 @@
 - [ ] Gizmos
 ### Off-Rendering
 - [ ] Ray Tracer
-- [ ] 
 
 ## Gallery
 #### Layered Material PBR
