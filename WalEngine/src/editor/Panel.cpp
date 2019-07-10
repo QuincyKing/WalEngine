@@ -55,8 +55,8 @@ void Panel::show_layer_material_panel()
 
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
 
-	//mLayerMaterialPanel.show();
-	mFGDPanel.show();
+	mLayerMaterialPanel.show();
+	//mFGDPanel.show();
 	ImGui::PopStyleVar();
 	ImGui::End();
 }

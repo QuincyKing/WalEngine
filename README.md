@@ -14,7 +14,7 @@
 - [ ] SSS
 - [ ] SSR
 - [ ] SSSS
-- [ ] Layered Material PBR
+- [x] Layered Material PBR
 ### Rendering
 - [x] Material Complie
 - [x] Scene Graph
@@ -36,3 +36,8 @@
 - [ ] Gizmos
 ### Off-Rendering
 - [ ] Ray Tracer
+- [ ] 
+
+## Gallery
+#### Layered Material PBR
+![layered](./img/layered.jpg)

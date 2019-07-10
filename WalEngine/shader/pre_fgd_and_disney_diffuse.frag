@@ -178,7 +178,7 @@ vec2 Hammersley(uint i, uint N)
 	return vec2(float(i)/float(N), RadicalInverse_VdC(i));
 }
 
-// Ref: Listing 18 in "Moving Frostbite to PBR" + https://knarkowicz.wordpress.com/2014/12/27/analytical-dfg-term-for-ibl/
+// Ref: Listing 18 in "Moving Frostbite to PBR" p65 + https://knarkowicz.wordpress.com/2014/12/27/analytical-dfg-term-for-ibl/
 vec4 IntegrateGGXAndDisneyDiffuseFGD(float NdotV, float roughness, uint sampleCount = 4096)
 {
     // Note that our LUT covers the full [0, 1] range.
