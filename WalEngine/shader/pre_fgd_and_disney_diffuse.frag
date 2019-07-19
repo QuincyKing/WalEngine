@@ -8,11 +8,6 @@ in vec2 TexCoords;
 #define PI          3.14159265358979323846
 #define TWO_PI      6.28318530717958647693
 
-const mat3 k_identity3x3 = mat3(
-							1, 0, 0,
-                            0, 1, 0,
-                            0, 0, 1);
-
 float F_Schlick(float f0, float f90, float u)
 {
     float x = 1.0 - u;
@@ -182,14 +177,16 @@ vec2 Hammersley(uint i, uint N)
 vec4 IntegrateGGXAndDisneyDiffuseFGD(float NdotV, float roughness, uint sampleCount = 4096)
 {
     // Note that our LUT covers the full [0, 1] range.
-    // Therefore, we don't really want to clamp NdotV here (else the lerp slope is wrong).
+    // Therefore, we don't really want to clamp NdotV here (else the mix slope is wrong).
     // However, if NdotV is 0, the integral is 0, so that's not what we want, either.
     // Our runtime NdotV bias is quite large, so we use a smaller one here instead.
     NdotV     = max(NdotV, REAL_EPS);
     vec3 V   = vec3(sqrt(1 - NdotV * NdotV), 0, NdotV);
     vec4 acc = vec4(0.0, 0.0, 0.0, 0.0);
 
-    mat3 localToWorld = k_identity3x3;
+    mat3 localToWorld = mat3(1.0, 0.0, 0.0, 
+						     0.0, 1.0, 0.0, 
+						     0.0, 1.0, 1.0);
 
     for (uint i = 0; i < sampleCount; ++i)
     {
@@ -208,7 +205,7 @@ vec4 IntegrateGGXAndDisneyDiffuseFGD(float NdotV, float roughness, uint sampleCo
             // Integral{BSDF * <N,L> dw} =
             // Integral{(F0 + (1 - F0) * (1 - <V,H>)^5) * (BSDF / F) * <N,L> dw} =
             // (1 - F0) * Integral{(1 - <V,H>)^5 * (BSDF / F) * <N,L> dw} + F0 * Integral{(BSDF / F) * <N,L> dw}=
-            // (1 - F0) * x + F0 * y = lerp(x, y, F0)
+            // (1 - F0) * x + F0 * y = mix(x, y, F0)
 
             acc.x += weightOverPdf * pow(1 - VdotH, 5);
             acc.y += weightOverPdf;
