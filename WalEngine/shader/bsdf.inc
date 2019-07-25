@@ -1,7 +1,7 @@
 #ifndef BSDF_INCLUDED
 #define BSDF_INCLUDED
 
-#include "Common.cginc"
+#include "common.inc"
 
 #define FGDTEXTURE_RESOLUTION 64
 #define FLT_MIN  1.175494351e-38 
@@ -101,7 +101,7 @@ float V_SmithJointGGX(float NdotL, float NdotV, float roughness)
 //-----------------------------------------
 // D
 //-----------------------------------------
-inline float ComputeNDFGGXTerm(float NdotH, float roughness)
+float ComputeNDFGGXTerm(float NdotH, float roughness)
 {
 	float a = roughness * roughness;
 	float a2 = a * a;
@@ -134,14 +134,14 @@ float DisneyDiffuseNoPI(float NdotV, float NdotL, float LdotV, float perceptualR
 }
 
 //计算漫反射项
-inline float3 ComputeDisneyDiffuseTerm(float NdotV, float NdotL, float LdotH, float roughness, float3 baseColor)
+vec3 ComputeDisneyDiffuseTerm(float NdotV, float NdotL, float LdotH, float roughness, vec3 baseColor)
 {
 	float Fd90 = 0.5f + 2.0 * roughness * LdotH * LdotH;
 	return baseColor * INV_PI * (1.0 + (Fd90 - 1) * pow(1 - NdotL, 5)) * (1 + (Fd90 - 1) * pow(1 - NdotV, 5));
 }
 
 //计算间接光镜面反射菲涅尔项
-inline float3 ComputeFresnelLerp(float3 c0, float3 c1, float cosA)
+vec3 ComputeFresnelLerp(vec3 c0, vec3 c1, float cosA)
 {
 	float t = pow(1 - cosA, 5);
 	return mix(c0, c1, t);
@@ -149,9 +149,9 @@ inline float3 ComputeFresnelLerp(float3 c0, float3 c1, float cosA)
 
 void GetPreIntegratedFGDGGXAndDisneyDiffuse(sampler2D _PreIntegratedFGD, float NdotV, float perceptualRoughness, vec3 fresnel0, out vec3 specularFGD, out float diffuseFGD, out float reflectivity)
 {
-	vec2 coordLUT = Remap01ToHalfTexelCoord(vec2(sqrt(NdotV), perceptualRoughness), FGDTEXTURE_RESOLUTION);
+	vec2 coordLUT = Remap01ToHalfTexelCoord(vec2(sqrt(NdotV), perceptualRoughness), vec2(FGDTEXTURE_RESOLUTION));
 
-	vec3 preFGD = tex2D(_PreIntegratedFGD, coordLUT).xyz;
+	vec3 preFGD = texture(_PreIntegratedFGD, coordLUT).xyz;
 
 	specularFGD = mix(preFGD.xxx, preFGD.yyy, fresnel0);
 	diffuseFGD = preFGD.z + 0.5;
@@ -188,9 +188,9 @@ vec3 Ior2F0(vec3 transmittedIor, vec3 incidentIor)
 	return Sq((transmittedIor - incidentIor) / (transmittedIor + incidentIor));
 }
 
-float Ior2F0(float transmittedIor)
+vec3 Ior2F0(vec3 transmittedIor)
 {
-	return Ior2F0(transmittedIor, 1.0f);
+	return Ior2F0(transmittedIor, vec3(1.0f));
 }
 
 vec3 ComputeDiffuseColor(vec3 baseColor, float metallic)
@@ -198,7 +198,7 @@ vec3 ComputeDiffuseColor(vec3 baseColor, float metallic)
 	return baseColor * (1.0 - metallic);
 }
 
-vec3 ComputeFresnel0(vec3 baseColor, float metallic, float dielectricF0)
+vec3 ComputeFresnel0(vec3 baseColor, float metallic, vec3 dielectricF0)
 {
 	return mix(dielectricF0.xxx, baseColor, metallic);
 }

@@ -103,7 +103,7 @@ vec3 Remap01(vec3 x, vec3 rcpLength, vec3 startTimesRcpLength)
 	return clamp(x * rcpLength - startTimesRcpLength, 0.0, 1.0);
 }
 
-vec2 RemapHalfTexelCoordTo01(half2 coord, vec2 size)
+vec2 RemapHalfTexelCoordTo01(vec2 coord, vec2 size)
 {
 	const vec2 rcpLen = size * rcp(size - 1);
 	const vec2 startTimesRcpLength = 0.5 * rcp(size - 1);

@@ -7,6 +7,7 @@ in vec3 WorldPos;
 in vec3 Normal;
 
 #include "light_definition.inc"
+#include "light.inc"
 #include "sampling.inc"
 
 #define NB_NORMALS 2
@@ -21,7 +22,7 @@ in vec3 Normal;
 #define BOTTOM_VLAYER_IDX 2
 #define COAT_NORMAL_IDX 0
 #define BASE_NORMAL_IDX (NB_NORMALS-1)
-#define ZERO_INITIALIZE(type, name) name = (type)0;
+//#define ZERO_INITIALIZE(type, name) name = (type)0;
 #define VLAYERED_DUAL_NORMALS_TOP_FIX_FLIP
 #define NB_LV_DIR 1
 #define DNLV_COAT_IDX 0
@@ -143,7 +144,7 @@ float GetCoatEta(in BSDFData bsdfData)
 
 void ComputeAdding_GetVOrthoGeomN(BSDFData bsdfData, vec3 V, bool calledPerLight, out vec3 vOrthoGeomN, out bool useGeomN, bool testSingularity = false)
 {
-	vOrthoGeomN = (vec3)0;
+	vOrthoGeomN = vec3(0);
 	useGeomN = false;
 
 	if (!calledPerLight)
@@ -172,7 +173,7 @@ void ComputeStatistics(float  cti, vec3 V, vec3 vOrthoGeomN, bool useGeomN, int 
 			cti = ClampNdotV(dot(bsdfData.geomNormalWS, V));
 		}
 
-		R12 = R0; 
+		R12 = vec3(R0); 
 		T12 = 1.0 - R12;
 		R21 = R12;
 		T21 = T12;
@@ -408,7 +409,7 @@ vec3 GetEnergyCompensationFactor(float specularReflectivity, vec3 fresnel0)
 PreLightData GetPreLightData(vec3 V, inout BSDFData bsdfData, sampler2D _PreFGDandDisneyDiffuse)
 {
 	PreLightData preLightData;
-	ZERO_INITIALIZE(PreLightData, preLightData);
+//	ZERO_INITIALIZE(PreLightData, preLightData);
 
 	vec3 N[NB_NORMALS];
 	float NdotV[NB_NORMALS];
@@ -458,7 +459,7 @@ PreLightData GetPreLightData(vec3 V, inout BSDFData bsdfData, sampler2D _PreFGDa
 		preLightData.iblR[i] = reflect(-V, iblN[i]);
 	}
 
-	preLightData.energyCompensationFactor[COAT_LOBE_IDX] = GetEnergyCompensationFactor(specularReflectivity[COAT_LOBE_IDX], Ior2F0(bsdfData.coatIor));
+	preLightData.energyCompensationFactor[COAT_LOBE_IDX] = GetEnergyCompensationFactor(specularReflectivity[COAT_LOBE_IDX], Ior2F0(vec3(bsdfData.coatIor)));
 	preLightData.energyCompensationFactor[BASE_LOBEA_IDX] = GetEnergyCompensationFactor(specularReflectivity[BASE_LOBEA_IDX], bsdfData.fresnel0);
 
 	preLightData.diffuseFGD = 1.0;
@@ -469,7 +470,7 @@ PreLightData GetPreLightData(vec3 V, inout BSDFData bsdfData, sampler2D _PreFGDa
 IndirectLighting EvaluateBSDF_Env( PreLightData preLightData, BSDFData bsdfData, inout float hierarchyWeight, float ldScale)
 {
 	IndirectLighting lighting;
-	ZERO_INITIALIZE(IndirectLighting, lighting);
+//	ZERO_INITIALIZE(IndirectLighting, lighting);
 
 	vec3 envLighting = vec3(0.0, 0.0, 0.0);
 	float weight = 0.0;
@@ -502,7 +503,7 @@ IndirectLighting EvaluateBSDF_Env( PreLightData preLightData, BSDFData bsdfData,
 
 		iblMipLevel = PerceptualRoughnessToMipmapLevel(preLightData.iblPerceptualRoughness[i]);
 
-		float4 preLD = SampleEnv(R[i], iblMipLevel);
+		vec4 preLD = textureLod(prefilterMap, R[i],  iblMipLevel);
 
 		tempWeight[i] *= preLD.a;
 		L = preLD.rgb * ldScale * preLightData.specularFGD[i];
@@ -536,7 +537,7 @@ void BSDF_SetupNormalsAndAngles(BSDFData bsdfData, inout PreLightData preLightDa
 	NdotL[DNLV_COAT_IDX] = dot(N[COAT_NORMAL_IDX], L[TOP_DIR_IDX]);
 
 	float LdotV = dot(L[TOP_DIR_IDX], V[TOP_DIR_IDX]); 
-	float invLenLV = rsqrt(max(2.0 * LdotV + 2.0, FLT_EPS));
+	float invLenLV = 1.0 / sqrt(max(2.0 * LdotV + 2.0, FLT_EPS));
 	NdotH[COAT_NORMAL_IDX] = clamp((NdotL[DNLV_COAT_IDX] + unclampedNdotV[COAT_NORMAL_IDX]) * invLenLV, 0.0, 1.0); 
 	NdotV[DNLV_COAT_IDX] = ClampNdotV(unclampedNdotV[COAT_NORMAL_IDX]);
 	NdotH[BASE_NORMAL_IDX] = clamp((dot(N[BASE_NORMAL_IDX], L[TOP_DIR_IDX]) + unclampedNdotV[BASE_NORMAL_IDX]) * invLenLV, 0.0, 1.0); 
@@ -551,7 +552,7 @@ void BSDF_SetupNormalsAndAngles(BSDFData bsdfData, inout PreLightData preLightDa
 DirectLighting EvaluateBSDF_Directional(vec3 inV, vec3 inL, PreLightData preLightData, BSDFData bsdfData)
 {
 	DirectLighting lighting;
-	ZERO_INITIALIZE(DirectLighting, lighting);
+//	ZERO_INITIALIZE(DirectLighting, lighting);
 
 	float NdotL[NDOTLV_SIZE];
 	float NdotV[NDOTLV_SIZE];
@@ -566,8 +567,8 @@ DirectLighting EvaluateBSDF_Directional(vec3 inV, vec3 inL, PreLightData preLigh
 	float baseLayerDV = DV_SmithJointGGX(NdotH[BASE_NORMAL_IDX], NdotL[DNLV_BASE_IDX], NdotV[DNLV_BASE_IDX], preLightData.layeredRoughnessT[0], preLightData.partLambdaV[BASE_LOBEA_IDX]);
 	float coatLayerDV = DV_SmithJointGGX(NdotH[COAT_NORMAL_IDX], NdotL[DNLV_COAT_IDX], NdotV[DNLV_COAT_IDX], preLightData.layeredCoatRoughness, preLightData.partLambdaV[COAT_LOBE_IDX]);
 
-	vec3 specularLighting = max(0.0, NdotL[DNLV_BASE_IDX] * preLightData.vLayerEnergyCoeff[BOTTOM_VLAYER_IDX] * baseLayerDV * preLightData.energyCompensationFactor[BASE_LOBEA_IDX]);
-	vec3 coatSpecularLighting = max(0.0, NdotL[DNLV_COAT_IDX] * preLightData.vLayerEnergyCoeff[TOP_VLAYER_IDX] * coatLayerDV * preLightData.energyCompensationFactor[COAT_LOBE_IDX]);
+	vec3 specularLighting = max(vec3(0.0), NdotL[DNLV_BASE_IDX] * preLightData.vLayerEnergyCoeff[BOTTOM_VLAYER_IDX] * baseLayerDV * preLightData.energyCompensationFactor[BASE_LOBEA_IDX]);
+	vec3 coatSpecularLighting = max(vec3(0.0), NdotL[DNLV_COAT_IDX] * preLightData.vLayerEnergyCoeff[TOP_VLAYER_IDX] * coatLayerDV * preLightData.energyCompensationFactor[COAT_LOBE_IDX]);
 	specularLighting += coatSpecularLighting;
 
 	vec3 diffuseColor = preLightData.diffuseEnergy * bsdfData.diffuseColor;
@@ -582,7 +583,7 @@ DirectLighting EvaluateBSDF_Directional(vec3 inV, vec3 inL, PreLightData preLigh
 vec3 ConvertF0ForAirInterfaceToF0ForNewTopIor(vec3 fresnel0, float newTopIor)
 {
 	vec3 ior = F02Ior(min(fresnel0, vec3(1, 1, 1)*0.999)); 
-	return Ior2F0(ior, newTopIor);
+	return Ior2F0(ior, vec3(newTopIor));
 }
 
 BSDFData GetBSDFData(vec3 geomNormalWS,
@@ -601,7 +602,7 @@ BSDFData GetBSDFData(vec3 geomNormalWS,
 )
 {
 	BSDFData bsdfData;
-	ZERO_INITIALIZE(BSDFData, bsdfData);
+//	ZERO_INITIALIZE(BSDFData, bsdfData);
 
 	bsdfData.geomNormalWS = geomNormalWS;
 	
@@ -610,7 +611,7 @@ BSDFData GetBSDFData(vec3 geomNormalWS,
 	bsdfData.perceptualRoughnessA = PerceptualSmoothnessToPerceptualRoughness(perceptualSmoothnessA);
 
 	bsdfData.diffuseColor = ComputeDiffuseColor(baseColor, metallic);
-	bsdfData.fresnel0 = ComputeFresnel0(baseColor, metallic, Ior2F0(dielectricIor));
+	bsdfData.fresnel0 = ComputeFresnel0(baseColor, metallic, Ior2F0(vec3(dielectricIor)));
 
 	bsdfData.coatPerceptualRoughness = PerceptualSmoothnessToPerceptualRoughness(coatPerceptualRoughness);
 	//bsdfData.coatMask = coatMask;
@@ -631,13 +632,12 @@ void main()
 {
 	vec3 lightDir = normalize(light.direction);
 	vec3 viewDir = normalize(M_CamPos - WorldPos);
-	vec3 refDir = reflect(-viewDir,worldNormal);
+	vec3 refDir = reflect(-viewDir, Normal);
 
-	return vec4(geomNormalWS, 1.0);
 	vec3 halfDir = normalize(lightDir + viewDir);
-	float NdotV = clamp(dot(worldNormal,viewDir), 0.0, 1.0);
-	float NdotL = clamp(dot(worldNormal,lightDir), 0.0, 1.0);
-	float NdotH = clamp(dot(worldNormal,halfDir), 0.0, 1.0);
+	float NdotV = clamp(dot(Normal,viewDir), 0.0, 1.0);
+	float NdotL = clamp(dot(Normal,lightDir), 0.0, 1.0);
+	float NdotH = clamp(dot(Normal,halfDir), 0.0, 1.0);
 	float LdotV = clamp(dot(lightDir,viewDir), 0.0, 1.0);
 	float LdotH = clamp(dot(lightDir,halfDir), 0.0, 1.0);
 	float VdotH = clamp(dot(viewDir, halfDir), 0.0, 1.0);
@@ -647,7 +647,7 @@ void main()
 		coatNormalWS, _CoatPerceptualRoughness, _CoatIOR, _CoatThickness, _CoatExtinction.xyz);
 	PreLightData preLightData = GetPreLightData(viewDir, bsdfData, _PreFGDandDisneyDiffuse);
 	IndirectLighting indirLighting = EvaluateBSDF_Env(preLightData, bsdfData, hierarchyWeight, _IBLLDScale);
-	vec3 diffuse = 0.0;
+	vec3 diffuse = vec3(0.0);
 	vec3 specular = indirLighting.specularReflected;
 
 	DirectLighting dirLighting = EvaluateBSDF_Directional(viewDir, lightDir, preLightData, bsdfData);

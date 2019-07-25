@@ -53,14 +53,14 @@ void SampleGGXDir(vec2 u, vec3 V, mat3 localToWorld, float roughness,
 	}
 	else
 	{
-		localV = mul(transpose(localToWorld), V);
+		localV = transpose(localToWorld) * V;
 		VdotH = clamp(dot(localV, localH), 0.0, 1.0);
 	}
 
 	vec3 localL = -localV + 2.0 * VdotH * localH;
 	NdotL = localL.z;
 
-	L = mul(localToWorld, localL);
+	L = localToWorld * localL;
 }
 
 void ImportanceSampleGGX(vec2 u, vec3 V, mat3 localToWorld, float roughness, float NdotV,
