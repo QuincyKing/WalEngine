@@ -1,14 +1,36 @@
 #version 430 core
 
+#include "light_definition.inc"
+#include "light.inc"
+#include "sampling.inc"
+
 out vec4 outColor;
 
 in vec2 Tex;
 in vec3 WorldPos;
 in vec3 Normal;
 
-#include "light_definition.inc"
-#include "light.inc"
-#include "sampling.inc"
+uniform vec4 _Color;
+uniform sampler2D _MainTex;
+//uniform sampler2D _MetallicGlossMap;
+uniform float metallic;
+uniform sampler2D _RoughnessMap;
+uniform sampler2D _BumpMap;
+uniform sampler2D _OcclusionMap;
+uniform float _LumiScale;
+uniform sampler2D _PreFGDandDisneyDiffuse;
+uniform float _DelectricIOR;
+uniform sampler2D _BentNormal;
+uniform sampler2D _GeomNormal;
+uniform sampler2D _CoatNormalMap;
+uniform float _CoatPerceptualRoughness;
+uniform float _CoatIOR;
+uniform float _CoatThickness;
+uniform vec4 _CoatExtinction;
+uniform float _IBLLDScale;
+uniform samplerCube prefilterMap;
+uniform vec3 M_CamPos;
+uniform DirectionalLight light;
 
 #define NB_NORMALS 2
 #define COAT_NB_LOBES 1
@@ -114,27 +136,6 @@ struct PreLightData
 	mat3 ltcTransformDiffuse;                    // Inverse transformation for Lambertian or Disney Diffuse
 	mat3 ltcTransformSpecular[TOTAL_NB_LOBES];   // Inverse transformation for GGX
 };
-
-uniform vec4 _Color;
-uniform sampler2D _MainTex;
-uniform sampler2D _MetallicGlossMap;
-uniform sampler2D _RoughnessMap;
-uniform sampler2D _BumpMap;
-uniform sampler2D _OcclusionMap;
-uniform float _LumiScale;
-uniform sampler2D _PreFGDandDisneyDiffuse;
-uniform float _DelectricIOR;
-uniform sampler2D _BentNormal;
-uniform sampler2D _GeomNormal;
-uniform sampler2D _CoatNormalMap;
-uniform float _CoatPerceptualRoughness;
-uniform float _CoatIOR;
-uniform float _CoatThickness;
-uniform vec4 _CoatExtinction;
-uniform float _IBLLDScale;
-uniform samplerCube prefilterMap;
-uniform vec3 M_CamPos;
-uniform DirectionalLight light;
 
 float GetCoatEta(in BSDFData bsdfData)
 {
@@ -642,8 +643,14 @@ void main()
 	float LdotH = clamp(dot(lightDir,halfDir), 0.0, 1.0);
 	float VdotH = clamp(dot(viewDir, halfDir), 0.0, 1.0);
 
+	vec3 geomNormalWS = texture(_GeomNormal, Tex).rgb;
+	vec3 bentNormalWS = texture(_BentNormal, Tex).rgb;
+	vec3 coatNormalWS = texture(_CoatNormalMap, Tex).rgb;
+	float roughness = texture(_RoughnessMap, Tex).r;
+	vec3 albedo = texture(_MainTex, Tex).rgb * _Color.rgb;
+	float occlusion = texture(_OcclusionMap, Tex).r;
 	float hierarchyWeight = 0.0;
-	BSDFData bsdfData = GetBSDFData(geomNormalWS, worldNormal, bentNormalWS, roughness, metallic, albedo, _DelectricIOR,
+	BSDFData bsdfData = GetBSDFData(geomNormalWS, Normal, bentNormalWS, roughness, metallic, albedo, _DelectricIOR,
 		coatNormalWS, _CoatPerceptualRoughness, _CoatIOR, _CoatThickness, _CoatExtinction.xyz);
 	PreLightData preLightData = GetPreLightData(viewDir, bsdfData, _PreFGDandDisneyDiffuse);
 	IndirectLighting indirLighting = EvaluateBSDF_Env(preLightData, bsdfData, hierarchyWeight, _IBLLDScale);
@@ -651,11 +658,11 @@ void main()
 	vec3 specular = indirLighting.specularReflected;
 
 	DirectLighting dirLighting = EvaluateBSDF_Directional(viewDir, lightDir, preLightData, bsdfData);
-	diffuse += dirLighting.diffuse * _LightColor0.rgb * atten;
-	specular += dirLighting.specular * _LightColor0.rgb * atten;
+	diffuse += dirLighting.diffuse /* _LightColor0.rgb*/ /* atten*/;
+	specular += dirLighting.specular /* _LightColor0.rgb*/ /* atten*/;
 
 	outColor = vec4(diffuse * occlusion + specular * occlusion, 1.0);
 
-	outColor = color / (color + 1.0);
-	outColor = pow(color, 1.0 / 2.2);
+	outColor = outColor / (outColor + 1.0);
+	outColor = pow(outColor, vec4(1.0 / 2.2));
 }
