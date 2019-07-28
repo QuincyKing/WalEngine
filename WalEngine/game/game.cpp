@@ -1,4 +1,24 @@
 #include "game.h"
+void draw_quad();
+
+void Game::precompute()
+{
+	FrameBuffer capture(512, 512);
+
+	FrameBuffer::bind_render_targer_reset();
+
+	FGDTexture = Texture(64, 64, 0, GL_TEXTURE_2D, GL_LINEAR, GL_RGBA, GL_RGBA, true);
+
+	capture.change_render_buffer_storage(64, 64);
+	capture.bind_texture(FGDTexture.get_ID()[0]);
+
+	glViewport(0, 0, 64, 64);
+	fgdShader.use();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	draw_quad();
+
+	FrameBuffer::bind_render_targer_reset();
+}
 
 void Game::init()
 {
@@ -74,9 +94,9 @@ void Game::render(RenderEngine &renderer)
 	mat->mShader->set_int("brdfLUT", 2);
 
 	mat_layered->mShader->use();
-	mat_layered->mShader->set_int("irradianceMap", 0);
+	FGDTexture.bind(2);
 	mat_layered->mShader->set_int("prefilterMap", 1);
-	mat_layered->mShader->set_int("brdfLUT", 2);
+	mat_layered->mShader->set_int("_PreFGDandDisneyDiffuse", 2);
 
 	RenderEngine::Lights.push_back(&dir);
 	RenderEngine::Lights.push_back(&dir2);

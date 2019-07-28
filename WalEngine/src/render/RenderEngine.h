@@ -29,18 +29,19 @@ public:
 public:
 	static std::vector<BaseLight*>		Lights;
 	static DataPool						Data;
+	std::vector<std::function<void(void)> >		precomputeEvent;
 
 private:
-	static std::map<std::string, unsigned int> SamplerMap;
-	const Window*                       mWindow;
-	Material                            mFxaaFilter;
-	Shader								irradianceShader;
-	Shader								prefilterShader;
-	Shader								brdfShader;
-	Texture								irradianceMap;
-	Texture								prefilterMap;
-	Texture								brdfLUTTexture;
-	Cube								box;
-	FrameBuffer							displayFrame;
-	SkyBox								mSkyBox;
+	static std::map<std::string, unsigned int>	SamplerMap;
+	const Window*								mWindow;
+	Material									mFxaaFilter;
+	Shader										irradianceShader;
+	Shader										prefilterShader;
+	Shader										brdfShader;
+	Texture										irradianceMap;
+	Texture										prefilterMap;
+	Texture										brdfLUTTexture;
+	Cube										box;
+	FrameBuffer									displayFrame;
+	SkyBox										mSkyBox;
 };

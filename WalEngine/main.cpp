@@ -23,7 +23,8 @@ int main()
 	game = std::make_shared<Game>();
 	window.mUpdateFun = [&renderer]() { game->render(renderer); };
 	window.mInitFun = []() { game->init(); };
-
+	renderer.precomputeEvent.push_back([]() { game->precompute(); });
+	renderer.precompute();
 	window.onrun();
 	
 	return 0;

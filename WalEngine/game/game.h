@@ -27,12 +27,15 @@ public:
 	Material *mat_layered;
 	DirectionalLight dir;
 	DirectionalLight dir2;
+	Texture	FGDTexture;
+	Shader	fgdShader;
 
 public:
 	Game() :
 		model("pbr-ball", "mitsuba/mitsuba-sphere.obj"),
 		model2("layered-material-ball", "mitsuba/mitsuba-sphere.obj"),
 		renderRoot("root"),
+		fgdShader("brdf.vert", "pre_fgd_and_disney_diffuse.frag"),
 		dir("dir"),
 		dir2("dir2")
 	{}
@@ -44,4 +47,6 @@ public:
 	void init();
 
 	void render(RenderEngine &renderer);
+
+	void precompute();
 };
