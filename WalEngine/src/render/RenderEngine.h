@@ -37,10 +37,8 @@ private:
 	Material									mFxaaFilter;
 	Shader										irradianceShader;
 	Shader										prefilterShader;
-	Shader										brdfShader;
 	Texture										irradianceMap;
 	Texture										prefilterMap;
-	Texture										brdfLUTTexture;
 	Cube										box;
 	FrameBuffer									displayFrame;
 	SkyBox										mSkyBox;

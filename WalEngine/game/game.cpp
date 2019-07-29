@@ -7,6 +7,18 @@ void Game::precompute()
 
 	FrameBuffer::bind_render_targer_reset();
 
+	brdfLUTTexture = Texture(512, 512, 0, GL_TEXTURE_2D, GL_LINEAR, GL_RG16F, GL_RG, true);
+
+	capture.change_render_buffer_storage(512, 512);
+	capture.bind_texture(brdfLUTTexture.get_ID()[0]);
+
+	glViewport(0, 0, 512, 512);
+	brdfShader.use();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	draw_quad();
+
+	FrameBuffer::bind_render_targer_reset();
+
 	FGDTexture = Texture(64, 64, 0, GL_TEXTURE_2D, GL_LINEAR, GL_RGBA, GL_RGBA, true);
 
 	capture.change_render_buffer_storage(64, 64);
@@ -28,6 +40,10 @@ void Game::init()
 	roughness = Texture("pbr/plastic/roughness.png");
 	ao = Texture("pbr/plastic/ao.png");
 
+	MainTex = Texture("pbr/QuiltedMaple_Bronze_BC.png");
+	normalMap = Texture("pbr/QuiltedMaple_NM.png");
+	//coatNormalMap = Texture("pbr/QuiltedMaple_Bronze_BC.png");
+	//RoughnessMap
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
 
@@ -36,6 +52,8 @@ void Game::init()
 	metallic.process();
 	roughness.process();
 	ao.process();
+	MainTex.process();
+	normalMap.process();
 
 	mat = new Material("pbr");
 	mat->set_shader("pbr.vert", "ibl.frag");
@@ -47,24 +65,34 @@ void Game::init()
 	mat->set_texture("metallicMap", metallic);
 	mat->set_texture("roughnessMap", roughness);
 
-	mat_layered->set_texture("albedoMap", albedo);
-	mat_layered->set_texture("normalMap", normal);
-	mat_layered->set_texture("metallicMap", metallic);
-	mat_layered->set_texture("roughnessMap", roughness);
+	mat_layered->set_texture("MainTex", MainTex);
+	mat_layered->set_texture("RoughnessMap", RoughnessMap);
+	mat_layered->set_texture("BumpMap", normalMap);
+	mat_layered->set_texture("OcclusionMap", OcclusionMap);
+	mat_layered->set_texture("BentNormal", BentNormal);
+	mat_layered->set_texture("GeomNormal", GeomNormal);
+	mat_layered->set_texture("CoatNormalMap", normalMap);
 
-	RenderEngine::set_sampler_slot("irradianceMap", 0);
-	RenderEngine::set_sampler_slot("prefilterMap", 1);
-	RenderEngine::set_sampler_slot("brdfLUT", 2);
 	RenderEngine::set_sampler_slot("albedoMap", 3);
 	RenderEngine::set_sampler_slot("normalMap", 4);
 	RenderEngine::set_sampler_slot("metallicMap", 5);
 	RenderEngine::set_sampler_slot("roughnessMap", 6);
+
+	RenderEngine::set_sampler_slot("RoughnessMap", 3);
+	RenderEngine::set_sampler_slot("BumpMap", 4);
+	RenderEngine::set_sampler_slot("OcclusionMap", 5);
+	RenderEngine::set_sampler_slot("BentNormal", 6);
+	RenderEngine::set_sampler_slot("GeomNormal", 7);
+	RenderEngine::set_sampler_slot("CoatNormalMap", 8);
+	RenderEngine::set_sampler_slot("MainTex", 9);
 
 	model.mTransform->set_pos(glm::vec3(-2.5, -1.0, -1.0));
 	model2.mTransform->set_pos(glm::vec3(0.5, -1.0, -1.0));
 
 	model.set_mat(mat);
 	model2.set_mat(mat_layered);
+	model.mRenderStateEvent = [&]() { brdfLUTTexture.bind(2); };
+	model2.mRenderStateEvent = [&]() { FGDTexture.bind(2); };
 
 	renderRoot.add_child(&model);
 	renderRoot.add_child(&model2);
@@ -94,7 +122,6 @@ void Game::render(RenderEngine &renderer)
 	mat->mShader->set_int("brdfLUT", 2);
 
 	mat_layered->mShader->use();
-	FGDTexture.bind(2);
 	mat_layered->mShader->set_int("prefilterMap", 1);
 	mat_layered->mShader->set_int("_PreFGDandDisneyDiffuse", 2);
 

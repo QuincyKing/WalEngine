@@ -11,18 +11,18 @@ in vec3 WorldPos;
 in vec3 Normal;
 
 uniform vec4 _Color;
-uniform sampler2D _MainTex;
+uniform sampler2D M_MainTex;
 //uniform sampler2D _MetallicGlossMap;
 uniform float metallic;
-uniform sampler2D _RoughnessMap;
-uniform sampler2D _BumpMap;
-uniform sampler2D _OcclusionMap;
+uniform sampler2D M_RoughnessMap;
+uniform sampler2D M_BumpMap;
+uniform sampler2D M_OcclusionMap;
 uniform float _LumiScale;
 uniform sampler2D _PreFGDandDisneyDiffuse;
 uniform float _DelectricIOR;
-uniform sampler2D _BentNormal;
-uniform sampler2D _GeomNormal;
-uniform sampler2D _CoatNormalMap;
+uniform sampler2D M_BentNormal;
+uniform sampler2D M_GeomNormal;
+uniform sampler2D M_CoatNormalMap;
 uniform float _CoatPerceptualRoughness;
 uniform float _CoatIOR;
 uniform float _CoatThickness;
@@ -633,7 +633,8 @@ void main()
 {
 	vec3 lightDir = normalize(light.direction);
 	vec3 viewDir = normalize(M_CamPos - WorldPos);
-	vec3 refDir = reflect(-viewDir, Normal);
+	vec3 normal = texture(M_BumpMap, Tex).rgb;
+	vec3 refDir = reflect(-viewDir, normal);
 
 	vec3 halfDir = normalize(lightDir + viewDir);
 	float NdotV = clamp(dot(Normal,viewDir), 0.0, 1.0);
@@ -643,12 +644,12 @@ void main()
 	float LdotH = clamp(dot(lightDir,halfDir), 0.0, 1.0);
 	float VdotH = clamp(dot(viewDir, halfDir), 0.0, 1.0);
 
-	vec3 geomNormalWS = texture(_GeomNormal, Tex).rgb;
-	vec3 bentNormalWS = texture(_BentNormal, Tex).rgb;
-	vec3 coatNormalWS = texture(_CoatNormalMap, Tex).rgb;
-	float roughness = texture(_RoughnessMap, Tex).r;
-	vec3 albedo = texture(_MainTex, Tex).rgb * _Color.rgb;
-	float occlusion = texture(_OcclusionMap, Tex).r;
+	vec3 geomNormalWS = normal; //texture(M_GeomNormal, Tex).rgb;
+	vec3 bentNormalWS = normal; //texture(M_BentNormal, Tex).rgb;
+	vec3 coatNormalWS = texture(M_CoatNormalMap, Tex).rgb;
+	float roughness = texture(M_RoughnessMap, Tex).r;
+	vec3 albedo = texture(M_MainTex, Tex).rgb * _Color.rgb;
+	float occlusion = texture(M_OcclusionMap, Tex).r;
 	float hierarchyWeight = 0.0;
 	BSDFData bsdfData = GetBSDFData(geomNormalWS, Normal, bentNormalWS, roughness, metallic, albedo, _DelectricIOR,
 		coatNormalWS, _CoatPerceptualRoughness, _CoatIOR, _CoatThickness, _CoatExtinction.xyz);

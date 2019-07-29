@@ -19,6 +19,8 @@ void Entity::add_child(Entity* child)
 
 void Entity::render_all()
 {
+	if(mRenderStateEvent)
+		mRenderStateEvent();
 	render();
 	for (unsigned int i = 0; i < mChildren.size(); i++)
 	{

@@ -14,7 +14,6 @@ RenderEngine::RenderEngine(const Window& window)
 	mFxaaFilter("fxaa"),
 	irradianceShader("cubemap.vert", "irradiance_convolution.frag"),
 	prefilterShader("cubemap.vert", "prefilter.frag"),
-	brdfShader("brdf.vert", "brdf.frag"),
 	box("box"),
 	displayFrame(Window::Inputs.get_win_size_x(), Window::Inputs.get_win_size_y()),
 	mSkyBox("hdr/uffizi.hdr")
@@ -29,8 +28,6 @@ RenderEngine::RenderEngine(const Window& window)
 
 	mFxaaFilter.set_shader("fxaa.vert", "fxaa.frag");
 	mFxaaFilter.mShader->set_int("screenTexture", RenderEngine::get_sampler_slot("screenTexture"));
-
-	//precompute();
 }
 
 void draw_quad()
@@ -118,37 +115,11 @@ void RenderEngine::precompute()
 			box.draw();
 		}
 	}
-	FrameBuffer::bind_render_targer_reset();
-
-	brdfLUTTexture = Texture(512, 512, 0, GL_TEXTURE_2D, GL_LINEAR, GL_RG16F, GL_RG, true);
-
-	capture.change_render_buffer_storage(512, 512);
-	capture.bind_texture(brdfLUTTexture.get_ID()[0]);
-
-	glViewport(0, 0, 512, 512);
-	brdfShader.use();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	draw_quad();
-
-	FrameBuffer::bind_render_targer_reset();
 
 	for (auto e : precomputeEvent)
 	{
 		e();
 	}
-	//FrameBuffer::bind_render_targer_reset();
-
-	//FGDTexture = Texture(64, 64, 0, GL_TEXTURE_2D, GL_LINEAR, GL_RGBA, GL_RGBA, true);
-
-	//capture.change_render_buffer_storage(64, 64);
-	//capture.bind_texture(FGDTexture.get_ID()[0]);
-
-	//glViewport(0, 0, 64, 64);
-	//fgdShader.use();
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//draw_quad();
-
-	//FrameBuffer::bind_render_targer_reset();
 }
 
 void RenderEngine::render(Entity& object)

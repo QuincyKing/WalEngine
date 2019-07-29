@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <functional>
 
 #include "Transform.h"
 #include "Component.h"
@@ -72,6 +73,7 @@ public:
 	int									mIndex;
 	static int							mCount;
 	static std::vector<Entity*>			Root;
+	std::function<void(void)>			mRenderStateEvent;
 
 protected:
 	std::map<ComType, Component* >	mComponents;

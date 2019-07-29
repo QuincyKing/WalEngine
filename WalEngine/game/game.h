@@ -28,7 +28,16 @@ public:
 	DirectionalLight dir;
 	DirectionalLight dir2;
 	Texture	FGDTexture;
+	Texture	brdfLUTTexture;
+	Texture coatNormalMap;
+	Texture normalMap;
+	Texture MainTex;
+	Texture RoughnessMap;
+	Texture OcclusionMap;
+	Texture BentNormal;
+	Texture GeomNormal;
 	Shader	fgdShader;
+	Shader	brdfShader;
 
 public:
 	Game() :
@@ -36,6 +45,7 @@ public:
 		model2("layered-material-ball", "mitsuba/mitsuba-sphere.obj"),
 		renderRoot("root"),
 		fgdShader("brdf.vert", "pre_fgd_and_disney_diffuse.frag"),
+		brdfShader("brdf.vert", "brdf.frag"),
 		dir("dir"),
 		dir2("dir2")
 	{}
