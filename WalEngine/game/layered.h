@@ -16,7 +16,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <memory>
 
-class Game
+class Layered
 {
 public:
 	Texture albedo, normal, metallic, roughness, ao;
@@ -40,7 +40,7 @@ public:
 	Shader	brdfShader;
 
 public:
-	Game() :
+	Layered() :
 		model("pbr-ball", "mitsuba/mitsuba-sphere.obj"),
 		model2("layered-material-ball", "mitsuba/mitsuba-sphere.obj"),
 		renderRoot("root"),
@@ -50,7 +50,7 @@ public:
 		dir2("dir2")
 	{}
 
-	~Game()
+	~Layered()
 	{
 	}
 

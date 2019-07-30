@@ -17,10 +17,12 @@ private:
 	void update_variances();
 
 public:
-	static float  depth1;
-	static float  alpha1;
-	static float  g;
-	static float  eta1;
-	static ImVec4 sigma_a1;
-	static ImVec4 sigma_s1;
+	static float  x;
+	static float  y;
+	static float  metal;
+	static float  delectricIOR;
+	static float  coatSmoothness;
+	static float  coatIOR;
+	static float  coatThickness;
+	static ImVec4 coatExtinction;
 };

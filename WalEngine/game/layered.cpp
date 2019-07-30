@@ -1,7 +1,7 @@
-#include "game.h"
+#include "layered.h"
 void draw_quad();
 
-void Game::precompute()
+void Layered::precompute()
 {
 	FrameBuffer capture(512, 512);
 
@@ -32,7 +32,7 @@ void Game::precompute()
 	FrameBuffer::bind_render_targer_reset();
 }
 
-void Game::init()
+void Layered::init()
 {
 	albedo = Texture("pbr/plastic/albedo.png");
 	normal = Texture("pbr/plastic/normal.png");
@@ -57,7 +57,7 @@ void Game::init()
 
 	mat = new Material("pbr");
 	mat->set_shader("pbr.vert", "ibl.frag");
-	mat_layered = new  Material("layered_material");
+	mat_layered = new Material("layered_material");
 	mat_layered->set_shader("pbr.vert", "layered_material.frag");
 
 	mat->set_texture("albedoMap", albedo);
@@ -100,7 +100,7 @@ void Game::init()
 	Material::update_uniforms_constant_all();
 }
 
-void Game::render(RenderEngine &renderer)
+void Layered::render(RenderEngine &renderer)
 {
 	glm::vec2 curScreen;
 

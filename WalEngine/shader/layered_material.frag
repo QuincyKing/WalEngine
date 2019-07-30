@@ -17,17 +17,16 @@ uniform sampler2D M_MainTex;
 uniform sampler2D M_RoughnessMap;
 uniform sampler2D M_BumpMap;
 uniform sampler2D M_OcclusionMap;
-uniform sampler2D _PreFGDandDisneyDiffuse;
 uniform sampler2D M_CoatNormalMap;
+uniform sampler2D _PreFGDandDisneyDiffuse;
 uniform samplerCube prefilterMap;
-uniform float metallic = 0.0;
-uniform float _LumiScale = 2.5;
-uniform float _DelectricIOR = 1.68;
-uniform float _CoatPerceptualRoughness = 1.0;
-uniform float _CoatIOR = 1.501;
-uniform float _CoatThickness = 0.26;
-uniform vec4 _CoatExtinction = vec4(0.8);
-uniform float _IBLLDScale = 1.0;
+uniform float R_metallic;
+uniform float R_DelectricIOR;
+uniform float R_CoatPerceptualRoughness;
+uniform float R_CoatIOR;
+uniform float R_CoatThickness;
+uniform vec3 R_ST;
+uniform vec3 R_CoatExtinction;
 uniform vec3 M_CamPos;
 uniform DirectionalLight R_dir2;
 
@@ -467,7 +466,7 @@ PreLightData GetPreLightData(vec3 V, inout BSDFData bsdfData, sampler2D _PreFGDa
 	return preLightData;
 }
 
-IndirectLighting EvaluateBSDF_Env( PreLightData preLightData, BSDFData bsdfData, inout float hierarchyWeight, float ldScale)
+IndirectLighting EvaluateBSDF_Env( PreLightData preLightData, BSDFData bsdfData, inout float hierarchyWeight)
 {
 	IndirectLighting lighting;
 //	ZERO_INITIALIZE(IndirectLighting, lighting);
@@ -506,7 +505,7 @@ IndirectLighting EvaluateBSDF_Env( PreLightData preLightData, BSDFData bsdfData,
 		vec4 preLD = textureLod(prefilterMap, R[i],  iblMipLevel);
 
 		tempWeight[i] *= preLD.a;
-		L = preLD.rgb * ldScale * preLightData.specularFGD[i];
+		L = preLD.rgb * preLightData.specularFGD[i];
 		L *= preLightData.energyCompensationFactor[i];
 		envLighting += L;
 	}
@@ -610,8 +609,8 @@ BSDFData GetBSDFData(vec3 geomNormalWS,
 	bsdfData.bentNormalWS = bentNormalWS;
 	bsdfData.perceptualRoughnessA = PerceptualSmoothnessToPerceptualRoughness(perceptualSmoothnessA);
 
-	bsdfData.diffuseColor = ComputeDiffuseColor(baseColor, metallic);
-	bsdfData.fresnel0 = ComputeFresnel0(baseColor, metallic, Ior2F0(vec3(dielectricIor)));
+	bsdfData.diffuseColor = ComputeDiffuseColor(baseColor, R_metallic);
+	bsdfData.fresnel0 = ComputeFresnel0(baseColor, R_metallic, Ior2F0(vec3(dielectricIor)));
 
 	bsdfData.coatPerceptualRoughness = PerceptualSmoothnessToPerceptualRoughness(coatPerceptualRoughness);
 	//bsdfData.coatMask = coatMask;
@@ -630,7 +629,8 @@ BSDFData GetBSDFData(vec3 geomNormalWS,
 
 vec3 getNormalFromMap()
 {
-    vec3 tangentNormal = texture(M_BumpMap, Tex).xyz * 2.0 - 1.0;
+	vec2 texcoord = Tex * R_ST.xy;
+    vec3 tangentNormal = texture(M_BumpMap, texcoord ).xyz * 2.0 - 1.0;
 
     vec3 Q1  = dFdx(WorldPos);
     vec3 Q2  = dFdy(WorldPos);
@@ -647,6 +647,7 @@ vec3 getNormalFromMap()
 
 void main()
 {
+	vec2 texcoord = Tex * R_ST.xy;
 	vec3 lightDir = normalize(R_dir2.direction);
 	vec3 viewDir = normalize(M_CamPos - WorldPos);
 	vec3 normal = getNormalFromMap();
@@ -663,17 +664,17 @@ void main()
 	vec3 geomNormalWS = Normal; 
 	vec3 bentNormalWS = Normal;
 	vec3 coatNormalWS = Normal; //texture(M_CoatNormalMap, Tex).rgb;
-	float roughness = texture(M_RoughnessMap, Tex).r;
-	vec3 albedo = texture(M_MainTex, Tex).rgb;
-	float occlusion = texture(M_OcclusionMap, Tex).r;
+	float roughness = texture(M_RoughnessMap, texcoord).r;
+	vec3 albedo = texture(M_MainTex, texcoord).rgb;
+	float occlusion = texture(M_OcclusionMap, texcoord).r;
 	float hierarchyWeight = 0.0;
 
 //	outColor = vec4(lightDir, 1.0);
 //	return;
-	BSDFData bsdfData = GetBSDFData(geomNormalWS, Normal, bentNormalWS, roughness, metallic, albedo, _DelectricIOR,
-		coatNormalWS, _CoatPerceptualRoughness, _CoatIOR, _CoatThickness, _CoatExtinction.xyz);
+	BSDFData bsdfData = GetBSDFData(geomNormalWS, Normal, bentNormalWS, roughness, R_metallic, albedo, R_DelectricIOR,
+		coatNormalWS, R_CoatPerceptualRoughness, R_CoatIOR, R_CoatThickness, R_CoatExtinction);
 	PreLightData preLightData = GetPreLightData(viewDir, bsdfData, _PreFGDandDisneyDiffuse);
-	IndirectLighting indirLighting = EvaluateBSDF_Env(preLightData, bsdfData, hierarchyWeight, _IBLLDScale);
+	IndirectLighting indirLighting = EvaluateBSDF_Env(preLightData, bsdfData, hierarchyWeight);
 	vec3 diffuse = vec3(0.0);
 	vec3 specular = indirLighting.specularReflected;
 

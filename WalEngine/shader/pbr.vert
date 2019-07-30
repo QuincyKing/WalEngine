@@ -12,7 +12,7 @@ out vec3 Normal;
 
 void main()
 {
-	Tex = aTex ;
+	Tex = aTex;
 	WorldPos = vec3(T_model * vec4(aPos, 1.0));
 	Normal = mat3(T_model) * aNormal;
 

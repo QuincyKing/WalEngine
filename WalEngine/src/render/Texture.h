@@ -69,7 +69,7 @@ public:
 		GLenum textureTarget = GL_TEXTURE_2D,
 		GLfloat filter = GL_LINEAR_MIPMAP_LINEAR,
 		GLenum internalFormat = GL_RGB,
-		bool clamp = true
+		bool clamp = false
 	);
 
 	void process
