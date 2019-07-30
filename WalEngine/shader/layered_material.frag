@@ -10,27 +10,26 @@ in vec2 Tex;
 in vec3 WorldPos;
 in vec3 Normal;
 
-uniform vec4 _Color;
-uniform sampler2D M_MainTex;
+
 //uniform sampler2D _MetallicGlossMap;
-uniform float metallic;
+
+uniform sampler2D M_MainTex;
 uniform sampler2D M_RoughnessMap;
 uniform sampler2D M_BumpMap;
 uniform sampler2D M_OcclusionMap;
-uniform float _LumiScale;
 uniform sampler2D _PreFGDandDisneyDiffuse;
-uniform float _DelectricIOR;
-uniform sampler2D M_BentNormal;
-uniform sampler2D M_GeomNormal;
 uniform sampler2D M_CoatNormalMap;
-uniform float _CoatPerceptualRoughness;
-uniform float _CoatIOR;
-uniform float _CoatThickness;
-uniform vec4 _CoatExtinction;
-uniform float _IBLLDScale;
 uniform samplerCube prefilterMap;
+uniform float metallic = 0.0;
+uniform float _LumiScale = 2.5;
+uniform float _DelectricIOR = 1.68;
+uniform float _CoatPerceptualRoughness = 1.0;
+uniform float _CoatIOR = 1.501;
+uniform float _CoatThickness = 0.26;
+uniform vec4 _CoatExtinction = vec4(0.8);
+uniform float _IBLLDScale = 1.0;
 uniform vec3 M_CamPos;
-uniform DirectionalLight light;
+uniform DirectionalLight R_dir2;
 
 #define NB_NORMALS 2
 #define COAT_NB_LOBES 1
@@ -629,28 +628,48 @@ BSDFData GetBSDFData(vec3 geomNormalWS,
 	return bsdfData;
 }
 
+vec3 getNormalFromMap()
+{
+    vec3 tangentNormal = texture(M_BumpMap, Tex).xyz * 2.0 - 1.0;
+
+    vec3 Q1  = dFdx(WorldPos);
+    vec3 Q2  = dFdy(WorldPos);
+    vec2 st1 = dFdx(Tex);
+    vec2 st2 = dFdy(Tex);
+
+    vec3 N   = normalize(Normal);
+    vec3 T  = normalize(Q1*st2.t - Q2*st1.t);
+    vec3 B  = -normalize(cross(N, T));
+    mat3 TBN = mat3(T, B, N);
+
+    return normalize(TBN * tangentNormal);
+}
+
 void main()
 {
-	vec3 lightDir = normalize(light.direction);
+	vec3 lightDir = normalize(R_dir2.direction);
 	vec3 viewDir = normalize(M_CamPos - WorldPos);
-	vec3 normal = texture(M_BumpMap, Tex).rgb;
+	vec3 normal = getNormalFromMap();
 	vec3 refDir = reflect(-viewDir, normal);
 
 	vec3 halfDir = normalize(lightDir + viewDir);
-	float NdotV = clamp(dot(Normal,viewDir), 0.0, 1.0);
-	float NdotL = clamp(dot(Normal,lightDir), 0.0, 1.0);
-	float NdotH = clamp(dot(Normal,halfDir), 0.0, 1.0);
+	float NdotV = clamp(dot(normal,viewDir), 0.0, 1.0);
+	float NdotL = clamp(dot(normal,lightDir), 0.0, 1.0);
+	float NdotH = clamp(dot(normal,halfDir), 0.0, 1.0);
 	float LdotV = clamp(dot(lightDir,viewDir), 0.0, 1.0);
 	float LdotH = clamp(dot(lightDir,halfDir), 0.0, 1.0);
 	float VdotH = clamp(dot(viewDir, halfDir), 0.0, 1.0);
 
-	vec3 geomNormalWS = normal; //texture(M_GeomNormal, Tex).rgb;
-	vec3 bentNormalWS = normal; //texture(M_BentNormal, Tex).rgb;
-	vec3 coatNormalWS = texture(M_CoatNormalMap, Tex).rgb;
+	vec3 geomNormalWS = Normal; 
+	vec3 bentNormalWS = Normal;
+	vec3 coatNormalWS = Normal; //texture(M_CoatNormalMap, Tex).rgb;
 	float roughness = texture(M_RoughnessMap, Tex).r;
-	vec3 albedo = texture(M_MainTex, Tex).rgb * _Color.rgb;
+	vec3 albedo = texture(M_MainTex, Tex).rgb;
 	float occlusion = texture(M_OcclusionMap, Tex).r;
 	float hierarchyWeight = 0.0;
+
+//	outColor = vec4(lightDir, 1.0);
+//	return;
 	BSDFData bsdfData = GetBSDFData(geomNormalWS, Normal, bentNormalWS, roughness, metallic, albedo, _DelectricIOR,
 		coatNormalWS, _CoatPerceptualRoughness, _CoatIOR, _CoatThickness, _CoatExtinction.xyz);
 	PreLightData preLightData = GetPreLightData(viewDir, bsdfData, _PreFGDandDisneyDiffuse);
@@ -662,7 +681,7 @@ void main()
 	diffuse += dirLighting.diffuse /* _LightColor0.rgb*/ /* atten*/;
 	specular += dirLighting.specular /* _LightColor0.rgb*/ /* atten*/;
 
-	outColor = vec4(diffuse * occlusion + specular * occlusion, 1.0);
+	outColor = vec4(diffuse + specular, 1.0);
 
 	outColor = outColor / (outColor + 1.0);
 	outColor = pow(outColor, vec4(1.0 / 2.2));

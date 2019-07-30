@@ -133,7 +133,6 @@ void RenderEngine::render(Entity& object)
 
 	irradianceMap.bind(0);
 	prefilterMap.bind(1);
-	//brdfLUTTexture.bind(2);
 	
 	Material::update_uniforms_mutable_all();
 

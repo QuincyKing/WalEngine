@@ -40,8 +40,8 @@ void Game::init()
 	roughness = Texture("pbr/plastic/roughness.png");
 	ao = Texture("pbr/plastic/ao.png");
 
-	MainTex = Texture("pbr/QuiltedMaple_Bronze_BC.png");
-	normalMap = Texture("pbr/QuiltedMaple_NM.png");
+	MainTex = Texture("pbr/multilayer/CarbonFiber_BC.png");
+	normalMap = Texture("pbr/multilayer/CarbonFiber_NM.png");
 	//coatNormalMap = Texture("pbr/QuiltedMaple_Bronze_BC.png");
 	//RoughnessMap
 	glEnable(GL_DEPTH_TEST);
@@ -67,24 +67,22 @@ void Game::init()
 
 	mat_layered->set_texture("MainTex", MainTex);
 	mat_layered->set_texture("RoughnessMap", RoughnessMap);
-	mat_layered->set_texture("BumpMap", normalMap);
+	mat_layered->set_texture("CoatNormalMap", coatNormalMap);
 	mat_layered->set_texture("OcclusionMap", OcclusionMap);
 	mat_layered->set_texture("BentNormal", BentNormal);
 	mat_layered->set_texture("GeomNormal", GeomNormal);
-	mat_layered->set_texture("CoatNormalMap", normalMap);
+	mat_layered->set_texture("BumpMap", normalMap);
 
 	RenderEngine::set_sampler_slot("albedoMap", 3);
 	RenderEngine::set_sampler_slot("normalMap", 4);
 	RenderEngine::set_sampler_slot("metallicMap", 5);
 	RenderEngine::set_sampler_slot("roughnessMap", 6);
 
-	RenderEngine::set_sampler_slot("RoughnessMap", 3);
-	RenderEngine::set_sampler_slot("BumpMap", 4);
-	RenderEngine::set_sampler_slot("OcclusionMap", 5);
-	RenderEngine::set_sampler_slot("BentNormal", 6);
-	RenderEngine::set_sampler_slot("GeomNormal", 7);
+	RenderEngine::set_sampler_slot("RoughnessMap", 7);
 	RenderEngine::set_sampler_slot("CoatNormalMap", 8);
-	RenderEngine::set_sampler_slot("MainTex", 9);
+	RenderEngine::set_sampler_slot("OcclusionMap", 9);
+	RenderEngine::set_sampler_slot("BumpMap", 10);
+	RenderEngine::set_sampler_slot("MainTex", 11);
 
 	model.mTransform->set_pos(glm::vec3(-2.5, -1.0, -1.0));
 	model2.mTransform->set_pos(glm::vec3(0.5, -1.0, -1.0));
