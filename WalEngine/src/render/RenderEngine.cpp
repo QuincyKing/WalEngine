@@ -16,7 +16,7 @@ RenderEngine::RenderEngine(const Window& window)
 	prefilterShader("cubemap.vert", "prefilter.frag"),
 	box("box"),
 	displayFrame(Window::Inputs.get_win_size_x(), Window::Inputs.get_win_size_y()),
-	mSkyBox("hdr/uffizi.hdr")
+	mSkyBox("hdr/studio_small_02_2k.hdr")
 {
 	Data.set_float("fxaaSpanMax", 8.0f);
 	Data.set_float("fxaaReduceMin", 1.0f / 128.0f);

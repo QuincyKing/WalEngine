@@ -39,4 +39,4 @@
 
 ## Gallery
 #### Layered Material PBR
-![layered](./img/layered.jpg)
+![layered](./img/layered.PNG)
