@@ -1,13 +1,13 @@
 #pragma once
 
+#include "game.h"
 #include "../src/core/Window.h"
-#include "../src/core/Quaternion.h";
+#include "../src/core/Quaternion.h"
 #include "../src/core/Model.h"
 #include "../src/component/Material.h"
 #include "../src/render/Texture.h"
 #include "../src/model/Sphere.h"
 #include "../src/model/Cube.h"
-#include "../src/render/RenderEngine.h"
 
 #include <stb_image/stb_image.h>
 #include <GLFW/glfw3.h>
@@ -16,13 +16,12 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <memory>
 
-class Layered
+class Layered : public Game
 {
 public:
 	Texture albedo, normal, metallic, roughness, ao;
 	Model model;
 	Model model2;
-	Entity renderRoot;
 	Material *mat;
 	Material *mat_layered;
 	DirectionalLight dir;
@@ -38,12 +37,12 @@ public:
 	Texture GeomNormal;
 	Shader	fgdShader;
 	Shader	brdfShader;
+	LayerMaterialPanel mLayerMaterialPanel;
 
 public:
 	Layered() :
 		model("pbr-ball", "mitsuba/mitsuba-sphere.obj"),
 		model2("layered-material-ball", "mitsuba/mitsuba-sphere.obj"),
-		renderRoot("root"),
 		fgdShader("brdf.vert", "pre_fgd_and_disney_diffuse.frag"),
 		brdfShader("brdf.vert", "brdf.frag"),
 		dir("dir"),
@@ -59,4 +58,6 @@ public:
 	void render(RenderEngine &renderer);
 
 	void precompute();
+
+	void gui();
 };

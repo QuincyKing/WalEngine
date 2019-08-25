@@ -18,21 +18,17 @@ public:
 		mAboutSize.x = 400;
 	}
 	virtual ~Panel() {}
-	void make_panel();
-
-private:
-	void show_about();
-	void show_hierarchy();
-	void show_gameobject();
-	void show_layer_material_panel();
-
-private:
-	Menu mMenu;
-	Hierarchy mHierarchy;
-	ImVec2 mAboutSize;
-	LayerMaterialPanel mLayerMaterialPanel;
-	FGDPanel mFGDPanel;
 
 public:
-	ImVec2 mScreen;
+	static void show_about();
+	static void show_hierarchy();
+	static void show_gameobject();
+	static void make_panel();
+
+public:
+	static float WinX;
+	static float WinY;
+	static Menu mMenu;
+	static Hierarchy mHierarchy;
+	static ImVec2 mAboutSize;
 };

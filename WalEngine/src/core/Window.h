@@ -23,7 +23,6 @@ public:
 		int posY;
 	}mProInfo;
 	int multisample;
-	Panel mPanel;
 	static Camera MainCamera;
 	static Input Inputs;
 	static float deltaTime;

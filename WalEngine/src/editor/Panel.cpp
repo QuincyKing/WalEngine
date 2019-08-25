@@ -1,22 +1,27 @@
 #include "Panel.h"
 #include "../core/Entity.h"
 
+float Panel::WinX = 0.0;
+float Panel::WinY = 0.0;
+Menu Panel::mMenu = Menu();
+Hierarchy Panel::mHierarchy = Hierarchy();
+ImVec2 Panel::mAboutSize = ImVec2(0.0, 0.0);
+
 void Panel::make_panel()
 {
-	//mMenu.make_menu();
+	mMenu.make_menu();
 	//if (mMenu.mAboutW)
 	//	show_about();
 	////if (mMenu.mHierarchyW)
 	//if(false)
 	//	show_hierarchy();
-	show_layer_material_panel();
 }
 
 //ÏÔÊ¾About´°¿Ú
 void Panel::show_about()
 {
-	ImGui::SetNextWindowPos(ImVec2((mScreen.x - mAboutSize.x) / 2, 
-		(mScreen.y - mAboutSize.y) / 2), ImGuiCond_Appearing);
+	ImGui::SetNextWindowPos(ImVec2((WinX - mAboutSize.x) / 2, 
+		(WinY - mAboutSize.y) / 2), ImGuiCond_Appearing);
 	ImGui::SetNextWindowSize(mAboutSize, ImGuiCond_Appearing);
 	if (!ImGui::Begin("About", &mMenu.mAboutW, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse))
 	{
@@ -39,24 +44,6 @@ void Panel::show_hierarchy()
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
 
 	mHierarchy.show(Entity::Root);
-	ImGui::PopStyleVar();
-	ImGui::End();
-}
-
-void Panel::show_layer_material_panel()
-{
-	bool flag = true;
-	ImGui::SetNextWindowSize(ImVec2(430, 450), ImGuiCond_FirstUseEver);
-	if (!ImGui::Begin("LayerMaterialPanel", &flag))
-	{
-		ImGui::End();
-		return;
-	}
-
-	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
-
-	mLayerMaterialPanel.show();
-	//mFGDPanel.show();
 	ImGui::PopStyleVar();
 	ImGui::End();
 }

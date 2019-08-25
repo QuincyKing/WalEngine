@@ -1,6 +1,23 @@
 #include "layered.h"
 void draw_quad();
 
+void Layered::gui()
+{
+	bool flag = true;
+	ImGui::SetNextWindowSize(ImVec2(430, 450), ImGuiCond_FirstUseEver);
+	if (!ImGui::Begin("LayerMaterialPanel", &flag))
+	{
+		ImGui::End();
+		return;
+	}
+
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
+	
+	mLayerMaterialPanel.show();
+	ImGui::PopStyleVar();
+	ImGui::End();
+}
+
 void Layered::precompute()
 {
 	FrameBuffer capture(512, 512);

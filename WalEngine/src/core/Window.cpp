@@ -12,8 +12,8 @@ Window::Window(unsigned int _Width, unsigned int _Height, unsigned int _posX,
 	mProInfo.title = _title;
 	mProInfo.posX = _posX;
 	mProInfo.posY = _posY;
-	mPanel.mScreen.x = _Width;
-	mPanel.mScreen.y = _Height;
+	Panel::WinX = _Width;
+	Panel::WinY = _Height;
 	multisample = _multisample;
 	Inputs.set_win_size(_Width, _Height);
 
@@ -111,7 +111,7 @@ int Window::onrun()
 
 	//初始化摄像机
 	Quaternion cameraRot = Quaternion(0, 0, 0, 1.0);
-	glm::vec3  cameraPos = glm::vec3(0.0f, 0.0f, 5.0f);
+	glm::vec3  cameraPos = glm::vec3(5.0f, 2.0f, 15.0f);
 	std::shared_ptr<Transform> cameraT = std::make_shared<Transform>(cameraPos, cameraRot);
 	MainCamera.set_transform(cameraT);
 
@@ -209,8 +209,6 @@ void Window::_gui()
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
-
-	mPanel.make_panel();
 }
 
 void Window::_update()
