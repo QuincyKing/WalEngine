@@ -5,7 +5,7 @@
 - [x] FxAA
 - [x] PBR
 - [x] IBL
-- [ ] AO
+- [ ] AO (GTAO)
 - [ ] TAA
 - [ ] Voxelize
 - [ ] Fog
