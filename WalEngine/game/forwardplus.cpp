@@ -1,5 +1,4 @@
 #include "forwardplus.h"
-#define INTERAL 3
 void draw_quad();
 
 void ForwardPlus::gui()
@@ -17,6 +16,8 @@ void ForwardPlus::gui()
 // 	ImGui::PopStyleVar();
 // 	ImGui::End();
 }
+
+
 
 void ForwardPlus::precompute()
 {
@@ -41,12 +42,14 @@ void ForwardPlus::init()
 {
 	MainTex = Texture("pbr/multilayer/CarbonFiber_BC.png");
 	normalMap = Texture("pbr/multilayer/CarbonFiber_NM.png");
+	WoodTex = Texture("toy_box_diffuse.png");
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
 
 	MainTex.process();
 	normalMap.process();
+	WoodTex.process();
 
 	mat = new Material("pbr");
 	mat->set_shader("pbr.vert", "forwardplus.frag");
@@ -59,12 +62,24 @@ void ForwardPlus::init()
 	mat->set_texture("GeomNormal", GeomNormal);
 	mat->set_texture("BumpMap", normalMap);
 
+	//mat2 = new Material("pbr2");
+	//mat2->set_shader("pbr.vert", "forwardplus.frag");
+
+	//mat2->set_texture("MainTex", WoodTex);
+	//mat2->set_texture("RoughnessMap", RoughnessMap);
+	//mat2->set_texture("CoatNormalMap", coatNormalMap);
+	//mat2->set_texture("OcclusionMap", OcclusionMap);
+	//mat2->set_texture("BentNormal", BentNormal);
+	//mat2->set_texture("GeomNormal", GeomNormal);
+	//mat2->set_texture("BumpMap", normalMap);
+
 	RenderEngine::set_sampler_slot("RoughnessMap", 7);
 	RenderEngine::set_sampler_slot("CoatNormalMap", 8);
 	RenderEngine::set_sampler_slot("OcclusionMap", 9);
 	RenderEngine::set_sampler_slot("BumpMap", 10);
 	RenderEngine::set_sampler_slot("MainTex", 11);
 
+	//init scene
 	glm::vec3 pos = glm::vec3(0.0);
 	int num = ceil(sqrt(OBJECT_NUM));
 
@@ -79,6 +94,70 @@ void ForwardPlus::init()
 	}
 
 	Entity::Root.push_back(&renderRoot);
+
+	//init compute shader
+	workgroupsx = (Window::Inputs.get_win_size_x() + (Window::Inputs.get_win_size_x() % 16)) / 16;
+	workgroupsy = (Window::Inputs.get_win_size_y() + (Window::Inputs.get_win_size_y() % 16)) / 16;
+
+	size_t numtiles = workgroupsx * workgroupsy;
+	size_t headsize = 16;
+	size_t nodesize = 16;
+
+	glGenBuffers(1, &headbuffer);
+	glGenBuffers(1, &nodebuffer);
+	glGenBuffers(1, &lightbuffer);
+	glGenBuffers(1, &counterbuffer);
+
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, headbuffer);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, numtiles * headsize, 0, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, nodebuffer);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, numtiles * nodesize * 1024, 0, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightbuffer);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, NUM_LIGHTS * sizeof(PointLightData), 0, GL_DYNAMIC_DRAW);
+
+	if (lightbuffer == 0)
+		return;
+
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightbuffer);
+	PointLightData* particles = (PointLightData*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_READ_WRITE);
+
+	int segments = sqrt(NUM_LIGHTS);
+	float theta, phi;
+
+	glm::vec3 randomcolors[3] =
+	{
+		glm::vec3(1, 0, 0),
+		glm::vec3(0, 1, 0),
+		glm::vec3(0, 0, 1)
+	};
+
+	for (int i = 0; i < segments; ++i)
+	{
+		for (int j = 0; j < segments; ++j)
+		{
+			PointLightData& p = particles[i * segments + j];
+
+			p.intensity = 1.0;
+			p.constant = 1.0;
+			p.exponent = 1.0;
+			p.linear = 1.0;
+			p.position = glm::vec3(-1.5 + i * INTERAL, 0.0, -1.5 + j * INTERAL);
+			p.range = LIGHT_RADIUS;
+			p.color = randomcolors[(i + j) % 3];
+		}
+	}
+	glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+
+	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, counterbuffer);
+	glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(GLuint), 0, GL_DYNAMIC_DRAW);
+	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, 0);
+
+	lightcull.use();
+	lightcull.set_int("depthSampler", 0);
+	lightcull.set_int("numLights", NUM_LIGHTS);
 
 	Material::update_uniforms_constant_all();
 }

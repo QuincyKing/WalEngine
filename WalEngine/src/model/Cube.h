@@ -14,7 +14,7 @@ public:
 	{
 	}
 
-	void render();
+	void render(Shader *shader);
 	void draw();
 
 private:

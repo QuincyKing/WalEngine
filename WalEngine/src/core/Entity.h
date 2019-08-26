@@ -44,8 +44,8 @@ public:
 	virtual ~Entity() {};
 
 	void add_child(Entity *child);
-	virtual void render() {};
-	void render_all();
+	virtual void render(Shader *shader = nullptr) {};
+	void render_all(Shader *shader = nullptr);
 	void set_mat(Material* mat) 
 	{ 
 		mComponents[ComType::Mat] = mat;

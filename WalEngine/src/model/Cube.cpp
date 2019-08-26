@@ -3,11 +3,20 @@
 unsigned int Cube::vao;
 unsigned int Cube::count;
 
-void Cube::render()
+void Cube::render(Shader *shader)
 {
 	glm::mat4 model = mTransform->get_model();
-	get_component<Material>(ComType::Mat)->mShader->use();
-	get_component<Material>(ComType::Mat)->mShader->set_mat4("T_model", model);
+	if (shader == nullptr)
+	{
+		get_component<Material>(ComType::Mat)->mShader->use();
+		get_component<Material>(ComType::Mat)->mShader->set_mat4("T_model", model);
+	}
+	else
+	{
+		shader->use();
+		shader->set_mat4("T_model", model);
+	}
+
 	draw();
 }
 

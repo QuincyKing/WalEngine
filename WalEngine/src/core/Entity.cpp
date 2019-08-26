@@ -17,14 +17,14 @@ void Entity::add_child(Entity* child)
 	}
 }
 
-void Entity::render_all()
+void Entity::render_all(Shader *shader)
 {
 	if(mRenderStateEvent)
 		mRenderStateEvent();
-	render();
+	render(shader);
 	for (unsigned int i = 0; i < mChildren.size(); i++)
 	{
-		mChildren[i]->render_all();
+		mChildren[i]->render_all(shader);
 	}
 }
 

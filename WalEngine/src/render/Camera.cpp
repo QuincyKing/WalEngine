@@ -15,6 +15,20 @@ glm::mat4 Camera::get_view_projection() const
 	return mProjection * cameraRotation * cameraTranslation;
 }
 
+glm::mat4 Camera::get_projection() const 
+{
+	return mProjection;
+}
+
+glm::mat4 Camera::get_view() const 
+{
+	glm::mat4 cameraRotation = get_transform().get_transform_rot().conjugate().to_rotation_mat();
+	glm::mat4 cameraTranslation = glm::mat4();
+
+	cameraTranslation = glm::translate(cameraTranslation, get_transform().get_transform_pos() * -1.0f);
+	return cameraRotation * cameraTranslation;
+}
+
 void Camera::move(glm::vec3 dir)
 {
 	get_transform()->add_pos(dir * -sensitive);

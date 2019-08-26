@@ -79,6 +79,7 @@ public:
 	friend class Material;
 
 public:
+	Shader(int type, const std::string& csFile);
 	Shader(const std::string& vsFile = "default.vert", const std::string& fsFile = "default.frag");
 	Shader(const Shader& other);
 	virtual ~Shader();
@@ -88,6 +89,7 @@ public:
 	void set_float(const std::string& uniformName, float value) const;
 	void set_mat4(const std::string& uniformName, const glm::mat4& value) const;
 	void set_vec3(const std::string& uniformName, const glm::vec3& value) const;
+	void set_vec4(const std::string& uniformName, const glm::vec4& value) const;
 	Shader& operator=(const Shader &other);
 	bool is_default();
 	void set_shader(const std::string& vsFile, const std::string& fsFile);
@@ -98,4 +100,5 @@ private:
 	std::string mVsName;
 	std::string mFsName;
 	std::string mGeName;
+	std::string mCsName;
 };

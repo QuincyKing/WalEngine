@@ -41,11 +41,19 @@ public:
         load_model(path);
     }
 
-	inline void render()
+	inline void render(Shader *shader)
 	{
 		glm::mat4 model = mTransform->get_model();
-		get_component<Material>(ComType::Mat)->mShader->use();
-		get_component<Material>(ComType::Mat)->mShader->set_mat4("T_model", model);
+		if (shader == nullptr)
+		{
+			get_component<Material>(ComType::Mat)->mShader->use();
+			get_component<Material>(ComType::Mat)->mShader->set_mat4("T_model", model);
+		}
+		else
+		{
+			shader->use();
+			shader->set_mat4("T_model", model);
+		}
 		for (unsigned int i = 0; i < meshes.size(); i++)
 		{
 			get_component<Material>(ComType::Mat)->mShader->set_vec3("albedo_mix", i == 0 ? glm::vec3(0.2, 0.6, 1.0) : glm::vec3(1.0, 1.0, 1.0));

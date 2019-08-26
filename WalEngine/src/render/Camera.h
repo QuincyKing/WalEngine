@@ -21,6 +21,8 @@ public:
 	}
 
 	glm::mat4 get_view_projection()           const;
+	glm::mat4 get_projection()			      const;
+	glm::mat4 get_view()					  const;
 
 	inline std::shared_ptr<Transform> get_transform() { return mTransform; }
 	inline const Transform& get_transform() const { return *mTransform; }

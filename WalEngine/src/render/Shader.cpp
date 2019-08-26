@@ -328,6 +328,25 @@ void ShaderData::compile_shader() const
 //////////////////////////////////
 ///////////Shader/////////////////
 //////////////////////////////////
+Shader::Shader(int type, const std::string& csFile)
+{
+	mCsName = csFile;
+
+	std::map<std::string, ShaderData*>::const_iterator it = ResourceMap.find(mCsName);
+	if (it != ResourceMap.end())
+	{
+		mShaderData = it->second;
+		mShaderData->add_reference();
+	}
+	else
+	{
+		mShaderData = new ShaderData();
+		mShaderData->init(mCsName, type);
+		mShaderData->compile_shader();
+		mShaderData->add_shader_uniforms(load_shader(mCsName));
+		ResourceMap.insert(std::pair<std::string, ShaderData*>(mCsName, mShaderData));
+	}
+}
 
 Shader::Shader(const std::string& vsFile, const std::string& fsFile)
 {
@@ -404,6 +423,12 @@ void Shader::set_vec3(const std::string& uniformName, const glm::vec3& value) co
 {
 	if (mShaderData->get_uniform_map().count(uniformName) > 0 && mShaderData->get_uniform_map().at(uniformName) != INVALID_VALUE)
 		glUniform3f(mShaderData->get_uniform_map().at(uniformName), value.x, value.y, value.z);
+}
+
+void Shader::set_vec4(const std::string& uniformName, const glm::vec4& value) const
+{
+	if (mShaderData->get_uniform_map().count(uniformName) > 0 && mShaderData->get_uniform_map().at(uniformName) != INVALID_VALUE)
+		glUniform4f(mShaderData->get_uniform_map().at(uniformName), value.x, value.y, value.z, value.w);
 }
 
 void Shader::set_mat4(const std::string& uniformName, const glm::mat4& value) const

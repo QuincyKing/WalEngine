@@ -8,10 +8,12 @@ std::vector<BaseLight*>		RenderEngine::Lights = std::vector<BaseLight*>();
 DataPool					RenderEngine::Data = DataPool();
 
 unsigned int quadVAO = 0, quadVBO = 0;
+glm::vec4 globalambient = glm::vec4( 0.01f, 0.01f, 0.01f, 1.0f );
 
 RenderEngine::RenderEngine(const Window& window)
 	:mWindow(&window),
 	mFxaaFilter("fxaa"),
+	zbuffer("zbuffer.vert", "zbuffer.frag"),
 	irradianceShader("cubemap.vert", "irradiance_convolution.frag"),
 	prefilterShader("cubemap.vert", "prefilter.frag"),
 	box("box"),
@@ -124,6 +126,18 @@ void RenderEngine::precompute()
 
 void RenderEngine::render(Entity& object)
 {
+	// zbuffer
+	displayFrame.bind_render_target();
+	displayFrame.bind_texture(Data.get_texture("displayTexture").get_ID()[0]);
+	
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+
+	zbuffer.use();
+	zbuffer.set_vec4("matAmbient", globalambient);
+	object.render_all(&zbuffer);
+
 	displayFrame.bind_render_target();
 	displayFrame.bind_texture(Data.get_texture("displayTexture").get_ID()[0]);
 	//Material::update_uniforms_constant_all();

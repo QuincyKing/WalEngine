@@ -30,6 +30,7 @@
 - [ ] Support LOD
 - [ ] Particle System
 - [ ] Baking
+- [ ] pass by value(Material class pass to Model class) 
 ### GUI
 - [x] Menu
 - [x] Panel

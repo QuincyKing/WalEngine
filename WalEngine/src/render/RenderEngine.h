@@ -42,4 +42,5 @@ private:
 	Cube										box;
 	FrameBuffer									displayFrame;
 	SkyBox										mSkyBox;
+	Shader										zbuffer;
 };

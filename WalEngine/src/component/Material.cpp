@@ -63,7 +63,8 @@ Material::Material(const std::string& materialName) :
 
 Material::Material(const Material& other) :
 	mMateriaData(other.mMateriaData),
-	mMaterialName(other.mMaterialName)
+	mMaterialName(other.mMaterialName),
+	mShader(other.mShader)
 {
 	mMateriaData->add_reference();
 	mShader->add_reference();
@@ -83,6 +84,7 @@ Material::~Material()
 	}
 }
 
+//Not Used
 void Material::update_uniforms_constant() const
 {
 	for (unsigned int i = 0; i < mShader->mShaderData->get_uniform_names().size(); i++)
@@ -144,6 +146,7 @@ void Material::update_uniforms_constant() const
 	}
 }
 
+//constant variance
 void Material::update_uniforms_constant_all()
 {
 	for (auto iter = ResourceMap.begin(); iter != ResourceMap.end(); iter++)
@@ -172,6 +175,7 @@ void Material::update_uniforms_constant_all()
 	}
 }
 
+//Not Used
 void Material::update_uniforms_mutable() const
 {
 	for (unsigned int i = 0; i < mShader->mShaderData->get_uniform_names().size(); i++)
@@ -182,6 +186,7 @@ void Material::update_uniforms_mutable() const
 	}
 }
 
+//mutable variance
 void Material::update_uniforms_mutable_all()
 {
 	for (auto iter = ResourceMap.begin(); iter != ResourceMap.end(); iter++)
@@ -199,10 +204,14 @@ void Material::update_uniforms_mutable_all()
 			//transform variance
 			if (uniformName.substr(0, 2) == "T_")
 			{
-				glm::mat4 projectedMatrix = Window::MainCamera.get_view_projection();
 				if (uniformName == "T_VP")
-					shader->set_mat4(uniformName, projectedMatrix);
+					shader->set_mat4(uniformName, Window::MainCamera.get_view_projection());
+				else if (uniformName == "T_View")
+					shader->set_mat4(uniformName, Window::MainCamera.get_view());
+				else if (uniformName == "T_Proj")
+					shader->set_mat4(uniformName, Window::MainCamera.get_projection());
 			}
+			//data store in material class
 			else if (uniformName.substr(0, 2) == "M_")
 			{
 				if(uniformName == "M_CamPos")
@@ -224,6 +233,7 @@ void Material::update_uniforms_mutable_all()
 				else
 					throw uniformType + " is not supported by the Material class";
 			}
+			//data store in RenderEngine class
 			else if (uniformName.substr(0, 2) == "R_")
 			{
 				std::string varianceName = uniformName.substr(2, uniformName.length());
