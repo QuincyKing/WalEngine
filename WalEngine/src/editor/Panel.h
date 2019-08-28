@@ -26,8 +26,6 @@ public:
 	static void make_panel();
 
 public:
-	static float WinX;
-	static float WinY;
 	static Menu mMenu;
 	static Hierarchy mHierarchy;
 	static ImVec2 mAboutSize;

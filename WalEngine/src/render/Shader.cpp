@@ -419,6 +419,12 @@ void Shader::set_float(const std::string& uniformName, float value) const
 		glUniform1f(mShaderData->get_uniform_map().at(uniformName), value);
 }
 
+void Shader::set_vec2(const std::string& uniformName, const glm::vec2& value) const
+{
+	if (mShaderData->get_uniform_map().count(uniformName) > 0 && mShaderData->get_uniform_map().at(uniformName) != INVALID_VALUE)
+		glUniform2f(mShaderData->get_uniform_map().at(uniformName), value.x, value.y);
+}
+
 void Shader::set_vec3(const std::string& uniformName, const glm::vec3& value) const
 {
 	if (mShaderData->get_uniform_map().count(uniformName) > 0 && mShaderData->get_uniform_map().at(uniformName) != INVALID_VALUE)
@@ -429,6 +435,24 @@ void Shader::set_vec4(const std::string& uniformName, const glm::vec4& value) co
 {
 	if (mShaderData->get_uniform_map().count(uniformName) > 0 && mShaderData->get_uniform_map().at(uniformName) != INVALID_VALUE)
 		glUniform4f(mShaderData->get_uniform_map().at(uniformName), value.x, value.y, value.z, value.w);
+}
+
+void Shader::set_vec2(const std::string& uniformName, const float x, const float y) const
+{
+	if (mShaderData->get_uniform_map().count(uniformName) > 0 && mShaderData->get_uniform_map().at(uniformName) != INVALID_VALUE)
+		glUniform2f(mShaderData->get_uniform_map().at(uniformName), x, y);
+}
+
+void Shader::set_vec3(const std::string& uniformName, const float x, const float y, const float z) const
+{
+	if (mShaderData->get_uniform_map().count(uniformName) > 0 && mShaderData->get_uniform_map().at(uniformName) != INVALID_VALUE)
+		glUniform3f(mShaderData->get_uniform_map().at(uniformName), x, y, z);
+}
+
+void Shader::set_vec4(const std::string& uniformName, const float x, const float y, const float z, const float w) const
+{
+	if (mShaderData->get_uniform_map().count(uniformName) > 0 && mShaderData->get_uniform_map().at(uniformName) != INVALID_VALUE)
+		glUniform4f(mShaderData->get_uniform_map().at(uniformName), x, y, z, w);
 }
 
 void Shader::set_mat4(const std::string& uniformName, const glm::mat4& value) const

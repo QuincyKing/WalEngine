@@ -8,9 +8,11 @@
 #include <iostream>
 #include <algorithm>
 #include <functional>
+#include <imgui/imgui.h>
+#include <imgui/imgui_impl_glfw.h>
+#include <imgui/imgui_impl_opengl3.h>
 
 #include "../render/Camera.h"
-#include "../editor/Panel.h"
 #include "Input.h"
 
 class Window

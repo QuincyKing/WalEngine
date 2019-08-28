@@ -12,8 +12,6 @@ Window::Window(unsigned int _Width, unsigned int _Height, unsigned int _posX,
 	mProInfo.title = _title;
 	mProInfo.posX = _posX;
 	mProInfo.posY = _posY;
-	Panel::WinX = _Width;
-	Panel::WinY = _Height;
 	multisample = _multisample;
 	Inputs.set_win_size(_Width, _Height);
 
@@ -146,11 +144,11 @@ int Window::onrun()
 
 		glm::mat4 projection = glm::perspective
 		(
-			glm::radians(Camera::mZoom),
+			glm::radians(Camera::Zoom),
 			Inputs.get_win_size_y() != 0 ?
 			(float)Inputs.get_win_size_x() / (float)Inputs.get_win_size_y() : 0,
-			Camera::mNear,
-			Camera::mFar
+			Camera::Near,
+			Camera::Far
 		);
 		MainCamera.set_projection(projection);
 

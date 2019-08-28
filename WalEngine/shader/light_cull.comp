@@ -1,6 +1,10 @@
 #version 430
 
-#include "light.inc"
+struct PointLightData
+{
+    vec4 color;
+    vec4 position;
+};
 
 struct ListHead
 {
@@ -21,15 +25,15 @@ layout(std140, binding = 1) writeonly buffer NodeBuffer {
 } nodebuffer;
 
 layout(std140, binding = 2) readonly buffer LightBuffer {
-	PointLight data[];
+	PointLightData data[];
 } lightbuffer;
 
 layout(binding = 0) uniform sampler2D depthSampler;
 layout(binding = 0) uniform atomic_uint nextInsertionPoint;
 
-uniform mat4 T_View;
-uniform mat4 T_Proj;
-uniform mat4 T_VP;
+uniform mat4 View;
+uniform mat4 Proj;
+uniform mat4 VP;
 uniform vec2 clipPlanes;
 uniform vec2 screenSize;
 uniform int numLights;
@@ -63,7 +67,7 @@ void main()
 	// STEP 1: calculate min/max depth in this tile
 	vec2 tex = vec2(loc) / screenSize;
 	float depth = texture(depthSampler, tex).r;
-	float linearz = (0.5 * T_Proj[3][2]) / (depth + 0.5 * T_Proj[2][2] - 0.5);
+	float linearz = (0.5 * Proj[3][2]) / (depth + 0.5 * Proj[2][2] - 0.5);
 
 	float minz = min(clipPlanes.y, linearz);
 	float maxz = max(clipPlanes.x, linearz);
@@ -94,12 +98,12 @@ void main()
 
 		for( int i = 0; i < 4; ++i )
 		{
-			FrustumPlanes[i] = FrustumPlanes[i] * T_VP;
+			FrustumPlanes[i] = FrustumPlanes[i] * VP;
 			FrustumPlanes[i] /= length(FrustumPlanes[i].xyz);
 		}
 
-		FrustumPlanes[4] = FrustumPlanes[4] * T_View;
-		FrustumPlanes[5] = FrustumPlanes[5] * T_View;
+		FrustumPlanes[4] = FrustumPlanes[4] * View;
+		FrustumPlanes[5] = FrustumPlanes[5] * View;
 
 		FrustumPlanes[4] /= length(FrustumPlanes[4].xyz);
 		FrustumPlanes[5] /= length(FrustumPlanes[5].xyz);
@@ -129,8 +133,8 @@ void main()
 
 	for( uint i = lightstart; i < lightend; ++i )
 	{
-		pos = vec4(lightbuffer.data[i].position, 1.0);
-		radius = lightbuffer.data[i].range;
+		pos = vec4(lightbuffer.data[i].position.xyz, 1.0);
+		radius = lightbuffer.data[i].position.w;
 
 		for( int j = 0; j < 6; ++j )
 		{

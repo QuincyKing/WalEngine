@@ -1,5 +1,11 @@
 #include "forwardplus.h"
+
+#define FORWARDPLUS //enable state in RenderEngine
+
 void draw_quad();
+
+glm::vec3 lightPosition = glm::vec3(0.0f, 0.0f, 5.0f);
+glm::vec3 lightColor = glm::vec3(255.0f, 255.0f, 255.0f);
 
 void ForwardPlus::gui()
 {
@@ -16,8 +22,6 @@ void ForwardPlus::gui()
 // 	ImGui::PopStyleVar();
 // 	ImGui::End();
 }
-
-
 
 void ForwardPlus::precompute()
 {
@@ -42,14 +46,14 @@ void ForwardPlus::init()
 {
 	MainTex = Texture("pbr/multilayer/CarbonFiber_BC.png");
 	normalMap = Texture("pbr/multilayer/CarbonFiber_NM.png");
-	WoodTex = Texture("toy_box_diffuse.png");
+	woodTex = Texture("wood.png");
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
 
 	MainTex.process();
 	normalMap.process();
-	WoodTex.process();
+	woodTex.process();
 
 	mat = new Material("pbr");
 	mat->set_shader("pbr.vert", "forwardplus.frag");
@@ -93,6 +97,16 @@ void ForwardPlus::init()
 		renderRoot.add_child(&models[i]);
 	}
 
+	wood = new Material("wood");
+	wood->set_shader("lightaccum.vert", "lightaccum.frag");
+	wood->set_texture("sampler", woodTex);
+	RenderEngine::set_sampler_slot("sampler", 12);
+
+	glm::vec3 center = glm::vec3((num-1)*INTERAL / 2, 0.0, (num - 1)*INTERAL / 2);
+	plane.mTransform->set_pos(center);
+	plane.mTransform->set_scale(glm::vec3(7, 0.01, 7));
+	plane.set_mat(wood);
+	renderRoot.add_child(&plane);
 	Entity::Root.push_back(&renderRoot);
 
 	//init compute shader
@@ -126,11 +140,11 @@ void ForwardPlus::init()
 	int segments = sqrt(NUM_LIGHTS);
 	float theta, phi;
 
-	glm::vec3 randomcolors[3] =
+	glm::vec4 randomcolors[3] =
 	{
-		glm::vec3(1, 0, 0),
-		glm::vec3(0, 1, 0),
-		glm::vec3(0, 0, 1)
+		glm::vec4(1, 0, 0, 1.0),
+		glm::vec4(0, 1, 0, 1.0),
+		glm::vec4(0, 0, 1, 1.0)
 	};
 
 	for (int i = 0; i < segments; ++i)
@@ -139,12 +153,7 @@ void ForwardPlus::init()
 		{
 			PointLightData& p = particles[i * segments + j];
 
-			p.intensity = 1.0;
-			p.constant = 1.0;
-			p.exponent = 1.0;
-			p.linear = 1.0;
-			p.position = glm::vec3(-1.5 + i * INTERAL, 0.0, -1.5 + j * INTERAL);
-			p.range = LIGHT_RADIUS;
+			p.position = glm::vec4(-1.5 + i * INTERAL, 1.0, -1.5 + j * INTERAL, LIGHT_RADIUS);
 			p.color = randomcolors[(i + j) % 3];
 		}
 	}
@@ -159,7 +168,17 @@ void ForwardPlus::init()
 	lightcull.set_int("depthSampler", 0);
 	lightcull.set_int("numLights", NUM_LIGHTS);
 
+	mat->mShader->use();
+	mat->mShader->set_int("numTilesX", workgroupsx);
+
+	wood->mShader->use();
+	wood->mShader->set_int("numTilesX", workgroupsx);
+
 	Material::update_uniforms_constant_all();
+
+	framebuffer.bind_render_target();
+	framebuffer.attach_texture(GL_COLOR_ATTACHMENT0, GLFMT_A8B8G8R8);
+	framebuffer.attach_texture(GL_DEPTH_ATTACHMENT, GLFMT_D32F);
 }
 
 void ForwardPlus::render(RenderEngine &renderer)
@@ -168,8 +187,6 @@ void ForwardPlus::render(RenderEngine &renderer)
 
 	curScreen.x = 5 * float((Window::Inputs.get_mouse_x()) - Window::Inputs.get_win_size_x() / 2.0f) / float(Window::Inputs.get_win_size_x());
 	curScreen.y = 5 * float(0 - (Window::Inputs.get_mouse_y()) - Window::Inputs.get_win_size_y() / 2.0f) / float(Window::Inputs.get_win_size_y());
-	glm::vec3 lightPosition = glm::vec3(0.0f, 0.0f, 5.0f);
-	glm::vec3 lightColor = glm::vec3(255.0f, 255.0f, 255.0f);
 
 	dir.get_component<DirectionalLightCom>()->set_color(lightColor);
 	dir.get_component<DirectionalLightCom>()->set_intensity(0.3);
@@ -179,5 +196,50 @@ void ForwardPlus::render(RenderEngine &renderer)
 	mat->mShader->set_int("_PreFGDandDisneyDiffuse", 2);
 
 	RenderEngine::Lights.push_back(&dir);
+	
+	// zbuffer
+	framebuffer.bind_render_target();
+	//framebuffer.attach_texture(GL_COLOR_ATTACHMENT0, GLFMT_A16B16G16R16F);
+	//framebuffer.attach_texture(GL_DEPTH_ATTACHMENT, GLFMT_D32F);
+	//framebuffer.bind_texture(tmp.get_ID()[0]);
+	{
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glEnable(GL_DEPTH_TEST);
+		glDepthMask(GL_TRUE);
+
+		zbuffer.use();
+		renderRoot.render_all(&zbuffer);
+	}
+	framebuffer.bind_render_targer_reset();
+
+	//light culling
+	lightcull.use();
+	lightcull.set_vec2("clipPlanes", Camera::Near, Camera::Far);
+	lightcull.set_vec2("screenSize", Window::Inputs.get_win_size_x(), Window::Inputs.get_win_size_y());
+	lightcull.set_mat4("Proj", Window::MainCamera.get_projection());
+	lightcull.set_mat4("View", Window::MainCamera.get_view());
+	lightcull.set_mat4("VP", Window::MainCamera.get_view_projection());
+
+	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, counterbuffer);
+	GLuint* counter = (GLuint*)glMapBuffer(GL_ATOMIC_COUNTER_BUFFER, GL_WRITE_ONLY);
+
+	*counter = 0;
+	glUnmapBuffer(GL_ATOMIC_COUNTER_BUFFER);
+
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, headbuffer);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, nodebuffer);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, lightbuffer);
+	glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 0, counterbuffer);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, framebuffer.get_depth_attachment());
+
+	lightcull.use();
+	glDispatchCompute(workgroupsx, workgroupsy, 1);
+
+	glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 0, 0);
+	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
 	renderer.render(renderRoot);
 }

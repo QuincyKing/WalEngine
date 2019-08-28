@@ -23,14 +23,13 @@
 - [x] Entity-Component System
 - [x] Mesh
 - [x] OpenGL API
-- [ ] Forward+ Rendering
+- [x] Forward+ Rendering
 - [ ] DX12 API
 - [ ] Physics Lib
 - [ ] Transparent Rendering
 - [ ] Support LOD
 - [ ] Particle System
 - [ ] Baking
-- [ ] pass by value(Material class pass to Model class) 
 ### GUI
 - [x] Menu
 - [x] Panel
@@ -41,3 +40,5 @@
 ## Gallery
 #### Layered Material PBR
 ![layered](./img/layered.PNG)
+#### Forward+
+![forwardplus](./img/forwardplus.jpg)

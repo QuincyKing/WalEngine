@@ -1,8 +1,7 @@
 #include "Panel.h"
 #include "../core/Entity.h"
+#include "../core/Window.h"
 
-float Panel::WinX = 0.0;
-float Panel::WinY = 0.0;
 Menu Panel::mMenu = Menu();
 Hierarchy Panel::mHierarchy = Hierarchy();
 ImVec2 Panel::mAboutSize = ImVec2(0.0, 0.0);
@@ -20,8 +19,8 @@ void Panel::make_panel()
 //ÏÔÊ¾About´°¿Ú
 void Panel::show_about()
 {
-	ImGui::SetNextWindowPos(ImVec2((WinX - mAboutSize.x) / 2, 
-		(WinY - mAboutSize.y) / 2), ImGuiCond_Appearing);
+	ImGui::SetNextWindowPos(ImVec2((Window::Inputs.get_win_size_x() - mAboutSize.x) / 2, 
+		(Window::Inputs.get_win_size_y() - mAboutSize.y) / 2), ImGuiCond_Appearing);
 	ImGui::SetNextWindowSize(mAboutSize, ImGuiCond_Appearing);
 	if (!ImGui::Begin("About", &mMenu.mAboutW, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse))
 	{

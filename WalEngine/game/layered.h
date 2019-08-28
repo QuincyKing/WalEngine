@@ -8,6 +8,7 @@
 #include "../src/render/Texture.h"
 #include "../src/model/Sphere.h"
 #include "../src/model/Cube.h"
+#include "../src/editor/Panel.h"
 
 #include <stb_image/stb_image.h>
 #include <GLFW/glfw3.h>

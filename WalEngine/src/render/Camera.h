@@ -38,7 +38,7 @@ private:
 	std::shared_ptr<Transform>	mTransform;
 
 public:
-	static float mZoom;
-	static float mNear;
-	static float mFar;
+	static float Zoom;
+	static float Near;
+	static float Far;
 };

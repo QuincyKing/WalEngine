@@ -6,13 +6,40 @@
 
 out vec4 outColor;
 
+struct PointLightData
+{
+    vec4 color;
+    vec4 position;
+};
+
 in vec2 Tex;
 in vec3 WorldPos;
 in vec3 Normal;
 
+struct ListHead
+{
+	uvec4 StartAndCount;
+};
+
+struct ListNode
+{
+	uvec4 LightIndexAndNext;
+};
+
+layout(std140, binding = 0) readonly buffer HeadBuffer {
+	ListHead data[];
+} headbuffer;
+
+layout(std140, binding = 1) readonly buffer NodeBuffer {
+	ListNode data[];
+} nodebuffer;
+
+layout(std140, binding = 2) readonly buffer LightBuffer {
+	PointLightData data[];
+} lightbuffer;
 
 //uniform sampler2D _MetallicGlossMap;
-
+uniform int numTilesX;
 uniform sampler2D M_MainTex;
 uniform sampler2D M_RoughnessMap;
 uniform sampler2D M_BumpMap;
@@ -29,6 +56,16 @@ vec3 R_ST = vec3(10.0, 10.0, 0.0);
 vec3 R_CoatExtinction = vec3(0.0, 0.0, 0.0);
 uniform vec3 M_CamPos;
 uniform DirectionalLight R_dir2;
+
+float Attenuate(vec3 ldir, float radius)
+{
+	float atten = dot(ldir, ldir) / radius;
+
+	atten = 1.0 / (atten * 15.0 + 1.0);
+	atten = (atten - 0.0625) * 1.066666;
+
+	return clamp(atten, 0.0, 1.0);
+}
 
 #define NB_NORMALS 2
 #define COAT_NB_LOBES 1
@@ -645,6 +682,7 @@ vec3 getNormalFromMap()
     return normalize(TBN * tangentNormal);
 }
 
+layout(early_fragment_tests) in;
 void main()
 {
 	vec2 texcoord = Tex * R_ST.xy;
@@ -679,8 +717,45 @@ void main()
 	vec3 specular = indirLighting.specularReflected;
 
 	DirectLighting dirLighting = EvaluateBSDF_Directional(viewDir, lightDir, preLightData, bsdfData);
-	diffuse += dirLighting.diffuse /* _LightColor0.rgb*/ /* atten*/;
-	specular += dirLighting.specular /* _LightColor0.rgb*/ /* atten*/;
+
+	diffuse += dirLighting.diffuse;
+	specular += dirLighting.specular;
+
+	//calculate multi light
+	ivec2	loc = ivec2(gl_FragCoord.xy);
+	ivec2	tileID = loc / ivec2(16, 16);
+	int		index = tileID.y * numTilesX + tileID.x;
+
+	float atten;
+	float radius;
+
+	uint start = headbuffer.data[index].StartAndCount.x;
+	uint count = headbuffer.data[index].StartAndCount.y;
+	uint nodeID = start;
+	uint lightID;
+	vec3 l;
+
+	vec3 lightcolor;
+	vec3 lightpos;
+
+	for( uint i = 0; i < count; ++i )
+	{
+		lightID = nodebuffer.data[nodeID].LightIndexAndNext.x;
+		nodeID = nodebuffer.data[nodeID].LightIndexAndNext.y;
+
+		lightcolor = lightbuffer.data[lightID].color.xyz;
+		lightpos = lightbuffer.data[lightID].position.xyz;
+		radius = lightbuffer.data[lightID].position.w;
+
+		l = lightpos.xyz - WorldPos.xyz;
+		atten = Attenuate(l, radius);
+		l = normalize(l);
+
+		DirectLighting dirLighting = EvaluateBSDF_Directional(viewDir, l, preLightData, bsdfData);
+
+		diffuse += dirLighting.diffuse * lightcolor * atten * 10;
+		specular += dirLighting.specular * lightcolor * atten * 10;
+	}
 
 	outColor = vec4(diffuse + specular, 1.0);
 

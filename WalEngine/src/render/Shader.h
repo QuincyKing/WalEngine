@@ -88,8 +88,12 @@ public:
 	void set_int(const std::string& uniformName, int value) const;
 	void set_float(const std::string& uniformName, float value) const;
 	void set_mat4(const std::string& uniformName, const glm::mat4& value) const;
+	void set_vec2(const std::string& uniformName, const glm::vec2& value) const;
 	void set_vec3(const std::string& uniformName, const glm::vec3& value) const;
 	void set_vec4(const std::string& uniformName, const glm::vec4& value) const;
+	void set_vec2(const std::string& uniformName, const float x, const float y) const;
+	void set_vec3(const std::string& uniformName, const float x, const float y, const float z) const;
+	void set_vec4(const std::string& uniformName, const float x, const float y, const float z, const float w) const;
 	Shader& operator=(const Shader &other);
 	bool is_default();
 	void set_shader(const std::string& vsFile, const std::string& fsFile);
