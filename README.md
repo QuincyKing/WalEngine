@@ -1,4 +1,4 @@
-# WalnutEngine
+# WalEngine
 
 ## TODO
 ### Effect
@@ -38,7 +38,7 @@
 	- [x] Point, Spot, Directional
 	- [ ] Area Light(LTC)
 - **Light Path**
-	- [ x ]  Tiled Based Forward
+	- [x] Tiled Based Forward
 	- [ ] Tiled Based Deferred
 	- [ ] Clustered Deferred
 - [x] SkyBox
