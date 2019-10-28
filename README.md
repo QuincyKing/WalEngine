@@ -2,29 +2,51 @@
 
 ## TODO
 ### Effect
-- [x] FxAA
-- [x] PBR
-- [x] IBL
-- [ ] AO (GTAO)
-- [ ] TAA
-- [ ] Voxelize
-- [ ] Fog
-- [x] Water
-- [x] Shadow(VSM)
-- [ ] SSS
-- [ ] SSR
-- [ ] SSSS
-- [x] Layered Material PBR
+- **AA**
+	- [x] FxAA
+	- [ ] TAA
+
+- **Shadow**
+	- [x] VSM
+
+- **PBR**
+	- [x] Layered Material PBR (clear coat)
+	- [x] IBL
+	- [ ] Anisotropic model
+	- [ ] Cloth model
+- **AO** 
+	- [ ] temporal SSAO
+	- [ ] GTAO
+
+- **Screen Space Effect**
+	- [ ] SSS
+	- [ ] SSR
+	- [ ] SSD
+- - [ ] **Voxelize**
+- - [x] **Water**
+- **Volume Effect**
+	- [ ] Fog
+- **Post Processing**
+	 - [ ] Motion Blur
+	 - [ ] Depth Of Field
+	 - [ ] Bloom
+	 - [ ] Lens flares
 ### Rendering
 - [x] Material Complie
 - [x] Scene Graph
-- [x] Lights: Point, Spot, Direction
+- **Lights** 
+	- [x] Point, Spot, Directional
+	- [ ] Area Light(LTC)
+- **Light Path**
+	- [ x ]  Tiled Based Forward
+	- [ ] Tiled Based Deferred
+	- [ ] Clustered Deferred
 - [x] SkyBox
 - [x] Entity-Component System
 - [x] Mesh
-- [x] OpenGL API
-- [x] Forward+ Rendering
-- [ ] DX12 API
+- **Graphic API**
+	- [x] OpenGL
+	- [ ] DirectX 11/12
 - [ ] Physics Lib
 - [ ] Transparent Rendering
 - [ ] Support LOD
